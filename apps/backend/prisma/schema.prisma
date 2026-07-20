@@ -1,0 +1,652 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Auth {
+  id       String  @id @default(uuid())
+
+  name            String
+  email           String    @unique
+  password        String
+  role            String    @default("employee") // admin, employee
+  phone           String?
+  department      String    @default("general")
+  status          String    @default("active") // "active", "inactive", "suspended"
+  suspensionReason String?
+  permissions     String[]
+  resetOtp        String?
+  resetOtpExpires DateTime?
+  profilePic      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  eventsAssigned   Event[]        @relation("EventStaff")
+  inventoryUpdates Inventory[]    @relation("InventoryUpdater")
+  stockHistory     StockHistory[] @relation("StockHistoryUser")
+  notifications    Notification[]
+  dutyRosters      DutyRoster[]
+  createdTickets   SupportTicket[] @relation("TicketCreator")
+  supportMessages  SupportMessage[]
+
+  @@index([createdAt])
+  @@index([name])
+  @@index([status])
+  @@index([role, status])
+}
+
+model Customer {
+  id       String @id @default(uuid())
+
+  name       String
+  email      String?
+  phone      String
+  address    String   @default("")
+  notes      String   @default("")
+  isFrequent Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  events     Event[]
+  invoices   Invoice[]
+  quotations Quotation[]
+
+  @@unique([email])
+  @@index([name])
+  @@index([phone])
+}
+
+model Event {
+  id       String @id @default(uuid())
+
+  title                String
+  description          String?
+  date                 DateTime
+  time                 String
+  location             String
+  guestCount           Int
+  status               String                @default("pending") // "pending", "confirmed", "in-progress", "completed", "cancelled"
+  notes                String                @default("")
+  durationInDays       Int                   @default(1)
+  cateringBoysCount    Int?                  @default(0)
+  cateringBoyRate      Decimal?              @default(0) @db.Decimal(12, 2)
+  eventFee             Decimal?              @db.Decimal(12, 2)
+  advanceAmount        Decimal?              @db.Decimal(12, 2)
+  customMenuPrices     Json?                 @default("{}")
+  customMenuSelections Json?                 @default("{}")
+  dutyRoster           DutyRoster[]
+  extraBills           ExtraBill[]
+  inventoryAllocations InventoryAllocation[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  deletedAt            DateTime?
+
+  packageId String?
+  package   Package? @relation(fields: [packageId], references: [id], onDelete: Restrict)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  assignedStaff  Auth[]      @relation("EventStaff")
+  menuItems      Menu[]      @relation("EventMenu")
+  inventoryItems Inventory[] @relation("EventInventory")
+
+  invoices         Invoice[]
+  stockHistory     StockHistory[]
+  expenses         Expense[]
+  eventIngredients EventIngredient[]
+  feedbacks        Feedback[]
+  agencyAssignments AgencyAssignment[]
+  purchases        Purchase[]
+
+  @@index([customerId])
+  @@index([packageId])
+  @@index([date])
+  @@index([status])
+  @@index([status, date])
+  @@index([date, deletedAt])
+}
+
+model Invoice {
+  id       String @id @default(uuid())
+
+  invoiceNumber  String        @unique
+  items          InvoiceItem[]
+  subtotal       Decimal       @db.Decimal(12, 2)
+  tax            Decimal       @default(0) @db.Decimal(12, 2)
+  taxRate        Decimal       @default(5) @db.Decimal(10, 4)
+  discountType   String        @default("fixed") // "fixed" or "percentage"
+  discountValue  Decimal       @default(0) @db.Decimal(12, 2)
+  discountAmount Decimal       @default(0) @db.Decimal(12, 2)
+  totalAmount    Decimal       @db.Decimal(12, 2)
+  advancePaid    Decimal       @default(0) @db.Decimal(12, 2)
+  balanceAmount  Decimal       @db.Decimal(12, 2)
+  status         String        @default("draft") // "draft", "sent", "partially-paid", "paid", "cancelled", "overdue"
+  dueDate        DateTime
+  paymentHistory Payment[]
+  notes          String?
+  promisedPaymentDate DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Restrict)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  @@index([eventId])
+  @@index([customerId])
+  @@index([customerId, status])
+  @@index([createdAt])
+  @@index([status])
+  @@index([status, createdAt])
+  @@index([status, deletedAt])
+}
+
+model MenuCategory {
+  id       String @id @default(uuid())
+
+  name        String      @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Menu {
+  id       String @id @default(uuid())
+
+  name        String     @unique
+  description String
+  category    String // "Starters", "Main Course", "Desserts", "Beverages", "Snacks"
+  minPrice    Decimal  @db.Decimal(12, 2)
+  maxPrice    Decimal  @db.Decimal(12, 2)
+  isAvailable Boolean  @default(true)
+  dietaryTags String[] // "Vegan", "Vegetarian", "Gluten-Free", "Halal", "Dairy-Free", "Nut-Free", "None"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  events            Event[]            @relation("EventMenu")
+  quotations        Quotation[]        @relation("QuotationMenu")
+  recipeIngredients RecipeIngredient[]
+  eventIngredients  EventIngredient[]
+  packages          Package[]          @relation("PackageMenu")
+
+  @@index([category])
+  @@index([name])
+}
+
+model Inventory {
+  id       String @id @default(uuid())
+
+  name          String
+  category      String    @default("Other") // "Raw Materials", "Beverages", "Spices", "Dairy", "Grains", "Equipment", "Other"
+  quantity      Decimal   @default(0) @db.Decimal(12, 2)
+  unit          String    @default("kg") // "kg", "g", "l", "ml", "packet", "piece", "box", "dozen"
+  minStockLevel Decimal   @default(10) @db.Decimal(12, 2)
+  rentPerDay    Decimal   @default(0) @db.Decimal(12, 2)
+  status        String    @default("In Stock") // "In Stock", "Low Stock", "Out of Stock"
+  lastRestocked DateTime  @default(now())
+  notes         String?
+  expiryDate    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  isActive      Boolean   @default(true)
+  isConsumable  Boolean   @default(true)
+
+  lastUpdatedById String?
+  lastUpdatedBy   Auth?   @relation("InventoryUpdater", fields: [lastUpdatedById], references: [id], onDelete: SetNull)
+
+
+  stockHistory      StockHistory[]
+  events            Event[]               @relation("EventInventory")
+  allocations       InventoryAllocation[]
+  recipeIngredients RecipeIngredient[]
+  eventIngredients  EventIngredient[]
+
+  @@index([name])
+  @@index([status])
+  @@index([category, status])
+}
+
+model InventoryCategory {
+  id       String @id @default(uuid())
+
+  name        String     @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Purchase {
+  id       String @id @default(uuid())
+
+  quantityPurchased Decimal  @db.Decimal(12, 2)
+  unitCost          Decimal  @db.Decimal(12, 2)
+  totalAmount       Decimal  @db.Decimal(12, 2)
+  paymentStatus     String   @default("pending") // "pending", "partial", "paid"
+  purchaseDate      DateTime @default(now())
+  notes             String   @default("")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  itemName          String
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  
+  eventId    String?
+  event      Event?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+
+  @@index([supplierId])
+  @@index([eventId])
+  @@index([purchaseDate])
+  @@index([paymentStatus])
+}
+
+model Supplier {
+  id       String @id @default(uuid())
+
+  name          String     @unique
+  contactPerson String
+  email         String?
+  phone         String
+  address       String   @default("")
+  category      String   @default("Wholesaler") // "Wholesaler", "Manufacturer", "Distributor", "Retailer"
+  rating        Int      @default(5)
+  status        String   @default("Active") // "Active", "Inactive"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  purchases Purchase[]
+
+  @@index([name])
+  @@index([status])
+}
+
+model Role {
+  id       String  @id @default(uuid())
+
+  name            String     @unique
+  label           String
+  description     String   @default("")
+  permissions     String[]
+  isSystemDefault Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model StockHistory {
+  id       String @id @default(uuid())
+
+  previousQuantity Decimal  @db.Decimal(12, 2)
+  newQuantity      Decimal  @db.Decimal(12, 2)
+  changeAmount     Decimal  @db.Decimal(12, 2)
+  type             String // "add", "subtract", "manual-adjustment", "spoiled", "expired"
+  reason           String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  inventoryItemId String
+  inventoryItem   Inventory @relation(fields: [inventoryItemId], references: [id], onDelete: Restrict)
+
+  performedById String?
+  performedBy   Auth?   @relation("StockHistoryUser", fields: [performedById], references: [id], onDelete: SetNull)
+
+  eventReferenceId String?
+  eventReference   Event?  @relation(fields: [eventReferenceId], references: [id], onDelete: SetNull)
+
+  @@index([inventoryItemId])
+  @@index([performedById])
+  @@index([eventReferenceId])
+}
+
+model Notification {
+  id       String @id @default(uuid())
+
+  title     String
+  message   String
+  type      String   @default("info") // "info", "success", "warning", "error"
+  category  String // "inventory", "billing", "event", "kitchen", "system", "staff"
+  isRead    Boolean  @default(false)
+  link      String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipientId String
+  recipient   Auth   @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId])
+  @@index([recipientId, isRead])
+  @@index([recipientId, createdAt])
+}
+
+model Quotation {
+  id       String @id @default(uuid())
+
+  quotationNumber String    @unique
+  validUntil      DateTime
+  items           InvoiceItem[] // DEPRECATED: Use customItems instead for new architecture
+  subtotal        Decimal       @db.Decimal(12, 2)
+  tax             Decimal       @default(0) @db.Decimal(12, 2)
+  discountAmount  Decimal       @default(0) @db.Decimal(12, 2)
+  totalAmount     Decimal       @db.Decimal(12, 2)
+  status          String        @default("draft") // "draft", "sent", "approved", "rejected"
+  notes           String?
+
+  durationInDays       Int      @default(1)
+  guestCount           Int      @default(50)
+  cateringBoysCount    Int?     @default(0)
+  cateringBoyRate      Decimal? @default(0) @db.Decimal(12, 2)
+  customMenuPrices     Json?    @default("{}")
+  customMenuSelections Json?    @default("{}")
+  inventoryAllocations Json?    @default("[]")
+  customItems          Json?    @default("[]")
+
+  menuItems Menu[] @relation("QuotationMenu")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  packageId String?
+  package   Package? @relation(fields: [packageId], references: [id], onDelete: Restrict)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  @@index([customerId])
+  @@index([packageId])
+  @@index([status])
+}
+
+model Expense {
+  id       String @id @default(uuid())
+
+  category    String // "wage", "fuel", "maintenance", "vendor", "other"
+  amount      Decimal  @db.Decimal(12, 2)
+  date        DateTime @default(now())
+  description String
+  receiptUrl  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  eventId String?
+  event   Event?  @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+}
+
+
+model ExtraBill {
+  id       String @id @default(uuid())
+
+  eventId     String
+  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  description String
+  amount      Decimal @db.Decimal(12, 2)
+
+  @@index([eventId])
+}
+
+model DutyRoster {
+  id       String @id @default(cuid())
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  staffId String
+  staff   Auth   @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  days    Int[]
+
+  @@index([eventId])
+  @@index([staffId])
+}
+
+model InventoryAllocation {
+  id       String @id @default(uuid())
+
+  eventId     String
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  inventoryId String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Restrict)
+  name        String
+  quantity    Decimal   @db.Decimal(12, 2)
+  unit        String
+  isDeducted  Boolean   @default(false)
+
+  returnedQuantity Decimal  @default(0) @db.Decimal(12, 2)
+  damagedQuantity  Decimal  @default(0) @db.Decimal(12, 2)
+  lostQuantity     Decimal  @default(0) @db.Decimal(12, 2)
+  status           String   @default("Allocated") // "Allocated", "Returned", "Partially Returned"
+  returnNotes      String?
+  returnDate       DateTime?
+
+  @@index([eventId])
+  @@index([inventoryId])
+}
+
+model InvoiceItem {
+  id          String     @id @default(uuid())
+  invoiceId   String?
+  invoice     Invoice?   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  quotationId String?
+  quotation   Quotation? @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Decimal    @db.Decimal(12, 2)
+  unitPrice   Decimal    @db.Decimal(12, 2)
+  total       Decimal    @db.Decimal(12, 2)
+
+  isManual Boolean @default(false)
+
+  @@index([invoiceId])
+  @@index([quotationId])
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount      Decimal  @db.Decimal(12, 2)
+  paymentDate DateTime
+  method      String
+  reference   String?
+
+  @@index([invoiceId])
+}
+
+model RecipeIngredient {
+  id                 String    @id @default(uuid())
+  menuId             String
+  menu               Menu      @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  inventoryId        String
+  inventory          Inventory @relation(fields: [inventoryId], references: [id], onDelete: Restrict)
+  quantityPerPortion Decimal   @db.Decimal(12, 4)
+  unit               String
+
+  @@unique([menuId, inventoryId])
+  @@index([menuId])
+  @@index([inventoryId])
+}
+
+model EventIngredient {
+  id          String     @id @default(uuid())
+  eventId     String
+  event       Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  menuId      String?
+  menu        Menu?      @relation(fields: [menuId], references: [id], onDelete: SetNull)
+  inventoryId String?
+  inventory   Inventory? @relation(fields: [inventoryId], references: [id], onDelete: SetNull)
+  customName  String?
+  quantity    Decimal    @db.Decimal(12, 2)
+  unit        String
+  category    String     @default("Other")
+  isPurchased Boolean    @default(false)
+  price       Decimal?   @db.Decimal(12, 2)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([eventId])
+  @@index([menuId])
+  @@index([inventoryId])
+}
+
+model Sequence {
+  id       String  @id
+  value    Int     @default(0)
+}
+
+model Feedback {
+  id       String @id @default(uuid())
+
+  eventId  String
+  event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  token    String @unique // For the public link
+  status   String @default("pending") // "pending", "submitted", "expired"
+
+  overallRating Int?
+  foodQuality   Int?
+  serviceRating Int?
+  staffBehavior Int?
+  comment       String?  @db.Text
+  photos        String[] // Array of URLs
+
+  submittedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([eventId])
+  @@index([token])
+}
+
+model Announcement {
+  id          String    @id @default(uuid())
+  title       String
+  message     String
+  type        String    @default("info") // "info", "warning", "danger", "success"
+  isActive    Boolean   @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdById String
+  createdBy   String
+}
+
+model SupportTicket {
+  id           String           @id @default(uuid())
+  ticketNumber String           @unique
+  subject      String
+  description  String           @db.Text
+  status       String           @default("open") // open, in_progress, resolved, closed
+  priority     String           @default("medium") // low, medium, high
+  
+  createdById  String
+  createdBy    Auth             @relation("TicketCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  
+  messages     SupportMessage[]
+  
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([createdById])
+  @@index([status])
+}
+
+model SupportMessage {
+  id        String        @id @default(uuid())
+  ticketId  String
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  message   String        @db.Text
+  senderId  String
+  sender    Auth          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  
+  isAdmin   Boolean       @default(false)
+  createdAt DateTime      @default(now())
+
+  @@index([ticketId])
+  @@index([senderId])
+}
+
+model Package {
+  id          String   @id @default(uuid())
+  
+  name          String     @unique
+  description   String?  @db.Text
+  pricePerHead  Float? @default(0)
+  minGuests     Int      @default(50)
+  isActive      Boolean  @default(true)
+  
+  menuItems     Menu[]   @relation("PackageMenu")
+  events        Event[]
+  quotations    Quotation[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ManpowerAgency {
+  id          String   @id @default(uuid())
+
+  name        String     @unique
+  phone       String?
+  serviceType String? // e.g., "Serving Boys", "Kitchen Staff", "Decorators"
+  address     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assignments AgencyAssignment[]
+}
+
+model AgencyAssignment {
+  id            String   @id @default(uuid())
+
+  eventId       String
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  agencyId      String
+  agency        ManpowerAgency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  numberOfStaff Int?     @default(0)
+  rentalItems   Json?    @default("[]")
+  numberOfDays  Int      @default(1)
+  totalAmount   Decimal  @db.Decimal(12, 2)
+  advancePaid   Decimal  @default(0) @db.Decimal(12, 2)
+  status        String   @default("pending") // pending, paid, cancelled
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([agencyId])
+}
+
+model BackupLog {
+  id           String   @id @default(uuid())
+
+  status       String   @default("pending") // pending, success, failed
+  errorMessage String?
+  createdAt    DateTime @default(now())
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SignupOtp {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

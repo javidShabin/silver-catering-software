@@ -1,0 +1,20 @@
+export const FEATURE_LABELS = {
+  dashboard: "Dashboard & Analytics",
+  events: "Event Management",
+  customers: "Customer CRM",
+  calendar: "Event Calendar",
+  inventory: "Inventory Management",
+  purchases: "Purchase Orders",
+  menu: "Menu Management",
+  kitchen: "Kitchen Workflow",
+  deliveries: "Delivery Tracking",
+  billing: "Billing & Invoicing",
+  quotations: "Quotations Builder",
+  expenses: "Expense Tracker",
+  staff: "Staff Management",
+  settings: "System Settings",
+  notifications: "Notifications",
+  POST_EVENT_FEEDBACK: "Post-Event Feedback",
+  MULTI_LANGUAGE: "Multi-language Support",
+  logistics: "Logistics Tracking"
+};
