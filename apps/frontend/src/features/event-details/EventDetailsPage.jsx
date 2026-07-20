@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Info, ArrowLeft, Plus } from "lucide-react";
 import { Toaster, toast as hotToast } from 'react-hot-toast';
 import { useAuthStore } from "../../store/authStore";
-import { useTenantStore } from "../../store/useTenantStore";
+
 
 import PremiumModal from "../../components/ui/PremiumModal";
 import DashboardSkeleton from "../../components/ui/DashboardSkeleton";
@@ -49,7 +49,7 @@ const EventDetailsPage = () => {
   
   // Custom Hooks mapping
   const { event, setEvent, isLoading, error } = useEventDetails(id);
-  const tenant = useTenantStore(state => state.tenant);
+  const tenant = {};
 
   const menuMgmt = useMenuManagement(event, setEvent, id, setToast);
   const staffMgmt = useStaffManagement(event, setEvent, id, setToast);

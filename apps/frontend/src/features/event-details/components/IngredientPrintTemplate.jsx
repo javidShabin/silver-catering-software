@@ -1,6 +1,6 @@
 import React from "react";
 import { ShoppingCart, MapPin, Calendar, Users, Square, ChefHat, Mail, Phone, Globe, FileText, Heart } from "lucide-react";
-import { useTenantStore } from "../../../store/useTenantStore";
+
 
 /**
  * Beautiful HTML template for Ingredient Purchase List
@@ -8,7 +8,7 @@ import { useTenantStore } from "../../../store/useTenantStore";
  */
 const IngredientPrintTemplate = React.forwardRef(({ event, ingredients }, ref) => {
   if (!event || !ingredients) return null;
-  const tenant = useTenantStore((state) => state.tenant) || {};
+  const tenant = {}; => state.tenant) || {};
 
   // Group ingredients by Category
   const groupedIngredients = ingredients.reduce((acc, ing) => {

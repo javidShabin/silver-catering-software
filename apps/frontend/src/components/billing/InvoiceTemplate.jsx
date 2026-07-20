@@ -1,13 +1,13 @@
 import { CURRENCY } from "../../config/currency";
 import React from "react";
-import { useTenantStore } from "../../store/useTenantStore";
+
 
 /**
  * Minimal & Professional Invoice Template
  */
 const InvoiceTemplate = React.forwardRef(({ invoice, viewMode = 'client' }, ref) => {
   if (!invoice) return null;
-  const tenant = useTenantStore((state) => state.tenant) || {};
+  const tenant = {}; => state.tenant) || {};
   const pdfSettings = tenant.pdfSettings || {
     showCustomerContact: true,
     showCustomerAddress: true,

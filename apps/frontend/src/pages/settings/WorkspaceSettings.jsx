@@ -3,7 +3,7 @@ import SettingsModule from "../../components/ui/SettingsModule";
 import Input from "../../components/ui/Input";
 import FloatingSaveBar from "../../components/ui/FloatingSaveBar";
 import { Globe, Users, Building, MapPin, Mail, Phone, Image as ImageIcon, Loader2, Upload, Trash2, Edit2, CheckCircle2, FileText } from "lucide-react";
-import { useTenantStore } from "../../store/useTenantStore";
+
 import { useShallow } from "zustand/react/shallow";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/authStore";

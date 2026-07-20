@@ -2,7 +2,7 @@ import { CURRENCY } from "../../../config/currency";
 import React, { useState, useEffect, useMemo } from "react";
 import { Calendar, Clock, Users, Layers } from "lucide-react";
 import { eventApi } from "../../../api/eventApi";
-import { useTenantStore } from "../../../store/useTenantStore";
+
 
 const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) => {
   // Parse custom selections safely
@@ -87,7 +87,7 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
   const advance = invoice ? Number(invoice.advancePaid) : Number(event.advanceAmount || 0);
   const balance = invoice ? Number(invoice.balanceAmount) : (subTotal - advance);
   
-  const tenant = useTenantStore(state => state.tenant);
+  const tenant = {};
 
   const [localTaxRate, setLocalTaxRate] = useState(invoice?.taxRate !== undefined ? invoice.taxRate : (tenant?.taxPercentage || 0));
   const [localDiscount, setLocalDiscount] = useState(invoice?.discountValue !== undefined ? invoice.discountValue : 0);

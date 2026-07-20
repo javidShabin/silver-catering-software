@@ -1,6 +1,5 @@
 import { CURRENCY } from "../../../config/currency";
 import React from "react";
-import { useTenantStore } from "../../../store/useTenantStore";
 
 /**
  * Clean Quotation PDF Template
@@ -8,7 +7,7 @@ import { useTenantStore } from "../../../store/useTenantStore";
  */
 const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
   if (!quotation) return null;
-  const tenant = useTenantStore((state) => state.tenant) || {};
+  const tenant = {};
 
   const {
     quotationNumber,

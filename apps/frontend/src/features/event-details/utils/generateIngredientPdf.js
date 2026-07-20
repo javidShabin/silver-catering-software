@@ -1,4 +1,4 @@
-import { useTenantStore } from "../../../store/useTenantStore";
+
 
 export const generateIngredientPdf = async (event, ingredients) => {
   const { default: jsPDF } = await import("jspdf");

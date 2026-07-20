@@ -5,7 +5,7 @@ import { Cloud, HardDrive, RefreshCcw, Loader2, CheckCircle2 } from "lucide-reac
 import api from "../../utils/axios";
 import toast from "react-hot-toast";
 import { useSearchParams } from "react-router-dom";
-import { useTenantStore } from "../../store/useTenantStore";
+
 import { useShallow } from "zustand/react/shallow";
 
 const BackupSettings = () => {
