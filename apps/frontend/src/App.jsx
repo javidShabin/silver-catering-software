@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./routes/AppRouter";
 import { useAuthStore } from "./store/authStore";
 import { useAppearanceStore } from "./store/useAppearanceStore";
+import { useTenantStore } from "./store/useTenantStore";
 import { useShallow } from "zustand/react/shallow";
 import { Toaster } from "react-hot-toast";
 import { GlobalErrorBoundary } from "./components/ui/GlobalErrorBoundary";
@@ -11,6 +12,8 @@ import PWAInstallPrompt from "./components/PWAInstallPrompt";
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const checkSetupStatus = useAuthStore((state) => state.checkSetupStatus);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const fetchSettings = useTenantStore((state) => state.fetchSettings);
   const { theme, primaryColor, animations, highContrast } = useAppearanceStore(
     useShallow((state) => ({
       theme: state.theme,
@@ -25,6 +28,12 @@ function App() {
     checkAuth();
     checkSetupStatus();
   }, [checkAuth, checkSetupStatus]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSettings();
+    }
+  }, [fetchSettings, isAuthenticated]);
 
   useEffect(() => {
     const root = document.documentElement;
