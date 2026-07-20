@@ -25,11 +25,12 @@ jobs:
             cd apps/backend
             
             npm install
-      
-            pm2 restart all
             
             cd ../frontend
             
             npm install
             
             npm run build
+            
+            pm2 restart all
+
