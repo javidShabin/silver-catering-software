@@ -32,5 +32,8 @@ jobs:
             
             npm run build
             
+            # Copy built files to Nginx folder
+            cp -r dist/* /var/www/silvercatering/
+            
             pm2 restart all
 
