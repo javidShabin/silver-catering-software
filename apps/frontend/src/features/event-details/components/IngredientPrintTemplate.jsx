@@ -1,5 +1,6 @@
 import React from "react";
 import { ShoppingCart, MapPin, Calendar, Users, Square, ChefHat, Mail, Phone, Globe, FileText, Heart } from "lucide-react";
+import { useTenantStore } from "../../../store/useTenantStore";
 
 
 /**
@@ -7,8 +8,8 @@ import { ShoppingCart, MapPin, Calendar, Users, Square, ChefHat, Mail, Phone, Gl
  * Designed to exactly match the requested orange UI for PDF downloads.
  */
 const IngredientPrintTemplate = React.forwardRef(({ event, ingredients }, ref) => {
+  const tenant = useTenantStore((state) => state.tenant) || {};
   if (!event || !ingredients) return null;
-  const tenant = {}; => state.tenant) || {};
 
   // Group ingredients by Category
   const groupedIngredients = ingredients.reduce((acc, ing) => {

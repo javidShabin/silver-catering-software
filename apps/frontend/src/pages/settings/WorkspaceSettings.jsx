@@ -7,6 +7,7 @@ import { Globe, Users, Building, MapPin, Mail, Phone, Image as ImageIcon, Loader
 import { useShallow } from "zustand/react/shallow";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/authStore";
+import { useTenantStore } from "../../store/useTenantStore";
 import SubscriptionPackageCard from "../../components/super-admin/SubscriptionPackageCard";
 import SecuritySettings from "./SecuritySettings";
 

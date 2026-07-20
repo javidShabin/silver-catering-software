@@ -1,5 +1,7 @@
 
 
+import { useTenantStore } from "../../../store/useTenantStore";
+
 export const generateInvoicePdf = async (invoice) => {
   const { default: jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");

@@ -1,6 +1,61 @@
 import prisma from "../../utils/prisma.js";
 import catchAsync from "../../utils/catchAsync.js";
 import AppError from "../../utils/AppError.js";
+import fs from "fs";
+import path from "path";
+
+const workspaceSettingsKey = "workspace_settings";
+
+const defaultPdfSettings = {
+  showCustomerContact: true,
+  showCustomerAddress: true,
+  showEventDetails: true,
+  showTax: true,
+  showDiscount: true,
+  showItemQuantity: true,
+  showItemUnitPrice: true,
+  showItemTotalPrice: true
+};
+
+const defaultWorkspaceSettings = {
+  name: "",
+  contactEmail: "",
+  contactPhone: "",
+  address: "",
+  website: "",
+  logoUrl: "",
+  pdfFromAddress: "",
+  taxNumber: "",
+  taxPercentage: "",
+  taxDetails: "",
+  pdfSettings: defaultPdfSettings
+};
+
+const getWorkspaceSettingsRecord = async () => {
+  let setting = await prisma.systemSetting.findUnique({
+    where: { key: workspaceSettingsKey }
+  });
+
+  if (!setting) {
+    setting = await prisma.systemSetting.create({
+      data: {
+        key: workspaceSettingsKey,
+        value: defaultWorkspaceSettings
+      }
+    });
+  }
+
+  return setting;
+};
+
+const normalizeWorkspaceSettings = (value = {}) => ({
+  ...defaultWorkspaceSettings,
+  ...value,
+  pdfSettings: {
+    ...defaultPdfSettings,
+    ...(value.pdfSettings || {})
+  }
+});
 
 const defaultPrivacyPolicy = [
   {
@@ -80,5 +135,64 @@ export const updatePrivacyPolicy = catchAsync(async (req, res) => {
   res.status(200).json({
     status: "success",
     data: setting.value
+  });
+});
+
+export const getWorkspaceSettings = catchAsync(async (req, res) => {
+  const setting = await getWorkspaceSettingsRecord();
+
+  res.status(200).json({
+    status: "success",
+    data: normalizeWorkspaceSettings(setting.value)
+  });
+});
+
+export const updateWorkspaceSettings = catchAsync(async (req, res) => {
+  const current = await getWorkspaceSettingsRecord();
+  const nextSettings = normalizeWorkspaceSettings({
+    ...current.value,
+    ...req.body,
+    pdfSettings: {
+      ...(current.value?.pdfSettings || {}),
+      ...(req.body?.pdfSettings || {})
+    }
+  });
+
+  const setting = await prisma.systemSetting.update({
+    where: { key: workspaceSettingsKey },
+    data: { value: nextSettings }
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: normalizeWorkspaceSettings(setting.value)
+  });
+});
+
+export const uploadWorkspaceLogo = catchAsync(async (req, res) => {
+  if (!req.file) throw new AppError("Please provide an image file", 400);
+
+  const current = await getWorkspaceSettingsRecord();
+  const currentSettings = normalizeWorkspaceSettings(current.value);
+
+  if (currentSettings.logoUrl?.startsWith("/uploads/")) {
+    const oldPath = path.join(process.cwd(), currentSettings.logoUrl);
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+  }
+
+  const logoUrl = `/uploads/${req.file.filename}`;
+  const nextSettings = normalizeWorkspaceSettings({
+    ...currentSettings,
+    logoUrl
+  });
+
+  await prisma.systemSetting.update({
+    where: { key: workspaceSettingsKey },
+    data: { value: nextSettings }
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: { logoUrl }
   });
 });

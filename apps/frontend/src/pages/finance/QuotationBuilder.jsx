@@ -10,6 +10,7 @@ import SummarySection from "../../features/quotation-builder/components/SummaryS
 import PricingSection from "../../features/quotation-builder/components/PricingSection";
 import { toast } from "react-hot-toast";
 import DatePicker from "../../components/ui/DatePicker";
+import { useTenantStore } from "../../store/useTenantStore";
 
 const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenPDF }) => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   const [packages, setPackages] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
   const [activeTab, setActiveTab] = useState("menus");
-  const tenant = {};
+  const tenant = useTenantStore((state) => state.tenant) || {};
 
   // Custom Dish Creation State
   const [showCustomDishForm, setShowCustomDishForm] = useState(false);

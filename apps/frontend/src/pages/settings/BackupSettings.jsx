@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useSearchParams } from "react-router-dom";
 
 import { useShallow } from "zustand/react/shallow";
+import { useTenantStore } from "../../store/useTenantStore";
 
 const BackupSettings = () => {
   const [isRestoring, setIsRestoring] = useState(false);

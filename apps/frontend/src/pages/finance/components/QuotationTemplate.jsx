@@ -1,13 +1,14 @@
 import { CURRENCY } from "../../../config/currency";
 import React from "react";
+import { useTenantStore } from "../../../store/useTenantStore";
 
 /**
  * Clean Quotation PDF Template
  * Renders actual saved data: menus, inventory, catering staff, custom items.
  */
 const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
+  const tenant = useTenantStore((state) => state.tenant) || {};
   if (!quotation) return null;
-  const tenant = {};
 
   const {
     quotationNumber,
