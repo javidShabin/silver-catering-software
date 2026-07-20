@@ -1,0 +1,33 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main # നിങ്ങളുടെ മെയിൻ ബ്രാഞ്ചിന്റെ പേര് master എന്നാണെങ്കിൽ അത് മാറ്റി കൊടുക്കുക
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploying to VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            # പ്രോജക്റ്റ് ഫോൾഡറിലേക്ക് പോകുന്നു
+            cd ~/apps/silver-catering-software
+            
+            # പുതിയ കോഡ് വലിച്ചെടുക്കുന്നു
+            git pull origin main
+            
+            # ബാക്കെൻഡ് ഫോൾഡറിലേക്ക് പോകുന്നു
+            cd apps/backend
+            
+            # പുതിയ പാക്കേജുകൾ ഉണ്ടെങ്കിൽ ഇൻസ്റ്റാൾ ചെയ്യുന്നു
+            npm install
+            
+            # സെർവർ റീസ്റ്റാർട്ട് ചെയ്യുന്നു (നിങ്ങളുടെ pm2 ആപ്പ് പേര് വേണമെങ്കിൽ ഇവിടെ മാറ്റാം)
+            pm2 restart all
