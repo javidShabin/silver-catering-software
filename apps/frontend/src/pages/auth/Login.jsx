@@ -86,7 +86,7 @@ const Login = () => {
         </div>
         <div className="relative z-10 flex flex-col justify-end p-12 w-full text-white">
           <div className="flex items-center mb-6 space-x-3">
-            <img src="/logo.png" alt="Docateos" className="h-14 w-auto object-contain drop-shadow-md" />
+            <img src="/software_logo.PNG" alt="Docateos" className="h-14 w-auto object-contain drop-shadow-md" />
           </div>
           <p className="text-lg text-gray-300 max-w-lg leading-relaxed">
             {t("auth.login_subtitle", "Elevate your events with our world-class catering management platform.")}
@@ -99,7 +99,7 @@ const Login = () => {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center lg:text-left">
             <div className="flex justify-center lg:justify-start lg:hidden mb-6">
-              <img src="/logo.png" alt="Docateos" className="h-12 w-auto object-contain" />
+              <img src="/software_logo.PNG" alt="Docateos" className="h-12 w-auto object-contain" />
             </div>
             <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">{t("auth.welcome_back", "Welcome back")}</h2>
             <p className="mt-2 text-sm text-gray-500">{t("auth.enter_details", "Please enter your details to sign in.")}</p>
