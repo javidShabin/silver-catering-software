@@ -2,14 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCpLJsST8wn6dgvW3lB0mudJZ20zLkmjsI",
-  authDomain: "do-catering-system.firebaseapp.com",
-  projectId: "do-catering-system",
-  storageBucket: "do-catering-system.firebasestorage.app",
-  messagingSenderId: "624684000262",
-  appId: "1:624684000262:web:a0640632a21b9befe0cf87"
+  apiKey: "AIzaSyCLYobfktsqQYhca7FKHr7jJ2_4Nus42GI",
+  authDomain: "silver-catering-f6e00.firebaseapp.com",
+  projectId: "silver-catering-f6e00",
+  storageBucket: "silver-catering-f6e00.firebasestorage.app",
+  messagingSenderId: "314443591811",
+  appId: "1:314443591811:web:f4953c6fd72bc2622cabb6"
 };
 
 // Initialize Firebase
