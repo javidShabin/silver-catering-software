@@ -416,17 +416,20 @@ const CreateEventForm = ({ onSubmit, onCancel, isLoading, initialData }) => {
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <DatePicker
-                    label="Date"
-                    min={new Date().toISOString().split('T')[0]}
-                    value={formData.date}
-                    onChange={e => setFormData({ ...formData, date: e.target.value })}
-                    required
-                    inputClassName={`${inputClasses('date')} pl-8 pr-1`}
-                    onFocus={() => setActiveField('date')}
-                    onBlur={() => setActiveField(null)}
-                    leftIcon={CalendarIcon}
-                  />
+                  <label className={labelClasses}>Date</label>
+                  <div className="relative">
+                    <CalendarIcon size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'date' ? 'text-orange-500' : 'text-slate-400'}`} />
+                    <input
+                      type="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      className={`${inputClasses('date')} pl-8 pr-1`}
+                      onFocus={() => setActiveField('date')}
+                      onBlur={() => setActiveField(null)}
+                      value={formData.date}
+                      onChange={e => setFormData({ ...formData, date: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className={labelClasses}>Time</label>

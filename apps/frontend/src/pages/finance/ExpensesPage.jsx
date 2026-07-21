@@ -368,11 +368,12 @@ const ExpensesPage = () => {
             </div>
 
             <div className="space-y-1">
-              <DatePicker 
-                label="Date"
+              <label className="text-xs font-semibold text-slate-700">Date</label>
+              <input 
+                type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({...formData, date: e.target.value})}
-                inputClassName="h-9 py-0 min-h-0 text-xs"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
               />
             </div>
 

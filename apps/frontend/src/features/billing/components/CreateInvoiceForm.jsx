@@ -102,14 +102,17 @@ const CreateInvoiceForm = ({ onSubmit, onCancel, isLoading }) => {
         </div>
 
         <div className="space-y-1.5">
-          <DatePicker
-            label="Due Date"
-            value={formData.dueDate}
-            onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
-            required
-            inputClassName="h-10 pl-11 bg-slate-50 border-slate-100 rounded-xl"
-            leftIcon={Clock}
-          />
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Due Date</label>
+          <div className="relative">
+            <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <input
+              type="date"
+              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:outline-none focus:border-primary-500 transition-all"
+              value={formData.dueDate}
+              onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
+              required
+            />
+          </div>
         </div>
       </div>
 

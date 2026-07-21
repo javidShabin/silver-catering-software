@@ -119,11 +119,12 @@ const CreatePurchaseForm = ({ onSubmit, onCancel, isLoading }) => {
         {/* Date */}
         <div>
           <label className={labelClasses}>Purchase Date</label>
-          <DatePicker
+          <input
+            type="date"
+            className={inputClasses}
             value={purchaseDate}
             onChange={e => setPurchaseDate(e.target.value)}
             required
-            inputClassName="h-9 px-3 !text-xs !font-normal !rounded-lg !bg-white !border-slate-200 !shadow-none"
           />
         </div>
 
