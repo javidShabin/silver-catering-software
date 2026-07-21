@@ -469,11 +469,15 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
           </div>
           <div>
             <label className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1">Valid Until</label>
-            <DatePicker 
-              value={formData.validUntil.split('T')[0]}
-              onChange={(e) => setFormData({...formData, validUntil: new Date(e.target.value).toISOString()})}
-              inputClassName="h-8 py-0 min-h-0 !text-xs !font-normal !rounded !bg-white !border-slate-200 !shadow-none"
-            />
+            <div className="relative">
+              <CalendarDays size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <input 
+                type="date"
+                value={formData.validUntil.split('T')[0]}
+                onChange={(e) => setFormData({...formData, validUntil: new Date(e.target.value).toISOString()})}
+                className="w-full h-8 rounded border border-slate-200 pl-7 pr-2 text-xs focus:border-primary-500 focus:ring-1 outline-none bg-white"
+              />
+            </div>
           </div>
           <div>
             <label className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1">Duration (Days)</label>
