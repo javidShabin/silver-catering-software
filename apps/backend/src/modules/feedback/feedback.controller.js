@@ -14,11 +14,9 @@ export const getFeedbackByToken = async (req, res) => {
         event: {
           select: {
             title: true,
-            date: true}},
-        tenant: {
-          select: {
-            name: true,
-            logoUrl: true}}}});
+            date: true}}
+      }
+    });
 
     if (!feedback) {
       return res.status(404).json({ success: false, message: "Invalid or expired feedback link." });
