@@ -110,7 +110,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
          if (sel) {
           price = Number(sel.price !== undefined && sel.price !== "" ? sel.price : menu.minPrice);
           if (sel.type === "PER_UNIT") {
-             qty = Number(sel.quantity) || 1;
+             qty = (Number(sel.quantity) || 1) * formData.durationInDays;
           }
           if (sel.packageId) {
             price = 0;

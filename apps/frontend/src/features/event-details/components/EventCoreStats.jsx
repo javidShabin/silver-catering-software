@@ -46,7 +46,7 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
         price = Number((sel.price !== undefined && sel.price !== null && sel.price !== "") ? sel.price : menu.minPrice);
       }
       if (sel.type === "PER_UNIT") {
-        qty = Number(sel.quantity) || 1;
+        qty = (Number(sel.quantity) || 1) * (event.durationInDays || 1);
       }
     } else if (safeCustomPrices?.[menu.id] !== undefined) {
       price = Number(safeCustomPrices[menu.id]);
