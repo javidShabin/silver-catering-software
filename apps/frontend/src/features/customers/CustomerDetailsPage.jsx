@@ -306,31 +306,34 @@ const CustomerDetailsPage = () => {
 
       {/* Record Payment Modal */}
       <Modal isOpen={paymentModalOpen} onClose={() => setPaymentModalOpen(false)} title="Record Payment">
-        <form onSubmit={handleRecordPayment} className="space-y-3">
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 mb-3">
-            <p className="text-xs text-slate-500 font-medium mb-1">Outstanding Balance</p>
+        <form onSubmit={handleRecordPayment} className="space-y-4">
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 mt-2">
+            <p className="text-xs text-slate-500 font-semibold mb-1">Outstanding Balance</p>
             <p className="text-xl font-bold text-slate-900 flex items-center">
-              <IndianRupee size={18} className="mr-1" />
+              <IndianRupee size={18} className="mr-1 text-slate-500" />
               {selectedInvoice ? Number(selectedInvoice.balanceAmount).toLocaleString() : 0}
             </p>
           </div>
           
-          <Input 
-            label="Payment Amount" 
-            type="number" 
-            step="any"
-            required 
-            min="1"
-            max={selectedInvoice?.balanceAmount}
-            value={paymentAmount}
-            onChange={(e) => setPaymentAmount(e.target.value)}
-            placeholder={`Max ₹${selectedInvoice ? Number(selectedInvoice.balanceAmount).toLocaleString() : 0}`}
-          />
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-slate-700">Payment Amount</label>
+            <input 
+              type="number" 
+              step="any"
+              required 
+              min="1"
+              max={selectedInvoice?.balanceAmount}
+              value={paymentAmount}
+              onChange={(e) => setPaymentAmount(e.target.value)}
+              placeholder={`Max ₹${selectedInvoice ? Number(selectedInvoice.balanceAmount).toLocaleString() : 0}`}
+              className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+            />
+          </div>
           
-          <div className="form-control w-full">
-            <label className="label"><span className="label-text text-xs font-medium text-slate-700">Payment Method</span></label>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-slate-700">Payment Method</label>
             <select 
-              className="select select-bordered select-md w-full bg-white border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm h-10 min-h-[40px]" 
+              className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
             >
@@ -342,16 +345,33 @@ const CustomerDetailsPage = () => {
             </select>
           </div>
           
-          <Input 
-            label="Reference ID (Optional)" 
-            value={paymentRef}
-            onChange={(e) => setPaymentRef(e.target.value)}
-            placeholder="Transaction ID, etc."
-          />
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-slate-700">Reference ID (Optional)</label>
+            <input 
+              type="text" 
+              value={paymentRef}
+              onChange={(e) => setPaymentRef(e.target.value)}
+              placeholder="Transaction ID, etc."
+              className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+            />
+          </div>
           
-          <div className="flex justify-end gap-2 mt-4">
-            <Button type="button" variant="ghost" size="sm" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="primary" size="sm" loading={paymentLoading}>Save</Button>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t border-slate-100">
+            <button 
+              type="button" 
+              onClick={() => setPaymentModalOpen(false)}
+              className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer text-center"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              disabled={paymentLoading}
+              className="w-full sm:w-auto px-4 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center justify-center shadow-sm cursor-pointer gap-2 disabled:opacity-50"
+            >
+              {paymentLoading ? <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : null}
+              Save Payment
+            </button>
           </div>
         </form>
       </Modal>
