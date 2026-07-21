@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import PremiumModal from "../../components/ui/PremiumModal";
 import { Toaster } from "react-hot-toast";
@@ -6,7 +6,8 @@ import {
   Truck, 
   Plus, 
   Clock,
-  Sparkles
+  Sparkles,
+  Search
 } from "lucide-react";
 import CreatePurchaseForm from "./components/CreatePurchaseForm";
 import EditPurchaseForm from "./components/EditPurchaseForm";
@@ -16,6 +17,7 @@ import { useTranslation } from "react-i18next";
 
 const PurchasesPage = () => {
   const { t } = useTranslation();
+  const [searchQuery, setSearchQuery] = useState("");
   const {
     activeTab, setActiveTab,
     purchases, suppliers, isLoading,
@@ -27,53 +29,53 @@ const PurchasesPage = () => {
     pagination
   } = usePurchaseManagement();
 
-  const tabs = [
-    { id: 'history', label: t("purchases.purchase_history", "Purchase History"), icon: Clock },
-  ];
+  const filteredPurchases = purchases.filter(p => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      (p.invoiceNumber && p.invoiceNumber.toLowerCase().includes(query)) ||
+      (p.supplier?.name && p.supplier.name.toLowerCase().includes(query)) ||
+      (p.itemName && p.itemName.toLowerCase().includes(query))
+    );
+  });
 
   return (
     <div className="space-y-8 pb-10 max-w-7xl mx-auto">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-center lg:text-left">
-        <div className="space-y-1">
-
-          <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight">{t("purchases.procurement", "Procurement")}</h1>
-          <p className="text-[11px] sm:text-xs text-slate-500 font-medium max-w-md mx-auto lg:mx-0">{t("purchases.purchases_subtitle", "Manage your suppliers and purchase logs with auto-inventory sync.")}</p>
+        <div className="space-y-0.5">
+          <h1 className="text-xl font-black text-slate-900 tracking-tight">{t("purchases.procurement", "Procurement")}</h1>
+          <p className="text-xs text-slate-500 font-medium">{t("purchases.purchases_subtitle", "Manage your suppliers and purchase logs with auto-inventory sync.")}</p>
         </div>
         
-        <div className="w-full flex justify-center lg:w-auto">
+        <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
           <button 
             onClick={() => {
               setModalType('purchase');
               setIsModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-extrabold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-md sm:shadow-lg shadow-primary-500/25 active:scale-95 shrink-0 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-lg shadow-primary-500/25 active:scale-95 shrink-0 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50 max-md:bg-primary-600 max-md:hover:bg-primary-500 max-md:shadow-primary-500/25"
           >
             <Plus className="w-4 h-4 max-md:w-6 max-md:h-6" /> <span className="max-md:hidden">{t("purchases.new_purchase", "New Purchase")}</span>
           </button>
         </div>
       </div>
 
-      <div className="flex items-center gap-6 border-b border-slate-100">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => { setActiveTab(tab.id); setCursor(null); setCursorsStack([]); }}
-            className={`flex items-center gap-2 pb-4 text-sm font-bold transition-all relative ${
-              activeTab === tab.id ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            <tab.icon size={18} />
-            {tab.label}
-            {activeTab === tab.id && (
-              <motion.div layoutId="tab-active" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
-            )}
-          </button>
-        ))}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full max-w-sm group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-500 transition-colors" size={16} />
+          <input 
+            type="text"
+            placeholder={t("purchases.search_placeholder", "Search by supplier, item or invoice...")}
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200/60 rounded-xl text-xs focus:outline-none focus:ring-4 focus:ring-primary-500/5 transition-all"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="min-h-[400px]">
         <PurchaseHistory 
-          purchases={purchases} 
+          purchases={filteredPurchases} 
           isLoading={isLoading} 
           pagination={pagination}
           onEdit={(purchase) => {
