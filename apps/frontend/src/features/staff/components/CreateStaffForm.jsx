@@ -126,101 +126,61 @@ const CreateStaffForm = ({ onSubmit, onCancel, isLoading, initialData }) => {
     }
   };
 
-  const inputClasses = (fieldName) => `
-    w-full pl-11 pr-4 py-2 bg-slate-50/50 border transition-all duration-300 rounded-xl text-sm text-slate-800 placeholder:text-slate-400
-    ${activeField === fieldName 
-      ? 'border-primary-500 ring-4 ring-primary-500/10 bg-white shadow-sm' 
-      : 'border-slate-200/80 hover:border-slate-300 hover:bg-slate-50'
-    }
-  `;
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 flex flex-col h-full">
-      <div className="flex items-center p-1 bg-slate-100/80 rounded-xl border border-slate-200/60 w-full md:w-fit">
-        <button 
-          type="button" 
-          onClick={() => setActiveTab('details')} 
-          className={`flex-1 md:flex-none px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTab === 'details' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent'}`}
-        >
-          Staff Details
-        </button>
-        <button 
-          type="button" 
-          onClick={() => setActiveTab('permissions')} 
-          className={`flex-1 md:flex-none px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTab === 'permissions' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent'}`}
-        >
-          Permissions
-        </button>
-      </div>
-
-      <div className="h-[220px] shrink-0 overflow-y-auto custom-scrollbar pr-2">
-        {activeTab === 'details' ? (
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Full Name</label>
+    <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Full Name</label>
                 <div className="relative">
-                  <User size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'name' ? 'text-primary-500' : 'text-slate-400'}`} />
                   <input
                     type="text"
                     autoFocus
-                    className={inputClasses('name')}
-                    onFocus={() => setActiveField('name')}
-                    onBlur={() => setActiveField(null)}
+                    className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     required
-                    placeholder="John Doe"
+                    placeholder="e.g. John Doe"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Email Address</label>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Email Address</label>
                 <div className="relative">
-                  <Mail size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'email' ? 'text-primary-500' : 'text-slate-400'}`} />
                   <input
                     type="email"
-                    className={inputClasses('email')}
-                    onFocus={() => setActiveField('email')}
-                    onBlur={() => setActiveField(null)}
+                    className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                     required
-                    placeholder="john@example.com"
+                    placeholder="e.g. john@example.com"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Initial Password</label>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Initial Password</label>
                 <div className="relative">
-                    <Lock size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'password' ? 'text-primary-500' : 'text-slate-400'}`} />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      className={inputClasses('password') + " pr-11"}
-                      onFocus={() => setActiveField('password')}
-                      onBlur={() => setActiveField(null)}
+                      className="w-full h-9 rounded-lg border border-slate-200 px-3 pr-9 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                       value={formData.password}
                       onChange={e => setFormData({ ...formData, password: e.target.value })}
                       required={!initialData}
                       placeholder={initialData ? "Leave blank to keep current" : "••••••••"}
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
+                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                     </button>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Phone Number</label>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Phone Number</label>
                 <div className="relative">
-                  <Phone size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'phone' ? 'text-primary-500' : 'text-slate-400'}`} />
                   <input
                     type="tel"
-                    className={inputClasses('phone')}
-                    onFocus={() => setActiveField('phone')}
-                    onBlur={() => setActiveField(null)}
+                    className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                     value={formData.phone}
                     onChange={e => {
                       const val = e.target.value.replace(/\D/g, '').slice(0, 10);
@@ -229,20 +189,17 @@ const CreateStaffForm = ({ onSubmit, onCancel, isLoading, initialData }) => {
                     minLength={10}
                     maxLength={10}
                     pattern="[0-9]{10}"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="e.g. 9876543210"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Department</label>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Department</label>
                 <div className="relative">
-                  <Briefcase size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'dept' ? 'text-primary-500' : 'text-slate-400'}`} />
                   <input
                     type="text"
-                    className={inputClasses('dept')}
-                    onFocus={() => setActiveField('dept')}
-                    onBlur={() => setActiveField(null)}
+                    className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                     value={formData.department}
                     onChange={e => setFormData({ ...formData, department: e.target.value })}
                     required
@@ -251,14 +208,11 @@ const CreateStaffForm = ({ onSubmit, onCancel, isLoading, initialData }) => {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">System Role</label>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">System Role</label>
                 <div className="relative">
-                  <Shield size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'role' ? 'text-primary-500' : 'text-slate-400'}`} />
                   <select
-                    className={`${inputClasses('role')} appearance-none`}
-                    onFocus={() => setActiveField('role')}
-                    onBlur={() => setActiveField(null)}
+                    className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                     value={formData.role}
                     onChange={e => {
                       const selectedRole = roles.find(r => (r.name || r.value) === e.target.value);
@@ -275,69 +229,16 @@ const CreateStaffForm = ({ onSubmit, onCancel, isLoading, initialData }) => {
                     disabled={isLoadingRoles}
                   >
                     {filteredRoles.map((role) => (
-                      <option key={role.id || role.value} value={role.name || role.value} className="text-slate-900 font-medium">
+                      <option key={role.id || role.value} value={role.name || role.value}>
                         {role.label}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="px-5 py-5 bg-slate-50/50 rounded-2xl border border-slate-200/60 space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-primary-100/50 text-primary-600 mt-0.5">
-                  <Shield size={16} />
-                </div>
-                <div>
-                  <span className="text-sm font-bold text-slate-800 block">Access Permissions</span>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed mt-0.5">
-                    {roles.find(r => (r.name || r.value) === formData.role)?.description || "Access privileges assigned to this system role."}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-200/60">
-                {allPermissions.map(perm => {
-                  const isAdmin = formData.role === 'admin';
-                  const isChecked = isAdmin || formData.permissions.includes(perm.id);
-                  
-                  return (
-                    <label 
-                      key={perm.id} 
-                      className={`flex items-center gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer select-none ${
-                        isChecked 
-                          ? (isAdmin ? 'bg-slate-100 border-slate-200 opacity-60' : 'bg-primary-50/80 border-primary-200')
-                          : 'bg-white border-slate-200/60 hover:border-slate-300 hover:bg-slate-50/50'
-                      }`}
-                    >
-                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                        isChecked ? 'bg-primary-500 border-primary-500 text-white' : 'border-slate-300 bg-white'
-                      }`}>
-                        {isChecked && <Check size={12} strokeWidth={3} />}
-                      </div>
-                      <span className={`text-xs font-bold ${isChecked ? 'text-primary-800' : 'text-slate-600'}`}>
-                        {perm.label}
-                      </span>
-                      <input 
-                        type="checkbox" 
-                        className="hidden"
-                        checked={isChecked}
-                        onChange={() => handlePermissionToggle(perm.id)}
-                        disabled={isAdmin}
-                      />
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
 
-      <div className="pt-4 mt-2 border-t border-slate-200/60 space-y-4">
+      <div className="pt-2 border-t border-slate-100 space-y-4">
         <div className="flex items-center gap-3 px-1 py-1">
           <input
             id="add-multiple"
@@ -351,20 +252,20 @@ const CreateStaffForm = ({ onSubmit, onCancel, isLoading, initialData }) => {
           </label>
         </div>
 
-        <div className="flex flex-col-reverse sm:flex-row items-center gap-3">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <button
             type="button"
             onClick={onCancel}
-            className="w-full sm:flex-1 px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer text-center"
+            className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer text-center"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="w-full sm:flex-[2] px-6 py-2.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-lg shadow-primary-500/25 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center justify-center shadow-sm cursor-pointer gap-2"
             disabled={isLoading}
           >
-            {isLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : (initialData ? "Save Changes" : "Complete Onboarding")}
+            {isLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : (initialData ? "Update Staff" : "Onboard Staff")}
           </button>
         </div>
       </div>

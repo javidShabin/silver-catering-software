@@ -1,13 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { 
+import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
   UserCircle,
-  Mail, 
-  Phone, 
-  Edit2, 
+  Mail,
+  Phone,
+  Edit2,
   Trash2,
   Shield
 } from "lucide-react";
@@ -31,7 +31,7 @@ export const StaffCard = React.memo(({ member, onEdit, onDelete, isCurrentUser }
   const roleClass = roleColors[member.role] || "bg-purple-50 text-purple-600 border-purple-100";
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-xl border border-slate-100 p-1.5 sm:p-2 shadow-sm hover:shadow-md transition-all group flex flex-col h-full relative overflow-hidden"
@@ -84,7 +84,7 @@ export const StaffCard = React.memo(({ member, onEdit, onDelete, isCurrentUser }
           </div>
         </div>
       </div>
-      
+
       <div className="absolute -right-3 -bottom-3 opacity-[0.015] group-hover:opacity-[0.04] transition-opacity duration-500 pointer-events-none">
         <Shield size={80} className="text-slate-900" />
       </div>
