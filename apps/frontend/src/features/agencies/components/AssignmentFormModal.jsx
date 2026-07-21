@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Calendar as CalendarIcon, Users, IndianRupee, Plus, Trash2, Box } from "lucide-react";
+import { X, Calendar as CalendarIcon, Users, IndianRupee, Plus, Trash2, Box, Edit2 } from "lucide-react";
 import { agenciesApi } from "../../../api/agenciesApi";
 import { eventApi } from "../../../api/eventApi";
 import toast from "react-hot-toast";
