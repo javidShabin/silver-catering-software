@@ -13,7 +13,8 @@ export const createPackage = catchAsync(async (req, res) => {
 
   // Check if name already exists
   const existing = await prisma.package.findUnique({
-    where: { _name: {  name } }});
+    where: { name }
+  });
   if (existing) {
     throw new AppError("A package with this name already exists", 400);
   }
@@ -111,7 +112,8 @@ export const updatePackage = catchAsync(async (req, res) => {
 
   if (name && name !== pkg.name) {
     const existing = await prisma.package.findUnique({
-      where: { _name: {  name } }});
+      where: { name }
+    });
     if (existing) {
       throw new AppError("A package with this name already exists", 400);
     }

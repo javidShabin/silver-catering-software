@@ -27,6 +27,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
+import { useTenantStore } from "../../store/useTenantStore";
 import { useTranslation } from "react-i18next";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { billingApi } from "../../api/billingApi";
@@ -77,6 +78,7 @@ const navigationGroups = [
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const user = useAuthStore(state => state.user);
+  const tenant = useTenantStore(state => state.tenant);
   const location = useLocation();
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -149,13 +151,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         {/* Header */}
         <div className={`flex items-center h-16 shrink-0 transition-all duration-300 ${isCollapsed ? "justify-center px-0" : "justify-between px-6"}`}>
           <div className="flex items-center gap-3 overflow-hidden">
-            {user?.tenantLogoUrl ? (
+            {tenant?.logoUrl ? (
+              <img src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} alt="Logo" className="w-8 h-8 rounded-xl object-cover shrink-0" />
+            ) : user?.tenantLogoUrl ? (
               <img src={user.tenantLogoUrl.startsWith('http') ? user.tenantLogoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${user.tenantLogoUrl}`} alt="Logo" className="w-8 h-8 rounded-xl object-cover shrink-0" />
             ) : (
               <img src="/logo.png" alt="Docateos" className="w-8 h-8 object-contain shrink-0" />
             )}
             <span className={`text-[15px] font-bold tracking-tight text-slate-900 transition-opacity duration-300 whitespace-nowrap ${isCollapsed ? "opacity-0 w-0 hidden" : "opacity-100"}`}>
-              {"Company" || "Docateos"}
+              {tenant?.name || user?.tenantName || "Docateos"}
             </span>
           </div>
           

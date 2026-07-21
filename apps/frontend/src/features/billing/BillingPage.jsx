@@ -46,13 +46,6 @@ const BillingPage = () => {
           <h1 className="text-xl font-black text-slate-900 tracking-tight">{t("billing.billing_and_payments", "Billing & Payments")}</h1>
           <p className="text-xs text-slate-500">{t("billing.billing_subtitle", "Track catering revenue and automated event invoicing.")}</p>
         </div>
-        
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-lg shadow-primary-500/25 active:scale-95 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50 max-md:bg-primary-600 max-md:hover:bg-primary-500 max-md:shadow-primary-500/25"
-        >
-          <Plus className="w-4 h-4 max-md:w-6 max-md:h-6" /> <span className="max-md:hidden">{t("billing.create_invoice", "Create Invoice")}</span>
-        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -292,19 +285,6 @@ const BillingPage = () => {
         </div>
       )}
 
-      <PremiumModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Generate Invoice"
-        description="Create a professional billing record for an event catering contract."
-        maxWidth="max-w-3xl"
-      >
-        <CreateInvoiceForm 
-          onSubmit={handleCreateInvoice}
-          onCancel={() => setIsModalOpen(false)}
-          isLoading={isLoading}
-        />
-      </PremiumModal>
 
       <InvoicePreviewModal 
         isOpen={isPreviewOpen}

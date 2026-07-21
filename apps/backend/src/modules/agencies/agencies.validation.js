@@ -36,7 +36,7 @@ export const assignAgencySchema = z.object({
     numberOfDays: z.number().int().min(1).default(1),
     totalAmount: z.number().min(0),
     advancePaid: z.number().min(0).default(0),
-    status: z.enum(["pending", "paid", "cancelled"]).default("pending"),
+    status: z.enum(["pending", "active", "completed", "paid", "cancelled"]).default("pending"),
     notes: z.string().optional().nullable()
   }),
   query: z.any().optional(),
@@ -53,7 +53,7 @@ export const updateAssignmentSchema = z.object({
     numberOfDays: z.number().int().min(1).optional(),
     totalAmount: z.number().min(0).optional(),
     advancePaid: z.number().min(0).optional(),
-    status: z.enum(["pending", "paid", "cancelled"]).optional(),
+    status: z.enum(["pending", "active", "completed", "paid", "cancelled"]).optional(),
     notes: z.string().optional().nullable()
   }),
   query: z.any().optional(),
