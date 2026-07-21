@@ -212,6 +212,15 @@ const BackupSettings = () => {
           </div>
           
           <div className="flex items-center gap-1.5 shrink-0">
+            {backupStatus.isConnected && (
+              <button
+                onClick={handleConnectGoogleDrive}
+                disabled={isLoadingStatus || isBackingUp}
+                className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
+              >
+                Change Email
+              </button>
+            )}
             <button
               onClick={backupStatus.isConnected ? handleTriggerBackup : handleConnectGoogleDrive}
               disabled={isLoadingStatus || isBackingUp}
