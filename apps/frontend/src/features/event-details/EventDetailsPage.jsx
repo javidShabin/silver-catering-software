@@ -322,16 +322,14 @@ const EventDetailsPage = () => {
         title="Add Food Shortage / Extra Charge"
         description="Record an additional charge or extra food prepared during the event."
         maxWidth="max-w-lg"
-        compactHeader={true}
       >
-        <div className="space-y-4 mt-1">
+        <div className="space-y-4 mt-2">
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wider ml-1">Charge For</label>
+            <label className="text-xs font-semibold text-slate-700">Charge For</label>
             <select
               value={newExtraBill.menuItemId || ""}
               onChange={(e) => setNewExtraBill({ ...newExtraBill, menuItemId: e.target.value })}
-              className="w-full px-3 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all appearance-none"
-              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em 1.2em', paddingRight: '2.5rem' }}
+              className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
             >
               <option value="" disabled className="text-slate-400">Select an item from the menu...</option>
               {event.menuItems?.map(menu => (
@@ -342,34 +340,33 @@ const EventDetailsPage = () => {
           </div>
           
           {newExtraBill.menuItemId === "custom" && (
-            <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
-              <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wider ml-1">Custom Details</label>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">Custom Details</label>
               <input 
                 type="text" 
                 placeholder="e.g. Extra Tables, Transport fee..." 
                 value={newExtraBill.description}
                 onChange={(e) => setNewExtraBill({ ...newExtraBill, description: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
               />
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wider ml-1">Quantity</label>
+              <label className="text-xs font-semibold text-slate-700">Quantity</label>
               <div className="flex items-center gap-2">
                 <input 
                   type="number" 
                   placeholder="e.g. 20" 
                   value={newExtraBill.quantity}
                   onChange={(e) => setNewExtraBill({ ...newExtraBill, quantity: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
+                  className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                 />
                 <select
                   value={newExtraBill.unit}
                   onChange={(e) => setNewExtraBill({ ...newExtraBill, unit: e.target.value })}
-                  className="w-24 shrink-0 px-2 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all appearance-none"
-                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1em 1em', paddingRight: '1.5rem' }}
+                  className="w-24 shrink-0 h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                 >
                   <option value="Plates">Plates</option>
                   <option value="KG">KG</option>
@@ -380,35 +377,35 @@ const EventDetailsPage = () => {
               </div>
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wider ml-1">Extra Amount</label>
+              <label className="text-xs font-semibold text-slate-700">Extra Amount</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-slate-500 font-bold sm:text-sm">{CURRENCY}</span>
+                  <span className="text-slate-500 font-semibold text-xs">{CURRENCY}</span>
                 </div>
                 <input 
                   type="number" 
                   placeholder="0.00" 
                   value={newExtraBill.amount}
                   onChange={(e) => setNewExtraBill({ ...newExtraBill, amount: e.target.value })}
-                  className="w-full pl-8 pr-3 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
+                  className="w-full h-9 rounded-lg border border-slate-200 pl-8 pr-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-100">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t border-slate-100">
             <button 
               onClick={() => setIsExtraBillModalOpen(false)}
-              className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors"
+              className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer text-center"
             >
               Cancel
             </button>
             <button 
               onClick={handleSaveExtraBill}
               disabled={isSaving}
-              className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-md shadow-primary-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+              className="w-full sm:w-auto px-4 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center justify-center shadow-sm cursor-pointer gap-2 disabled:opacity-50"
             >
-              {isSaving ? <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Plus size={16} strokeWidth={2.5} />}
+              {isSaving ? <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Plus size={14} strokeWidth={2.5} />}
               Save Charge
             </button>
           </div>
