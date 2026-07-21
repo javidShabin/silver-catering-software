@@ -208,15 +208,13 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
           <tr style={{ background: "#f8fafc", color: "#111", borderBottom: "2px solid #333" }}>
             <th style={{ padding: "9px 12px", textAlign: "left", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "36px" }}>#</th>
             <th style={{ padding: "9px 12px", textAlign: "left", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px" }}>Description</th>
-            <th style={{ padding: "9px 12px", textAlign: "center", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "60px" }}>Qty</th>
-            <th style={{ padding: "9px 12px", textAlign: "right", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "100px" }}>Unit Price</th>
             <th style={{ padding: "9px 12px", textAlign: "right", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "100px" }}>Total</th>
           </tr>
         </thead>
         <tbody>
           {allLines.length === 0 ? (
             <tr>
-              <td colSpan={5} style={{ padding: "16px 12px", textAlign: "center", color: "#999", fontSize: "11px", borderBottom: "1px solid #e5e7eb" }}>
+              <td colSpan={3} style={{ padding: "16px 12px", textAlign: "center", color: "#999", fontSize: "11px", borderBottom: "1px solid #e5e7eb" }}>
                 No items found
               </td>
             </tr>
@@ -228,8 +226,6 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                   <div style={{ fontSize: "12px", fontWeight: "600", color: "#111" }}>{line.description}</div>
                   {line.note && <div style={{ fontSize: "10px", color: "#888", marginTop: "2px" }}>{line.note}</div>}
                 </td>
-                <td style={{ padding: "9px 12px", textAlign: "center", fontSize: "11px", color: "#555", borderBottom: "1px solid #e5e7eb" }}>{line.qty}</td>
-                <td style={{ padding: "9px 12px", textAlign: "right", fontSize: "11px", color: "#555", borderBottom: "1px solid #e5e7eb" }}>{CURRENCY}{fmt(line.unitPrice)}</td>
                 <td style={{ padding: "9px 12px", textAlign: "right", fontSize: "12px", fontWeight: "700", color: "#111", borderBottom: "1px solid #e5e7eb" }}>{CURRENCY}{fmt(line.total)}</td>
               </tr>
             ))
