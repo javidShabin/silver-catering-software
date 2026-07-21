@@ -28,7 +28,7 @@ const EditEventModal = ({
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 15 }}
-        className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200/60 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in animate-duration-300"
+        className="relative w-full max-w-3xl bg-white rounded-2xl border border-slate-200/60 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in animate-duration-300"
       >
         <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
           <div className="space-y-0.5">
@@ -44,7 +44,7 @@ const EditEventModal = ({
           </button>
         </div>
 
-        <form onSubmit={handleSaveEventDetails} className="flex-1 overflow-y-auto p-5 space-y-3">
+        <form onSubmit={handleSaveEventDetails} className="flex-1 overflow-y-auto p-5 space-y-4">
           <div className="space-y-1">
             <label className="text-xs font-semibold text-slate-700">Event Title</label>
             <input
@@ -57,7 +57,7 @@ const EditEventModal = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-xs font-semibold text-slate-700">Event Status</label>
               <select
@@ -87,14 +87,15 @@ const EditEventModal = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <DatePicker
-                label="Date"
+              <label className="text-xs font-semibold text-slate-700">Date</label>
+              <input
+                type="date"
                 required
-                inputClassName="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
-                value={editFormData.date}
-                onChange={(e) => setEditFormData({ ...editFormData, date: e.target.value })}
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+                value={editFormData.date ? editFormData.date.split('T')[0] : ''}
+                onChange={(e) => setEditFormData({ ...editFormData, date: new Date(e.target.value).toISOString() })}
               />
             </div>
 
