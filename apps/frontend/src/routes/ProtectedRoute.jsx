@@ -70,7 +70,7 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Radial Gradient Background Blurs */}
-        <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-200/20 blur-[120px] rounded-full pointer-events-none" />
+        <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-200/20 blur-[120px] rounded-full pointer-events-none" />
         <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-red-200/20 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="max-w-md w-full text-center space-y-6 bg-white/70 backdrop-blur-md p-8 rounded-3xl border border-slate-200/60 shadow-xl relative z-10 animate-in fade-in zoom-in-95 duration-300">

@@ -248,7 +248,7 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
                 {isSaving ? "Saving..." : "Save"}
               </button>
             )}
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 rounded-lg px-2 py-1 transition-all focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-500/10">
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 rounded-lg px-2 py-1 transition-all focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-500/10">
               <span className="text-[9px] font-bold text-slate-500 uppercase">Tax %</span>
               <input
                 type="number"
@@ -380,7 +380,7 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
                   type="number" min="0"
                   value={localBoysCount}
                   onChange={(e) => setLocalBoysCount(e.target.value)}
-                  className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all bg-white"
+                  className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all bg-white"
                 />
               </div>
               
@@ -392,7 +392,7 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
                     type="number" min="0"
                     value={localBoyRate}
                     onChange={(e) => setLocalBoyRate(e.target.value)}
-                    className="w-full h-10 rounded-xl border border-slate-200 pl-8 pr-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all bg-white"
+                    className="w-full h-10 rounded-xl border border-slate-200 pl-8 pr-3 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all bg-white"
                   />
                 </div>
               </div>

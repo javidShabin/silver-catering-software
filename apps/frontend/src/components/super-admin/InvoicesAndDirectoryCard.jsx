@@ -24,7 +24,7 @@ const InvoicesAndDirectoryCard = ({
             onClick={() => setRightActiveTab("invoices")}
             className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
               rightActiveTab === "invoices"
-                ? "bg-white text-indigo-600 shadow-sm"
+                ? "bg-white text-primary-600 shadow-sm"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -34,7 +34,7 @@ const InvoicesAndDirectoryCard = ({
             onClick={() => setRightActiveTab("users")}
             className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
               rightActiveTab === "users"
-                ? "bg-white text-indigo-600 shadow-sm"
+                ? "bg-white text-primary-600 shadow-sm"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -46,7 +46,7 @@ const InvoicesAndDirectoryCard = ({
         {rightActiveTab === "invoices" && !isTrial && (
           <button
             onClick={onGenerateInvoiceClick}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm self-end sm:self-center cursor-pointer"
+            className="bg-primary-600 hover:bg-primary-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm self-end sm:self-center cursor-pointer"
           >
             + Generate Invoice
           </button>
@@ -91,7 +91,7 @@ const InvoicesAndDirectoryCard = ({
                         </span>
                       </td>
                       <td className="px-4.5 py-2.5">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold bg-indigo-50 text-indigo-755 uppercase border border-indigo-100">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold bg-primary-50 text-primary-755 uppercase border border-primary-100">
                           {inv.period}
                         </span>
                       </td>
@@ -105,7 +105,7 @@ const InvoicesAndDirectoryCard = ({
                         <select
                           value={inv.status}
                           onChange={(e) => onUpdateInvoiceStatus(inv.id, e.target.value)}
-                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer ${
+                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer ${
                             inv.status === "paid" ? "bg-green-50 text-green-700 border-green-200" :
                             inv.status === "overdue" ? "bg-red-50 text-red-700 border-red-200" :
                             "bg-amber-50 text-amber-700 border-amber-200"
@@ -119,7 +119,7 @@ const InvoicesAndDirectoryCard = ({
                       <td className="px-4.5 py-2.5 text-right space-x-2.5">
                         <button
                           onClick={() => onViewInvoice(inv)}
-                          className="text-xs text-indigo-650 hover:text-indigo-800 font-bold hover:underline cursor-pointer"
+                          className="text-xs text-primary-650 hover:text-primary-800 font-bold hover:underline cursor-pointer"
                         >
                           View
                         </button>

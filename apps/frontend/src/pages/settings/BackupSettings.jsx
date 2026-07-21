@@ -261,7 +261,7 @@ const BackupSettings = () => {
           <button 
             onClick={handleTaxSave}
             disabled={isTaxSaving}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-[11px] font-bold hover:bg-indigo-100 transition-colors shadow-sm disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-600 rounded-lg text-[11px] font-bold hover:bg-primary-100 transition-colors shadow-sm disabled:opacity-50"
           >
             {isTaxSaving ? (
               <><Loader2 size={12} className="animate-spin" /> Saving...</>

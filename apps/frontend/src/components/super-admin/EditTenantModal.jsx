@@ -64,7 +64,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium text-slate-700 bg-slate-50"
+              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium text-slate-700 bg-slate-50"
               placeholder="e.g. Acme Catering"
             />
           </div>
@@ -75,7 +75,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium text-slate-700 bg-slate-50 cursor-pointer"
+                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium text-slate-700 bg-slate-50 cursor-pointer"
               >
                 <option value="active">Active</option>
                 <option value="suspended">Suspended</option>
@@ -85,8 +85,8 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
           </div>
 
           {/* Subscription Settings Container */}
-          <div className="p-3.5 bg-indigo-50/20 border border-indigo-100/25 rounded-2xl space-y-3">
-            <span className="block text-[10px] font-extrabold text-indigo-650 uppercase tracking-widest">Subscription Settings</span>
+          <div className="p-3.5 bg-primary-50/20 border border-primary-100/25 rounded-2xl space-y-3">
+            <span className="block text-[10px] font-extrabold text-primary-650 uppercase tracking-widest">Subscription Settings</span>
             
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -94,7 +94,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
                 disabled
                 className={`py-1.5 px-2.5 text-[11px] font-bold rounded-lg border transition-all cursor-default ${
                   formData.isTesting
-                    ? "bg-indigo-650 border-indigo-650 text-white shadow-sm"
+                    ? "bg-primary-650 border-primary-650 text-white shadow-sm"
                     : "bg-slate-50 border-slate-100 text-slate-400"
                 }`}
               >
@@ -150,7 +150,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
                     }
                     setFormData({ ...formData, billingCycle: cycle, subscriptionPrice: price >= 0 ? price : 0 });
                   }}
-                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium text-slate-750 bg-white cursor-pointer font-semibold"
+                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-xs font-medium text-slate-750 bg-white cursor-pointer font-semibold"
                 >
                   {formData.isTesting ? (
                     <>
@@ -179,7 +179,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
                     type="number"
                     value={formData.subscriptionPrice}
                     onChange={(e) => setFormData({ ...formData, subscriptionPrice: Number(e.target.value) || 0 })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium text-slate-700 bg-white font-semibold"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-xs font-medium text-slate-700 bg-white font-semibold"
                   />
                 </div>
               )}
@@ -201,7 +201,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
               type="email"
               value={formData.contactEmail}
               onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium text-slate-700 bg-slate-50"
+              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium text-slate-700 bg-slate-50"
               placeholder="e.g. info@acme.com"
             />
           </div>
@@ -212,7 +212,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
               type="text"
               value={formData.contactPhone}
               onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium text-slate-700 bg-slate-50"
+              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium text-slate-700 bg-slate-50"
               placeholder="e.g. +91 9876543210"
             />
           </div>
@@ -223,7 +223,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               rows={2}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium text-slate-700 bg-slate-50 resize-none"
+              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium text-slate-700 bg-slate-50 resize-none"
               placeholder="Enter complete company address"
             />
           </div>
@@ -239,7 +239,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
             <button
               type="submit"
               disabled={isSaving || !formData.name.trim()}
-              className="px-4 py-2 text-sm font-semibold text-[#ffffff] bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-60 shadow-sm cursor-pointer"
+              className="px-4 py-2 text-sm font-semibold text-[#ffffff] bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60 shadow-sm cursor-pointer"
             >
               {isSaving ? "Saving..." : "Save Changes"}
             </button>

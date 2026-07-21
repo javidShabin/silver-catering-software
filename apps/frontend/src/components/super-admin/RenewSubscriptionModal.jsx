@@ -85,7 +85,7 @@ const RenewSubscriptionModal = ({ isOpen, onClose, tenant, onRenew, isRenewing }
         </button>
 
         <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+          <div className="p-2 bg-primary-50 text-primary-600 rounded-xl">
             <RotateCw size={20} />
           </div>
           <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider">Renew Subscription</h3>
@@ -99,7 +99,7 @@ const RenewSubscriptionModal = ({ isOpen, onClose, tenant, onRenew, isRenewing }
             </div>
             <div className="flex justify-between items-center pb-3 border-b border-slate-200/60">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Current Plan</span>
-              <span className="text-sm font-bold text-indigo-600">{planName}</span>
+              <span className="text-sm font-bold text-primary-600">{planName}</span>
             </div>
           </div>
 
@@ -108,7 +108,7 @@ const RenewSubscriptionModal = ({ isOpen, onClose, tenant, onRenew, isRenewing }
             <select
               value={billingCycle}
               onChange={(e) => setBillingCycle(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium text-slate-800 bg-white cursor-pointer shadow-sm"
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium text-slate-800 bg-white cursor-pointer shadow-sm"
             >
               {tenant?.plan?.price >= 0 && <option value="1_month">1 Month (₹{tenant.plan.price.toLocaleString("en-IN")})</option>}
               {tenant?.plan?.price3Months >= 0 && <option value="3_months">3 Months (₹{(tenant.plan.price3Months * 3).toLocaleString("en-IN")})</option>}
@@ -145,7 +145,7 @@ const RenewSubscriptionModal = ({ isOpen, onClose, tenant, onRenew, isRenewing }
             <button
               type="submit"
               disabled={isRenewing}
-              className="w-full py-3 text-sm font-bold text-[#ffffff] bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all disabled:opacity-60 shadow-md hover:shadow-lg cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3 text-sm font-bold text-[#ffffff] bg-primary-600 hover:bg-primary-700 rounded-xl transition-all disabled:opacity-60 shadow-md hover:shadow-lg cursor-pointer flex items-center justify-center gap-2"
             >
               {isRenewing ? (
                 <>

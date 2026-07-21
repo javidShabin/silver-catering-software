@@ -88,37 +88,40 @@ const AgencyAssignmentsPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="space-y-8 pb-10 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <Users className="w-6 h-6 text-primary" />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-center lg:text-left">
+        <div className="space-y-1">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight">
             {t("agency_assignments.title", "Agency Assignments")}
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-[11px] sm:text-xs text-slate-500 font-medium max-w-md mx-auto lg:mx-0">
             {t("agency_assignments.subtitle", "Manage manpower assignments across all your events.")}
           </p>
         </div>
-        <button
-          onClick={() => { setSelectedAssignment(null); setIsModalOpen(true); }}
-          className="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-1.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm shadow-orange-600/20"
-        >
-          <Plus size={16} />
-          {t("agency_assignments.new_assignment", "New Assignment")}
-        </button>
+        
+        <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
+          <button
+            onClick={() => { setSelectedAssignment(null); setIsModalOpen(true); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-extrabold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-md sm:shadow-lg shadow-primary-500/25 active:scale-95 shrink-0 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50"
+          >
+            <Plus className="w-4 h-4 max-md:w-6 max-md:h-6" /> <span className="max-md:hidden">{t("agency_assignments.new_assignment", "New Assignment")}</span>
+          </button>
+        </div>
       </div>
 
       {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-        <input
-          type="text"
-          placeholder={t("agency_assignments.search_placeholder", "Search by agency, event, or service...")}
-          className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full lg:max-w-md group">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+          <input
+            type="text"
+            placeholder={t("agency_assignments.search_placeholder", "Search by agency, event, or service...")}
+            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200/60 rounded-2xl text-sm focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all shadow-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* List */}

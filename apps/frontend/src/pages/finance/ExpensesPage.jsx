@@ -226,7 +226,7 @@ const ExpensesPage = () => {
                     </td>
                     <td className="px-4 py-2.5">
                       {expense.event ? (
-                        <span className="text-indigo-600 font-bold text-xs hover:underline cursor-pointer">{expense.event.title}</span>
+                        <span className="text-primary-600 font-bold text-xs hover:underline cursor-pointer">{expense.event.title}</span>
                       ) : (
                         <span className="text-slate-300 font-bold">-</span>
                       )}
@@ -240,7 +240,7 @@ const ExpensesPage = () => {
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => handleOpenEdit(expense)}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                         >
                           <Edit2 size={14} />
                         </button>
@@ -280,13 +280,13 @@ const ExpensesPage = () => {
                       {categories.find(c => c.value === expense.category)?.label || expense.category}
                     </span>
                     {expense.event && (
-                      <span className="text-[10px] text-indigo-600 font-bold truncate max-w-[120px]">{expense.event.title}</span>
+                      <span className="text-[10px] text-primary-600 font-bold truncate max-w-[120px]">{expense.event.title}</span>
                     )}
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <button 
                       onClick={() => handleOpenEdit(expense)}
-                      className="p-1.5 text-slate-500 hover:text-indigo-700 bg-slate-50 rounded-md transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-primary-700 bg-slate-50 rounded-md transition-colors"
                     >
                       <Edit2 size={14} />
                     </button>

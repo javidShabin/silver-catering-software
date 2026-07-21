@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
 import Navbar from "../components/layout/Navbar";
 import MobileBottomNav from "../components/layout/MobileBottomNav";
@@ -14,6 +14,7 @@ const AdminLayout = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [expiryAlerts, setExpiryAlerts] = useState([]);
   const user = useAuthStore(state => state.user);
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -63,6 +64,8 @@ const AdminLayout = () => {
 
   const dismissedIds = JSON.parse(localStorage.getItem("dismissedAnnouncements") || "[]");
   const visibleAnnouncements = announcements.filter(a => !dismissedIds.includes(a.id));
+  
+  const isCalendar = location.pathname.includes('/calendar');
 
   return (
     <>
@@ -135,7 +138,7 @@ const AdminLayout = () => {
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto focus:outline-none custom-scrollbar">
-          <div className="px-2 py-6 sm:px-8 lg:px-10 max-w-7xl mx-auto max-md:pb-20">
+          <div className={`px-2 py-6 sm:px-8 lg:px-10 ${isCalendar ? "max-w-full" : "max-w-7xl"} mx-auto max-md:pb-20`}>
             <Outlet />
           </div>
         </main>

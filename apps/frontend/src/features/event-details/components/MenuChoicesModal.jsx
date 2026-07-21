@@ -228,7 +228,7 @@ const MenuChoicesModal = ({
                   </div>
                   {packages && packages.length > 0 && (
                     <select 
-                      className="flex-1 max-w-[140px] py-1.5 rounded-lg border border-indigo-200 bg-indigo-50/50 px-2.5 text-xs outline-none focus:border-indigo-500 font-semibold text-indigo-700 cursor-pointer"
+                      className="flex-1 max-w-[140px] py-1.5 rounded-lg border border-primary-200 bg-primary-50/50 px-2.5 text-xs outline-none focus:border-primary-500 font-semibold text-primary-700 cursor-pointer"
                       onChange={(e) => { 
                         if (e.target.value) handleApplyPackage(e.target.value); 
                         e.target.value = ""; 
@@ -256,7 +256,7 @@ const MenuChoicesModal = ({
                       
                       const categoryColors = {
                         "Starters": "bg-emerald-50 text-emerald-700",
-                        "Main Course": "bg-indigo-50 text-indigo-700",
+                        "Main Course": "bg-primary-50 text-primary-700",
                         "Desserts": "bg-rose-50 text-rose-700",
                         "Beverages": "bg-sky-50 text-sky-700",
                         "Snacks": "bg-amber-50 text-amber-700"

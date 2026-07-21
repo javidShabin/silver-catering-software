@@ -2,48 +2,19 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Badge from "../../../components/ui/Badge";
 import { ChevronRight, Calendar, Users as UsersIcon } from "lucide-react";
-import DataTable from "../../../components/ui/table/DataTable";
+import { TableContainer, Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../../../components/ui/table/Table";
 import { useTranslation } from "react-i18next";
 
 const RecentEvents = ({ events = [], isLoading = false }) => {
   const { t } = useTranslation();
 
-  const columns = [
-    {
-      header: t("common.event", "Event"),
-      accessor: "title",
-      cell: (row) => (
-        <div className="text-[12px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
-          {row.title}
-        </div>
-      ),
-    },
-    {
-      header: t("common.date", "Date"),
-      accessor: "date",
-      cell: (row) => (
-        <div className="text-[11px] text-slate-500">
-          {new Date(row.date).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </div>
-      ),
-    },
-    {
-      header: t("common.guests", "Guests"),
-      accessor: "guestCount",
-      cell: (row) => (
-        <div className="text-[11px] text-slate-500">{row.guestCount}</div>
-      ),
-    },
-    {
-      header: t("common.status", "Status"),
-      accessor: "status",
-      cell: (row) => <Badge status={row.status} />,
-    },
-  ];
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="card-premium flex flex-col h-full overflow-hidden !p-0">
@@ -53,19 +24,62 @@ const RecentEvents = ({ events = [], isLoading = false }) => {
         </h3>
         <Link 
           to="/events" 
-          className="text-[11px] font-medium text-cyan-600 hover:text-cyan-500 transition-colors flex items-center uppercase tracking-wider"
+          className="text-[11px] font-medium text-primary-600 hover:text-primary-500 transition-colors flex items-center uppercase tracking-wider"
         >
           {t("common.view_all", "View all")} <ChevronRight size={12} className="ml-0.5" />
         </Link>
       </div>
       
-      <div className="flex-1 max-md:hidden">
-        <DataTable
-          columns={columns}
-          data={events}
-          isLoading={isLoading}
-          emptyMessage="No upcoming events"
-        />
+      <div className="flex-1 max-md:hidden overflow-y-auto">
+        <TableContainer className="border-0 shadow-none bg-transparent rounded-none">
+          <Table>
+            <TableHeader className="bg-transparent border-slate-100/60">
+              <TableRow className="hover:bg-transparent">
+                <TableHead>{t("common.event", "Event")}</TableHead>
+                <TableHead>{t("common.date", "Date")}</TableHead>
+                <TableHead>{t("common.guests", "Guests")}</TableHead>
+                <TableHead>{t("common.status", "Status")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell><div className="h-4 bg-slate-100 rounded-lg animate-pulse w-3/4"></div></TableCell>
+                    <TableCell><div className="h-4 bg-slate-100 rounded-lg animate-pulse w-1/2"></div></TableCell>
+                    <TableCell><div className="h-4 bg-slate-100 rounded-lg animate-pulse w-1/2"></div></TableCell>
+                    <TableCell><div className="h-4 bg-slate-100 rounded-lg animate-pulse w-3/4"></div></TableCell>
+                  </TableRow>
+                ))
+              ) : events.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="py-8 text-center text-[12px] text-slate-500">
+                    No upcoming events
+                  </TableCell>
+                </TableRow>
+              ) : (
+                events.map((row, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>
+                      <div className="text-[12px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
+                        {row.title}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-[11px] text-slate-500">{formatDate(row.date)}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-[11px] text-slate-500">{row.guestCount}</div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge status={row.status} />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
       
       <div className="hidden max-md:flex flex-col gap-3 p-4 bg-slate-50/50 flex-1 overflow-y-auto">
@@ -92,7 +106,7 @@ const RecentEvents = ({ events = [], isLoading = false }) => {
                   <span>{new Date(row.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-medium">
-                  <UsersIcon size={12} className="text-indigo-500" />
+                  <UsersIcon size={12} className="text-primary-500" />
                   <span>{row.guestCount} guests</span>
                 </div>
               </div>

@@ -7,20 +7,17 @@ const CalendarHeader = ({ currentDate, view, setView, prevMonth, nextMonth, setC
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4 text-center md:text-left">
-      <div className="flex items-center justify-center md:justify-start gap-3 w-full md:w-auto">
-        <div className="p-2 rounded-xl bg-gradient-to-tr from-primary-600 to-indigo-500 text-white shadow-sm">
-          <CalendarIcon size={18} />
-        </div>
-        <div className="text-left">
-          <h1 className="text-xl font-black text-slate-900 tracking-tight">
-            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()} - {t("calendar.event_calendar", "Event Calendar")}
-          </h1>
-          <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-0.5">{t("calendar.calendar_subtitle", "Overview of your catering schedule.")}</p>
-        </div>
+    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-center lg:text-left mb-6">
+      <div className="space-y-1">
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight">
+          {t("calendar.event_calendar", "Event Calendar")}
+        </h1>
+        <p className="text-[11px] sm:text-xs text-slate-500 font-medium max-w-md mx-auto lg:mx-0">
+          {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()} - {t("calendar.calendar_subtitle", "Overview of your catering schedule.")}
+        </p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 w-full md:w-auto">
+      <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
         <div className="flex bg-slate-100/80 backdrop-blur p-0.5 rounded-lg border border-slate-200/50 shadow-sm">
           <button 
             onClick={() => setView("month")}
@@ -51,10 +48,10 @@ const CalendarHeader = ({ currentDate, view, setView, prevMonth, nextMonth, setC
           </button>
         </div>
 
-        <div className="w-full flex justify-center md:w-auto">
+        <div className="w-full flex justify-center sm:w-auto">
           <button 
             onClick={() => openCreateWithDate(null)}
-            className="flex items-center gap-1.5 px-4 py-2 md:px-4 md:py-1.5 text-xs font-extrabold text-white bg-primary-600 hover:bg-primary-500 rounded-lg transition-all active:scale-95 cursor-pointer shrink-0 shadow-sm max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50 max-md:bg-primary-600 max-md:hover:bg-primary-500 max-md:shadow-primary-500/25"
+            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-extrabold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-md sm:shadow-lg shadow-primary-500/25 active:scale-95 shrink-0 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50 max-md:bg-primary-600 max-md:hover:bg-primary-500 max-md:shadow-primary-500/25"
           >
             <Plus className="w-4 h-4 max-md:w-6 max-md:h-6" /> <span className="max-md:hidden">{t("calendar.add_event", "Add Event")}</span>
           </button>

@@ -130,7 +130,7 @@ const CalendarPage = () => {
   }, [events, popoverDate]);
 
   return (
-    <div className="pb-4 max-w-[1600px] mx-auto px-1 sm:px-6">
+    <div className="pb-4 max-w-full mx-auto px-4 sm:px-8">
       
       {/* Top Header */}
       <CalendarHeader 

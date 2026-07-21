@@ -16,7 +16,7 @@ const AddOnModulesCard = ({
     <div className="mt-4 bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
       <div className="px-4.5 py-3 border-b border-slate-100 bg-slate-50/40 flex items-center justify-between">
         <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Add-on Modules</h3>
-        <span className="bg-indigo-50 text-indigo-755 py-0.5 px-2 rounded-full text-[10px] font-bold border border-indigo-100">
+        <span className="bg-primary-50 text-primary-755 py-0.5 px-2 rounded-full text-[10px] font-bold border border-primary-100">
           {selectedFeatures.length} Enabled
         </span>
       </div>
@@ -39,7 +39,7 @@ const AddOnModulesCard = ({
                   isPlanFeature 
                     ? "bg-slate-50/60 border-slate-100 text-slate-400" 
                     : isChecked 
-                      ? "bg-indigo-50/20 border-indigo-100 text-slate-900 shadow-sm" 
+                      ? "bg-primary-50/20 border-primary-100 text-slate-900 shadow-sm" 
                       : "bg-white border-slate-100 text-slate-700 hover:border-slate-200"
                 }`}
               >
@@ -57,7 +57,7 @@ const AddOnModulesCard = ({
                         );
                       }
                     }}
-                    className="w-3.5 h-3.5 text-indigo-655 bg-slate-100 border-slate-200 rounded focus:ring-indigo-500 disabled:opacity-50 cursor-pointer"
+                    className="w-3.5 h-3.5 text-primary-655 bg-slate-100 border-slate-200 rounded focus:ring-primary-500 disabled:opacity-50 cursor-pointer"
                   />
                   <span>{FEATURE_LABELS[feature] || feature}</span>
                 </label>
@@ -79,7 +79,7 @@ const AddOnModulesCard = ({
                           const val = e.target.value === "" ? 0 : Number(e.target.value);
                           setFeaturePrices(prev => ({ ...prev, [feature]: val }));
                         }}
-                        className="w-14 px-1 py-0.5 border border-slate-200 rounded-lg text-center font-bold text-slate-755 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-[11px]"
+                        className="w-14 px-1 py-0.5 border border-slate-200 rounded-lg text-center font-bold text-slate-755 focus:outline-none focus:ring-1 focus:ring-primary-500 text-[11px]"
                       />
                     </div>
                   ) : null}
@@ -94,7 +94,7 @@ const AddOnModulesCard = ({
           <button
             onClick={onSave}
             disabled={isUpdatingFeatures}
-            className="flex items-center gap-1.5 px-4.5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all disabled:opacity-60 shadow-sm cursor-pointer"
+            className="flex items-center gap-1.5 px-4.5 py-2 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all disabled:opacity-60 shadow-sm cursor-pointer"
           >
             {isUpdatingFeatures ? (
               <><Loader2 size={12} className="animate-spin" /> Saving...</>

@@ -60,7 +60,7 @@ const EventDetailsHeader = ({ event, navigate, openEditModal }) => {
             <button
               onClick={handleShareFeedback}
               disabled={isGeneratingLink}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl transition-all shadow-sm active:scale-95 shrink-0 disabled:opacity-70"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 rounded-xl transition-all shadow-sm active:scale-95 shrink-0 disabled:opacity-70"
             >
               {isGeneratingLink ? <Loader2 size={13} className="animate-spin" /> : copied ? <Check size={13} className="text-green-600" /> : <Share2 size={13} />}
               <span>{copied ? "Copied Link!" : "Share Feedback"}</span>
@@ -93,7 +93,7 @@ const EventDetailsHeader = ({ event, navigate, openEditModal }) => {
           <button
             onClick={handleShareFeedback}
             disabled={isGeneratingLink}
-            className="flex flex-col items-center gap-1 text-indigo-600 hover:text-indigo-800 flex-1 py-1 disabled:opacity-50"
+            className="flex flex-col items-center gap-1 text-primary-600 hover:text-primary-800 flex-1 py-1 disabled:opacity-50"
           >
             {isGeneratingLink ? <Loader2 size={18} className="animate-spin" /> : copied ? <Check size={18} className="text-green-600" /> : <Share2 size={18} />}
             <span className="text-[10px] font-bold">{copied ? "Copied!" : "Feedback"}</span>

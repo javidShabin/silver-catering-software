@@ -104,7 +104,7 @@ const CalendarGrid = ({ currentDate, events, openCreateWithDate, popoverDate, se
             >
               <div className="absolute top-1 sm:top-1.5 left-1.5 sm:left-2">
                 <span className={`text-[10px] sm:text-xs font-black ${
-                  !dateObj.currentMonth ? "text-slate-300" : isToday ? "w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-tr from-primary-600 to-indigo-500 text-white rounded-full flex items-center justify-center shadow-md shadow-primary-500/20" : "text-slate-600"
+                  !dateObj.currentMonth ? "text-slate-300" : isToday ? "w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-tr from-primary-600 to-primary-500 text-white rounded-full flex items-center justify-center shadow-md shadow-primary-500/20" : "text-slate-600"
                 }`}>
                   {dateObj.day}
                 </span>
@@ -132,7 +132,7 @@ const CalendarGrid = ({ currentDate, events, openCreateWithDate, popoverDate, se
                   {dayEvents.length > 0 && (
                     <button 
                       onClick={(e) => { e.stopPropagation(); setPopoverDate(dayDate); }}
-                      className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white border border-slate-200 shadow-sm text-slate-400 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
+                      className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white border border-slate-200 shadow-sm text-slate-400 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50 flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
                       title="View Events"
                     >
                       <Eye size={14} />
@@ -232,7 +232,7 @@ const CalendarGrid = ({ currentDate, events, openCreateWithDate, popoverDate, se
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition-colors shrink-0 ${
                       mobileMenuDate.hasEvents
-                        ? "bg-primary-600 text-white shadow-primary-500/10 group-hover:bg-indigo-600"
+                        ? "bg-primary-600 text-white shadow-primary-500/10 group-hover:bg-primary-600"
                         : "bg-slate-200 text-slate-400"
                     }`}>
                       <Eye size={20} />

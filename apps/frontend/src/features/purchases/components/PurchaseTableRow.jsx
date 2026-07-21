@@ -65,7 +65,7 @@ const PurchaseTableRow = ({ purchase: p, statusColors, onEdit }) => {
             <span className="text-sm font-bold text-slate-800">{p.itemName}</span>
             <span className="text-[10px] text-slate-400">Qty: {p.quantityPurchased}</span>
             {p.event && (
-              <span className="text-[9px] mt-1 text-indigo-600 font-semibold bg-indigo-50 w-fit px-1.5 py-0.5 rounded border border-indigo-100">
+              <span className="text-[9px] mt-1 text-primary-600 font-semibold bg-primary-50 w-fit px-1.5 py-0.5 rounded border border-primary-100">
                 Event: {p.event.title}
               </span>
             )}

@@ -53,7 +53,7 @@ const SubscriptionTimeline = ({ startDate, expiresDate, billingCycle, isTesting 
       {end && (
         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-0.5">
           <div 
-            className="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full transition-all duration-1000 ease-out relative"
+            className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-1000 ease-out relative"
             style={{ width: `${percentage}%` }}
           >
             <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
@@ -64,7 +64,7 @@ const SubscriptionTimeline = ({ startDate, expiresDate, billingCycle, isTesting 
       <div className="flex items-center justify-between mt-2 text-[10px] text-slate-450 font-bold">
         <span>{start.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</span>
         {end ? (
-          <span className={today > end ? "text-red-600" : "text-indigo-600"}>
+          <span className={today > end ? "text-red-600" : "text-primary-600"}>
             {today > end ? "Expired" : `${daysRemaining} days left`}
           </span>
         ) : (
@@ -87,10 +87,10 @@ const SubscriptionPackageCard = ({ tenant, onRenewClick }) => {
             <div>
               <div className="flex items-center justify-between mb-3.5">
                 <div className="flex items-center gap-2">
-                  <Landmark className="text-indigo-600" size={16} />
+                  <Landmark className="text-primary-600" size={16} />
                   <span className="text-sm font-bold text-slate-900">{tenant.plan.name}</span>
                 </div>
-                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg capitalize">
+                <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-lg capitalize">
                   {(() => {
                     const price = tenant.subscriptionPrice ?? tenant.plan.price;
                     return price > 0
@@ -123,7 +123,7 @@ const SubscriptionPackageCard = ({ tenant, onRenewClick }) => {
               {!tenant.isTesting && onRenewClick && (
                 <button
                   onClick={onRenewClick}
-                  className="w-full mt-4 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer flex items-center justify-center gap-1.5"
+                  className="w-full mt-4 py-2.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <Landmark size={14} />
                   Renew Subscription

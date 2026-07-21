@@ -71,7 +71,7 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
           <div className="flex flex-col gap-1 mt-1">
             <span className="text-xs text-slate-500 font-semibold">Qty: {p.quantityPurchased}</span>
             {p.event && (
-              <span className="text-[9px] text-indigo-600 font-semibold bg-indigo-50 w-fit px-1.5 py-0.5 rounded border border-indigo-100">
+              <span className="text-[9px] text-primary-600 font-semibold bg-primary-50 w-fit px-1.5 py-0.5 rounded border border-primary-100">
                 Event: {p.event.title}
               </span>
             )}

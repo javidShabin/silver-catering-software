@@ -61,7 +61,7 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
       className="p-0 overflow-hidden bg-white shadow-2xl rounded-2xl border border-slate-100"
     >
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 px-5 py-4 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 px-5 py-4 text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="relative z-10 flex items-center gap-3.5">
           <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm border border-white/30 flex-shrink-0">
@@ -69,7 +69,7 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
           </div>
           <div>
             <h2 className="text-lg font-bold tracking-tight mb-0.5">Privacy Policy & Terms</h2>
-            <p className="text-indigo-100 text-[13px] leading-snug font-medium">
+            <p className="text-primary-100 text-[13px] leading-snug font-medium">
               We value your privacy and security. Please carefully read and accept our updated privacy guidelines.
             </p>
           </div>
@@ -80,7 +80,7 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
       <div className="p-4 md:p-5 max-h-[50vh] overflow-y-auto bg-slate-50/50 custom-scrollbar relative min-h-[200px]">
         {isFetching ? (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-50/80 z-10">
-            <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="space-y-4 max-w-2xl mx-auto">
@@ -93,11 +93,11 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
               
               return (
                 <div key={index} className="flex gap-3.5 group">
-                  <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                  <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary-50 border border-primary-100 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 shadow-sm">
                     <Icon size={16} strokeWidth={1.8} />
                   </div>
                   <div>
-                    <h3 className="text-[14px] font-semibold text-slate-800 mb-0.5 tracking-tight group-hover:text-indigo-700 transition-colors">
+                    <h3 className="text-[14px] font-semibold text-slate-800 mb-0.5 tracking-tight group-hover:text-primary-700 transition-colors">
                       {policy.title}
                     </h3>
                     <p className="text-slate-600 text-[12px] leading-relaxed whitespace-pre-line">
@@ -114,7 +114,7 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
       {/* Footer / Action Section */}
       <div className="border-t border-slate-200 p-4 md:p-5 bg-white">
         <div className="max-w-2xl mx-auto">
-          <label className="flex items-start gap-3 cursor-pointer group bg-slate-50 p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 transition-all">
+          <label className="flex items-start gap-3 cursor-pointer group bg-slate-50 p-2.5 rounded-xl border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
             <div className="relative flex items-center pt-0.5">
               <input 
                 type="checkbox" 
@@ -122,7 +122,7 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
                 checked={isChecked}
                 onChange={(e) => setIsChecked(e.target.checked)}
               />
-              <div className="w-4 h-4 border-2 border-slate-300 rounded shadow-sm peer-checked:bg-indigo-600 peer-checked:border-indigo-600 transition-colors flex items-center justify-center">
+              <div className="w-4 h-4 border-2 border-slate-300 rounded shadow-sm peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-colors flex items-center justify-center">
                 <svg className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 scale-50 peer-checked:scale-100 transition-all duration-200" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -140,7 +140,7 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
               onClick={handleAccept}
               isLoading={isLoading}
               disabled={!isChecked}
-              className={`w-full sm:w-auto px-5 py-2 text-[13px] rounded-lg shadow-lg transition-all duration-300 ${isChecked ? 'shadow-indigo-600/30 hover:shadow-indigo-600/50 translate-y-0' : 'opacity-60 cursor-not-allowed'}`}
+              className={`w-full sm:w-auto px-5 py-2 text-[13px] rounded-lg shadow-lg transition-all duration-300 ${isChecked ? 'shadow-primary-600/30 hover:shadow-primary-600/50 translate-y-0' : 'opacity-60 cursor-not-allowed'}`}
             >
               Continue to Dashboard
             </Button>

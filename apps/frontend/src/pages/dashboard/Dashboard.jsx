@@ -70,7 +70,7 @@ const Dashboard = () => {
         <div className="flex items-center">
           <button 
             onClick={() => navigate('/quotations/new')} 
-            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-[12px] font-semibold rounded-lg shadow-sm transition-all shadow-indigo-200"
+            className="flex items-center gap-1.5 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-[12px] font-semibold rounded-lg shadow-sm transition-all shadow-primary-200"
           >
             <PlusCircle size={14} />
             {t("dashboard.create_quotation", "Create Quotation")}

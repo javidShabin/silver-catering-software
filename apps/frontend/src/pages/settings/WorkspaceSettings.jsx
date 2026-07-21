@@ -175,7 +175,7 @@ const WorkspaceSettings = () => {
   if (isFetching && !tenant) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 size={32} className="animate-spin text-indigo-500" />
+        <Loader2 size={32} className="animate-spin text-primary-500" />
       </div>
     );
   }
@@ -195,7 +195,7 @@ const WorkspaceSettings = () => {
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-[11px] font-bold hover:bg-indigo-100 transition-colors shadow-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-600 rounded-lg text-[11px] font-bold hover:bg-primary-100 transition-colors shadow-sm"
               >
                 <Edit2 size={12} /> Edit Details
               </button>

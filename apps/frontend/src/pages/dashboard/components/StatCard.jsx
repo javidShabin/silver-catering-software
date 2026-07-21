@@ -5,7 +5,7 @@ const StatCard = ({ title, value, icon: Icon, type = "blue", trend }) => {
   const styleMap = {
     blue: "bg-blue-50 text-blue-500 border-blue-100/50",
     orange: "bg-orange-50 text-orange-500 border-orange-100/50",
-    lavender: "bg-indigo-50 text-indigo-500 border-indigo-100/50",
+    lavender: "bg-primary-50 text-primary-500 border-primary-100/50",
     cyan: "bg-cyan-50 text-cyan-500 border-cyan-100/50",
     rose: "bg-rose-50 text-rose-500 border-rose-100/50",
     emerald: "bg-emerald-50 text-emerald-500 border-emerald-100/50"

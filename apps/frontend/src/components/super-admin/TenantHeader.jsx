@@ -14,7 +14,7 @@ const TenantHeader = ({ tenant, isTrial, monthlyRate, onBack, onEdit }) => {
           >
             <ArrowLeft size={14} />
           </button>
-          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-sm">
+          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-sm">
             <Building2 size={20} strokeWidth={2.2} />
           </div>
           <div>
@@ -27,7 +27,7 @@ const TenantHeader = ({ tenant, isTrial, monthlyRate, onBack, onEdit }) => {
               </span>
               <button 
                 onClick={onEdit}
-                className="p-1 rounded-lg border border-slate-100 hover:bg-slate-50 hover:border-slate-200 hover:text-indigo-650 transition-all text-slate-400 cursor-pointer flex items-center justify-center"
+                className="p-1 rounded-lg border border-slate-100 hover:bg-slate-50 hover:border-slate-200 hover:text-primary-650 transition-all text-slate-400 cursor-pointer flex items-center justify-center"
                 title="Edit Company Details"
               >
                 <Edit2 size={11} />
@@ -39,7 +39,7 @@ const TenantHeader = ({ tenant, isTrial, monthlyRate, onBack, onEdit }) => {
               )}
             </div>
             <p className="text-[11px] text-slate-450 mt-0.5 flex items-center gap-1 font-semibold">
-              <Calendar size={12} className="text-indigo-500" /> 
+              <Calendar size={12} className="text-primary-500" /> 
               Registered {new Date(tenant.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
             </p>
           </div>
@@ -47,19 +47,19 @@ const TenantHeader = ({ tenant, isTrial, monthlyRate, onBack, onEdit }) => {
 
         {/* Quick Subscription Card header block */}
         {tenant.plan && (
-          <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-xl p-3 md:w-72 shadow-sm">
+          <div className="bg-gradient-to-br from-primary-900 to-slate-900 text-white rounded-xl p-3 md:w-72 shadow-sm">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-200">Subscription Summary</span>
-              <span className="text-[10px] font-bold text-white bg-indigo-500/30 px-2 py-0.5 rounded-md">{tenant.plan.name}</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-primary-200">Subscription Summary</span>
+              <span className="text-[10px] font-bold text-white bg-primary-500/30 px-2 py-0.5 rounded-md">{tenant.plan.name}</span>
             </div>
             <div className="flex justify-between items-end">
               <div>
                 <span className="text-[10px] text-slate-300 font-medium block">Monthly Total</span>
                 <span className="text-base font-extrabold text-white">₹{monthlyRate.toLocaleString("en-IN")}</span>
               </div>
-              <div className="text-right border-l border-indigo-800 pl-3">
+              <div className="text-right border-l border-primary-800 pl-3">
                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Projected Yearly</span>
-                <span className="text-xs font-bold text-indigo-300">₹{(monthlyRate * 12).toLocaleString("en-IN")}</span>
+                <span className="text-xs font-bold text-primary-300">₹{(monthlyRate * 12).toLocaleString("en-IN")}</span>
               </div>
             </div>
           </div>
@@ -69,7 +69,7 @@ const TenantHeader = ({ tenant, isTrial, monthlyRate, onBack, onEdit }) => {
       {/* Contact Info Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 text-xs">
         <div className="flex items-start gap-2.5 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 min-w-0">
-          <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
+          <div className="p-2 rounded-lg bg-primary-50 text-primary-600 shrink-0">
             <Mail size={14} />
           </div>
           <div className="min-w-0 flex-1">
@@ -79,7 +79,7 @@ const TenantHeader = ({ tenant, isTrial, monthlyRate, onBack, onEdit }) => {
         </div>
 
         <div className="flex items-start gap-2.5 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 min-w-0">
-          <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
+          <div className="p-2 rounded-lg bg-primary-50 text-primary-600 shrink-0">
             <Phone size={14} />
           </div>
           <div className="min-w-0 flex-1">
@@ -89,7 +89,7 @@ const TenantHeader = ({ tenant, isTrial, monthlyRate, onBack, onEdit }) => {
         </div>
 
         <div className="flex items-start gap-2.5 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 min-w-0">
-          <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
+          <div className="p-2 rounded-lg bg-primary-50 text-primary-600 shrink-0">
             <MapPin size={14} />
           </div>
           <div className="min-w-0 flex-1">

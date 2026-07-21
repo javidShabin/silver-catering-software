@@ -79,7 +79,7 @@ const AdminPrivacyPolicyPage = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-white p-4 md:p-5 rounded-lg shadow-sm border border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 border border-indigo-100">
+            <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center text-primary-600 border border-primary-100">
               <ShieldCheck size={20} />
             </div>
             <div>
@@ -91,7 +91,7 @@ const AdminPrivacyPolicyPage = () => {
           {isSuperAdmin && (
             <div className="relative z-10 mt-2 md:mt-0">
               {!isEditing ? (
-                <Button onClick={() => setIsEditing(true)} className="bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 hover:border-indigo-300 shadow-sm transition-all duration-300 font-semibold px-5">
+                <Button onClick={() => setIsEditing(true)} className="bg-white text-primary-600 border border-primary-200 hover:bg-primary-50 hover:border-primary-300 shadow-sm transition-all duration-300 font-semibold px-5">
                   <span className="flex items-center gap-2">
                     <FileText size={16} /> Edit Policy
                   </span>
@@ -101,7 +101,7 @@ const AdminPrivacyPolicyPage = () => {
                   <Button onClick={() => { setIsEditing(false); fetchPolicies(); }} variant="outline" className="border-slate-300 text-slate-600 hover:bg-slate-50">
                     Discard
                   </Button>
-                  <Button onClick={handleSave} isLoading={isSaving} className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 px-6">
+                  <Button onClick={handleSave} isLoading={isSaving} className="bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-500/20 px-6">
                     Save Changes
                   </Button>
                 </div>
@@ -114,9 +114,9 @@ const AdminPrivacyPolicyPage = () => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 p-4 md:p-6">
           
           {!isEditing && (
-            <div className="mb-5 p-3 bg-indigo-50/50 border border-indigo-100 rounded-lg flex items-start gap-2.5">
-              <Bell className="text-indigo-600 shrink-0 mt-0.5" size={16} />
-              <p className="text-[12.5px] text-indigo-900 leading-relaxed font-medium">
+            <div className="mb-5 p-3 bg-primary-50/50 border border-primary-100 rounded-lg flex items-start gap-2.5">
+              <Bell className="text-primary-600 shrink-0 mt-0.5" size={16} />
+              <p className="text-[12.5px] text-primary-900 leading-relaxed font-medium">
                 This policy outlines how user data is collected, processed, and protected within the system. It ensures compliance with data privacy standards and provides transparency to our users.
               </p>
             </div>
@@ -139,7 +139,7 @@ const AdminPrivacyPolicyPage = () => {
                 >
                   {!isEditing ? (
                     <div className="flex gap-4 items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary-50 border border-primary-100 flex items-center justify-center text-primary-600">
                         <IconComponent size={18} />
                       </div>
                       <div className="flex-1 mt-0.5">
@@ -170,7 +170,7 @@ const AdminPrivacyPolicyPage = () => {
                               type="text" 
                               value={policy.icon} 
                               onChange={(e) => handlePolicyChange(index, 'icon', e.target.value)}
-                              className="w-full text-sm font-medium text-slate-700 bg-white border-slate-300 rounded-xl p-3 border focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none pl-10"
+                              className="w-full text-sm font-medium text-slate-700 bg-white border-slate-300 rounded-xl p-3 border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all outline-none pl-10"
                               placeholder="e.g. ShieldCheck"
                             />
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
@@ -185,7 +185,7 @@ const AdminPrivacyPolicyPage = () => {
                             type="text" 
                             value={policy.title} 
                             onChange={(e) => handlePolicyChange(index, 'title', e.target.value)}
-                            className="w-full text-sm font-medium text-slate-700 bg-white border-slate-300 rounded-xl p-3 border focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                            className="w-full text-sm font-medium text-slate-700 bg-white border-slate-300 rounded-xl p-3 border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all outline-none"
                             placeholder="Enter the title for this section"
                           />
                         </div>
@@ -197,7 +197,7 @@ const AdminPrivacyPolicyPage = () => {
                           value={policy.description} 
                           onChange={(e) => handlePolicyChange(index, 'description', e.target.value)}
                           rows={3}
-                          className="w-full text-[13px] text-slate-700 bg-white border-slate-300 rounded-lg p-2.5 border focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none leading-relaxed resize-none custom-scrollbar"
+                          className="w-full text-[13px] text-slate-700 bg-white border-slate-300 rounded-lg p-2.5 border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all outline-none leading-relaxed resize-none custom-scrollbar"
                           placeholder="Provide the full terms and description..."
                         />
                       </div>

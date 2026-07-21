@@ -120,52 +120,55 @@ const QuotationsPage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-5 pb-8">
+    <div className="space-y-8 pb-10 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">{t("quotations.quotations_and_estimations", "Quotations & Estimations")}</h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">{t("quotations.quotations_subtitle", "Create and manage customer estimates before confirming events.")}</p>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-center lg:text-left">
+        <div className="space-y-1">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight">{t("quotations.quotations_and_estimations", "Quotations & Estimations")}</h1>
+          <p className="text-[11px] sm:text-xs text-slate-500 font-medium max-w-md mx-auto lg:mx-0">{t("quotations.quotations_subtitle", "Create and manage customer estimates before confirming events.")}</p>
         </div>
-        <button 
-          onClick={() => {
-            setSelectedQuoteForEdit(null);
-            setIsViewMode(false);
-            setIsBuilderOpen(true);
-          }} 
-          className="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-500/30 flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-colors cursor-pointer shrink-0 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:z-50"
-        >
-          <Plus className="max-md:mr-0 mr-1.5 sm:mr-2 max-md:w-6 max-md:h-6" size={15} />
-          <span className="max-md:hidden">{t("quotations.create_quotation", "Create Quotation")}</span>
-        </button>
+        
+        <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
+          <div className="w-full flex justify-center sm:w-auto">
+            <button 
+              onClick={() => {
+                setSelectedQuoteForEdit(null);
+                setIsViewMode(false);
+                setIsBuilderOpen(true);
+              }} 
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-extrabold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-md sm:shadow-lg shadow-primary-500/25 active:scale-95 shrink-0 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50 max-md:bg-primary-600 max-md:hover:bg-primary-500 max-md:shadow-primary-500/25"
+            >
+              <Plus className="w-4 h-4 max-md:w-6 max-md:h-6" /> <span className="max-md:hidden">{t("quotations.create_quotation", "Create Quotation")}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full lg:max-w-md group">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+          <input
+            type="text"
+            placeholder={t("quotations.search_quotations", "Search quotations...")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200/60 rounded-2xl text-sm focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all shadow-sm"
+          />
+        </div>
       </div>
 
       {/* Table Container */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-slate-50/50">
-          <div className="relative w-full sm:max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              placeholder={t("quotations.search_quotations", "Search quotations...")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500/50 focus:border-primary-500 transition-all"
-            />
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          {/* Desktop Table */}
-          <table className="w-full text-sm text-left hidden md:table">
-            <thead className="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <div className="min-h-[400px]">
+        <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm overflow-x-auto w-full max-md:hidden">
+          <table className="w-full text-left min-w-[700px]">
+            <thead className="bg-slate-50/50 border-b border-slate-100">
               <tr>
-                <th className="px-6 py-4">Quotation #</th>
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Valid Until</th>
-                <th className="px-6 py-4">Amount</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Quotation #</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Customer</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Valid Until</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Amount</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -180,11 +183,15 @@ const QuotationsPage = () => {
               ) : (
                 filteredQuotations.map((quotation) => (
                   <tr key={quotation.id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-6 py-4 font-medium text-slate-900">{quotation.quotationNumber}</td>
-                    <td className="px-6 py-4 text-slate-600">{quotation.customer?.name || "Unknown"}</td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm font-bold text-slate-800">{quotation.quotationNumber}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs font-medium text-slate-700">{quotation.customer?.name || "Unknown"}</span>
+                    </td>
                     <td className="px-6 py-4 text-slate-500 relative">
                       <div className="inline-flex items-center relative">
-                        {new Date(quotation.validUntil).toLocaleDateString()}
+                        <span className="text-xs font-medium">{new Date(quotation.validUntil).toLocaleDateString()}</span>
                         {isExpiringSoon(quotation) && (
                           <>
                             <span className="absolute -top-2 -right-3 flex h-3 w-3 z-10">
@@ -199,53 +206,57 @@ const QuotationsPage = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-900">{CURRENCY}{Number(quotation.totalAmount).toFixed(2)}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full ${
-                        quotation.status === "approved" ? "bg-green-100 text-green-700" :
-                        quotation.status === "rejected" ? "bg-red-100 text-red-700" :
+                      <span className="text-sm font-bold text-slate-900">{CURRENCY}{Number(quotation.totalAmount).toFixed(2)}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg ${
+                        quotation.status === "approved" ? "bg-emerald-100 text-emerald-700" :
+                        quotation.status === "rejected" ? "bg-rose-100 text-rose-700" :
                         quotation.status === "sent" ? "bg-blue-100 text-blue-700" :
                         "bg-slate-100 text-slate-600"
                       }`}>
                         {quotation.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right space-x-1">
-                      {quotation.status !== "approved" && quotation.status !== "rejected" && (
-                        <button 
-                          onClick={() => openConvertModal(quotation)}
-                          className="px-2.5 py-1 text-xs font-bold bg-primary-50 text-primary-600 hover:bg-primary-100 rounded-md transition-colors mr-2"
-                        >
-                          {t("quotations.convert", "Convert")}
-                        </button>
-                      )}
-                      <button 
-                        onClick={() => {
-                          setSelectedQuoteForEdit(quotation);
-                          setIsViewMode(true);
-                          setIsBuilderOpen(true);
-                        }}
-                        className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-flex"
-                        title="View Details"
-                      >
-                        <Eye size={16} />
-                      </button>
-                      {quotation.status !== "approved" && (
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        {quotation.status !== "approved" && quotation.status !== "rejected" && (
+                          <button 
+                            onClick={() => openConvertModal(quotation)}
+                            className="px-2.5 py-1 text-[10px] font-bold bg-primary-50 text-primary-600 hover:bg-primary-100 rounded-lg transition-colors"
+                          >
+                            {t("quotations.convert", "CONVERT")}
+                          </button>
+                        )}
                         <button 
                           onClick={() => {
                             setSelectedQuoteForEdit(quotation);
-                            setIsViewMode(false);
+                            setIsViewMode(true);
                             setIsBuilderOpen(true);
                           }}
-                          className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors inline-flex"
-                          title="Edit"
+                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-flex"
+                          title="View Details"
                         >
-                          <Edit size={16} />
+                          <Eye size={16} />
                         </button>
-                      )}
-                      <button onClick={() => handleDeleteClick(quotation.id)} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer" title="Delete">
-                        <Trash2 size={16} />
-                      </button>
+                        {quotation.status !== "approved" && (
+                          <button 
+                            onClick={() => {
+                              setSelectedQuoteForEdit(quotation);
+                              setIsViewMode(false);
+                              setIsBuilderOpen(true);
+                            }}
+                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors inline-flex"
+                            title="Edit"
+                          >
+                            <Edit size={16} />
+                          </button>
+                        )}
+                        <button onClick={() => handleDeleteClick(quotation.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer" title="Delete">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

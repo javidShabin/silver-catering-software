@@ -48,7 +48,7 @@ const Navbar = ({ toggleSidebar }) => {
             <select
               value={i18n.language}
               onChange={handleLanguageChange}
-              className="text-xs font-bold bg-slate-50 border border-slate-200 text-slate-700 py-1.5 px-2 rounded-lg outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 transition-all cursor-pointer"
+              className="text-xs font-bold bg-slate-50 border border-slate-200 text-slate-700 py-1.5 px-2 rounded-lg outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 transition-all cursor-pointer"
             >
               <option value="en">English</option>
               <option value="ml">മലയാളം</option>

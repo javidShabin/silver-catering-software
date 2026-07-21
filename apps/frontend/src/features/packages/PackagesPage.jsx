@@ -118,7 +118,7 @@ const PackagesPage = () => {
               <div className="flex justify-between items-start mb-1.5">
                 <h3 className="font-bold text-slate-900 text-sm line-clamp-1">{pkg.name}</h3>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEdit(pkg)} className="p-1 text-slate-400 hover:text-indigo-600 rounded hover:bg-indigo-50">
+                  <button onClick={() => handleEdit(pkg)} className="p-1 text-slate-400 hover:text-primary-600 rounded hover:bg-primary-50">
                     <Edit size={12} />
                   </button>
                   <button onClick={() => handleDeleteClick(pkg)} className="p-1 text-slate-400 hover:text-red-600 rounded hover:bg-red-50">

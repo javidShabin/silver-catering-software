@@ -51,8 +51,8 @@ const RaiseTicketModal = ({ onClose, onSave }) => {
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-150 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center">
-              <LifeBuoy size={18} className="text-indigo-600 animate-[spin_4s_linear_infinite]" />
+            <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center">
+              <LifeBuoy size={18} className="text-primary-600 animate-[spin_4s_linear_infinite]" />
             </div>
             <div>
               <h2 className="text-sm font-bold text-slate-900">Raise Support Ticket</h2>
@@ -79,7 +79,7 @@ const RaiseTicketModal = ({ onClose, onSave }) => {
                 value={form.subject}
                 onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))}
                 placeholder="e.g., Invoice generation failing, Printer scaling issue"
-                className="w-full px-3.5 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all bg-slate-50 hover:bg-slate-100/50 focus:bg-white font-medium text-slate-700"
+                className="w-full px-3.5 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-slate-50 hover:bg-slate-100/50 focus:bg-white font-medium text-slate-700"
               />
             </div>
 
@@ -93,7 +93,7 @@ const RaiseTicketModal = ({ onClose, onSave }) => {
                 value={form.description}
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                 placeholder="Provide detailed steps or context about the issue you are facing..."
-                className="w-full px-3.5 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all bg-slate-50 hover:bg-slate-100/50 focus:bg-white font-medium text-slate-700 resize-none leading-relaxed"
+                className="w-full px-3.5 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-slate-50 hover:bg-slate-100/50 focus:bg-white font-medium text-slate-700 resize-none leading-relaxed"
               />
             </div>
 
@@ -109,7 +109,7 @@ const RaiseTicketModal = ({ onClose, onSave }) => {
                       onClick={() => setForm((p) => ({ ...p, priority: opt.value }))}
                       className={`py-2.5 px-3 border text-xs font-bold rounded-xl transition-all ${
                         isSelected
-                          ? "bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm shadow-indigo-100/50"
+                          ? "bg-primary-50 border-primary-500 text-primary-700 shadow-sm shadow-primary-100/50"
                           : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
                       }`}
                     >
@@ -133,7 +133,7 @@ const RaiseTicketModal = ({ onClose, onSave }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-2 px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-60 shadow-md shadow-indigo-100/50 cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60 shadow-md shadow-primary-100/50 cursor-pointer"
             >
               {isLoading ? (
                 <><Loader2 size={13} className="animate-spin" /> Submitting...</>
@@ -243,7 +243,7 @@ const SupportPage = () => {
       {/* Top Header Panel */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-4">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-sm shadow-indigo-500/20 shrink-0">
+          <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-sm shadow-primary-500/20 shrink-0">
             <LifeBuoy size={20} strokeWidth={2.5} />
           </div>
           <div className="text-left">
@@ -255,7 +255,7 @@ const SupportPage = () => {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer"
         >
           <Plus size={14} strokeWidth={2.5} /> Raise Support Ticket
         </button>
@@ -273,7 +273,7 @@ const SupportPage = () => {
           <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-slate-50">
             {isLoading && tickets.length === 0 ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 size={24} className="animate-spin text-indigo-500" />
+                <Loader2 size={24} className="animate-spin text-primary-500" />
               </div>
             ) : tickets.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-2.5 px-6">
@@ -291,12 +291,12 @@ const SupportPage = () => {
                     key={tkt.id}
                     onClick={() => handleSelectTicket(tkt.id)}
                     className={`w-full p-4 text-left transition-all hover:bg-slate-50/60 flex items-start justify-between gap-3 ${
-                      isSelected ? "bg-indigo-50/30 border-l-[3px] border-indigo-600 pl-3" : "border-l-[3px] border-transparent"
+                      isSelected ? "bg-primary-50/30 border-l-[3px] border-primary-600 pl-3" : "border-l-[3px] border-transparent"
                     }`}
                   >
                     <div className="space-y-1.5 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-indigo-600">{tkt.ticketNumber}</span>
+                        <span className="text-[11px] font-bold text-primary-600">{tkt.ticketNumber}</span>
                         {getStatusBadge(tkt.status)}
                       </div>
                       <span className="block text-xs font-extrabold text-slate-800 truncate leading-snug">{tkt.subject}</span>
@@ -321,17 +321,17 @@ const SupportPage = () => {
             <div className="flex flex-col flex-1 min-h-0">
               {/* Header Panel - Ticket UI */}
               <div className="p-3 bg-slate-50/20 border-b border-slate-100 shrink-0">
-                <div className="relative bg-[#f9f8ff] flex shadow-sm border border-indigo-100/50 rounded-xl overflow-hidden h-[72px]">
-                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full border-r border-indigo-100/50"></div>
+                <div className="relative bg-[#f9f8ff] flex shadow-sm border border-primary-100/50 rounded-xl overflow-hidden h-[72px]">
+                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full border-r border-primary-100/50"></div>
                   
-                  <div className="px-4 py-2 flex flex-col justify-center border-r-2 border-dashed border-indigo-100 min-w-[110px] shrink-0 text-left">
+                  <div className="px-4 py-2 flex flex-col justify-center border-r-2 border-dashed border-primary-100 min-w-[110px] shrink-0 text-left">
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Ticket ID</span>
-                    <span className="text-[14px] font-black text-indigo-600 leading-none">{selectedTicket.ticketNumber}</span>
+                    <span className="text-[14px] font-black text-primary-600 leading-none">{selectedTicket.ticketNumber}</span>
                   </div>
                   
-                  <div className="px-4 py-2 flex-1 flex flex-col justify-center border-r-2 border-dashed border-indigo-100 min-w-0 text-left">
+                  <div className="px-4 py-2 flex-1 flex flex-col justify-center border-r-2 border-dashed border-primary-100 min-w-0 text-left">
                     <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                      <button onClick={() => setMobileViewThread(false)} className="md:hidden p-1 -ml-1 text-slate-400 hover:bg-indigo-100 rounded-lg">
+                      <button onClick={() => setMobileViewThread(false)} className="md:hidden p-1 -ml-1 text-slate-400 hover:bg-primary-100 rounded-lg">
                         <ChevronRight size={16} className="rotate-180" />
                       </button>
                       <h2 className="text-[14px] font-extrabold text-slate-900 truncate leading-none">{selectedTicket.subject}</h2>
@@ -348,13 +348,13 @@ const SupportPage = () => {
                     <div className="w-full h-5 opacity-60" style={{ background: "repeating-linear-gradient(to right, #1e293b 0, #1e293b 1.5px, transparent 1.5px, transparent 3px, #1e293b 3px, #1e293b 4px, transparent 4px, transparent 6px)" }}></div>
                     <button 
                       disabled
-                      className="w-full py-1.5 bg-indigo-50/50 border border-indigo-100 text-indigo-300 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 cursor-not-allowed"
+                      className="w-full py-1.5 bg-primary-50/50 border border-primary-100 text-primary-300 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 cursor-not-allowed"
                     >
                       <CheckCircle2 size={12} /> Mark Resolved
                     </button>
                   </div>
 
-                  <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full border-l border-indigo-100/50"></div>
+                  <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full border-l border-primary-100/50"></div>
                 </div>
               </div>
 
@@ -362,7 +362,7 @@ const SupportPage = () => {
               <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5">
                 {/* Initial Description Block */}
                 <div className="flex items-start gap-4 p-5 bg-white border border-slate-100 rounded-2xl shadow-sm text-left">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100/50 font-bold text-sm">
+                  <div className="w-9 h-9 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 border border-primary-100/50 font-bold text-sm">
                     {selectedTicket.createdBy?.name?.slice(0, 2).toUpperCase() || "US"}
                   </div>
                   <div className="space-y-1.5 flex-1 min-w-0">
@@ -388,13 +388,13 @@ const SupportPage = () => {
                         key={msg.id}
                         className={`flex items-start gap-4 p-4.5 rounded-2xl border transition-all text-left max-w-2xl shadow-sm ${
                           isSenderAdmin
-                            ? "bg-indigo-50/45 border-indigo-200/60 mr-auto"
+                            ? "bg-primary-50/45 border-primary-200/60 mr-auto"
                             : "bg-white border-slate-100 ml-auto"
                         }`}
                       >
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border font-bold text-sm ${
                           isSenderAdmin 
-                            ? "bg-indigo-600 text-white border-indigo-700 shadow-sm"
+                            ? "bg-primary-600 text-white border-primary-700 shadow-sm"
                             : "bg-slate-500 text-white border-slate-600 shadow-sm"
                         }`}>
                           {isSenderAdmin ? "AD" : (msg.sender?.name?.slice(0, 2).toUpperCase() || "US")}
@@ -431,7 +431,7 @@ const SupportPage = () => {
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="Type your reply here..."
-                      className="flex-1 px-3.5 py-3 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all bg-slate-50 hover:bg-slate-100/50 focus:bg-white font-medium text-slate-700 resize-none min-h-[46px] max-h-[46px] leading-relaxed custom-scrollbar"
+                      className="flex-1 px-3.5 py-3 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-slate-50 hover:bg-slate-100/50 focus:bg-white font-medium text-slate-700 resize-none min-h-[46px] max-h-[46px] leading-relaxed custom-scrollbar"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
@@ -442,7 +442,7 @@ const SupportPage = () => {
                     <button
                       type="submit"
                       disabled={isSending || !replyText.trim()}
-                      className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-50 shadow-md shadow-indigo-100/50 cursor-pointer shrink-0 w-12 h-[46px]"
+                      className="px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-50 shadow-md shadow-primary-100/50 cursor-pointer shrink-0 w-12 h-[46px]"
                     >
                       {isSending ? (
                         <Loader2 size={16} className="animate-spin" />
@@ -456,7 +456,7 @@ const SupportPage = () => {
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-slate-400 gap-3">
-              <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100/30 animate-pulse">
+              <div className="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center text-primary-600 shadow-sm border border-primary-100/30 animate-pulse">
                 <LifeBuoy size={28} strokeWidth={2} />
               </div>
               <h3 className="text-sm font-extrabold text-slate-800 mt-2">Select a Support Ticket</h3>

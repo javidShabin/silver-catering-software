@@ -93,7 +93,7 @@ const InvoicePreviewModal = ({ invoice, tenant, onClose }) => {
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrintInvoice}
-              className="bg-indigo-600 hover:bg-indigo-700 text-[#ffffff] px-4 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+              className="bg-primary-600 hover:bg-primary-700 text-[#ffffff] px-4 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
               <FileText size={14} /> Print
             </button>

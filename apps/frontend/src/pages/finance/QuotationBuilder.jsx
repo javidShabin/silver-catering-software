@@ -506,7 +506,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
           <div>
             <label className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1">Package</label>
             <select 
-              className="w-full h-8 rounded border border-indigo-200 bg-indigo-50/50 px-2 text-xs outline-none focus:border-indigo-500 font-semibold text-indigo-700"
+              className="w-full h-8 rounded border border-primary-200 bg-primary-50/50 px-2 text-xs outline-none focus:border-primary-500 font-semibold text-primary-700"
               onChange={(e) => { 
                 if (e.target.value) handleApplyPackage(e.target.value); 
               }}
@@ -687,14 +687,14 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
               )}
 
               {selectedPackage && (
-                <div className="flex items-center justify-between p-2 bg-indigo-50 border border-indigo-100 rounded text-xs">
+                <div className="flex items-center justify-between p-2 bg-primary-50 border border-primary-100 rounded text-xs">
                   <div>
-                    <p className="font-bold text-indigo-900">{selectedPackage.name}</p>
-                    <p className="text-[10px] text-indigo-600">
+                    <p className="font-bold text-primary-900">{selectedPackage.name}</p>
+                    <p className="text-[10px] text-primary-600">
                       Package: {CURRENCY}{Number(selectedPackage.pricePerHead || 0).toFixed(2)} / pax
                     </p>
                   </div>
-                  <div className="text-right font-black text-indigo-900">
+                  <div className="text-right font-black text-primary-900">
                     {CURRENCY}{selectedPackageTotal.toFixed(2)}
                   </div>
                 </div>
@@ -812,7 +812,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                             <p className="text-[10px] text-slate-500">{menu.category}</p>
                           </div>
                           {isPackageItem ? (
-                            <div className="px-2 py-1 text-[9px] font-bold rounded bg-indigo-100 text-indigo-700">
+                            <div className="px-2 py-1 text-[9px] font-bold rounded bg-primary-100 text-primary-700">
                               Package
                             </div>
                           ) : (

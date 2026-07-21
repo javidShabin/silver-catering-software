@@ -58,7 +58,7 @@ const GenerateInvoiceModal = ({
             />
           </div>
 
-          <div className="bg-indigo-50/40 p-4 rounded-2xl border border-indigo-100/50 text-xs text-indigo-950 mt-4 space-y-2.5 font-semibold">
+          <div className="bg-primary-50/40 p-4 rounded-2xl border border-primary-100/50 text-xs text-primary-950 mt-4 space-y-2.5 font-semibold">
             <div className="flex justify-between">
               <span>Base Subscription:</span>
               <span className="font-bold">₹{basePriceCalculated.toLocaleString("en-IN")}</span>
@@ -69,7 +69,7 @@ const GenerateInvoiceModal = ({
                 <span className="font-bold">+₹{customFeatureCalculated.toLocaleString("en-IN")}</span>
               </div>
             )}
-            <div className="border-t border-indigo-200/50 my-2 pt-2 flex justify-between text-indigo-600 font-extrabold text-sm">
+            <div className="border-t border-primary-200/50 my-2 pt-2 flex justify-between text-primary-600 font-extrabold text-sm">
               <span>Total Due:</span>
               <span>₹{totalPriceCalculated.toLocaleString("en-IN")}</span>
             </div>
@@ -88,7 +88,7 @@ const GenerateInvoiceModal = ({
             type="button"
             onClick={onGenerate}
             disabled={isGeneratingInvoice || !invoiceDueDate}
-            className="px-4 py-2 text-sm font-semibold text-[#ffffff] bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-60 shadow-sm cursor-pointer"
+            className="px-4 py-2 text-sm font-semibold text-[#ffffff] bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60 shadow-sm cursor-pointer"
           >
             {isGeneratingInvoice ? "Generating..." : "Generate"}
           </button>
