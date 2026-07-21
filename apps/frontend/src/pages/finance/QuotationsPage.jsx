@@ -399,62 +399,87 @@ const QuotationsPage = () => {
         description={`Configure details for ${selectedQuote?.quotationNumber}`}
         maxWidth="max-w-2xl"
       >
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input 
-              label="Event Title" 
-              value={convertForm.title} 
-              onChange={e => setConvertForm({...convertForm, title: e.target.value})} 
-            />
-            <Input 
-              label="Location" 
-              value={convertForm.location} 
-              onChange={e => setConvertForm({...convertForm, location: e.target.value})} 
-            />
+        <div className="space-y-4 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">Event Title</label>
+              <input 
+                type="text"
+                placeholder="e.g. Wedding Reception"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+                value={convertForm.title} 
+                onChange={e => setConvertForm({...convertForm, title: e.target.value})} 
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">Location</label>
+              <input 
+                type="text"
+                placeholder="e.g. Grand Hall"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+                value={convertForm.location} 
+                onChange={e => setConvertForm({...convertForm, location: e.target.value})} 
+              />
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <DatePicker 
-              label="Date" 
-              value={convertForm.date} 
-              onChange={e => setConvertForm({...convertForm, date: e.target.value})} 
-            />
-            <Input 
-              label="Time" 
-              type="time"
-              value={convertForm.time} 
-              onChange={e => setConvertForm({...convertForm, time: e.target.value})} 
-            />
-            <Input 
-              label="Guest Count" 
-              type="number"
-              value={convertForm.guestCount} 
-              onChange={e => setConvertForm({...convertForm, guestCount: parseInt(e.target.value) || 0})} 
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input 
-              label={`Advance Amount Paid (${CURRENCY}) - Optional`} 
-              type="number"
-              value={convertForm.advanceAmount} 
-              onChange={e => setConvertForm({...convertForm, advanceAmount: parseInt(e.target.value) || 0})} 
-            />
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">Date</label>
+              <input 
+                type="date"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+                value={convertForm.date} 
+                onChange={e => setConvertForm({...convertForm, date: e.target.value})} 
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">Time</label>
+              <input 
+                type="time"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+                value={convertForm.time} 
+                onChange={e => setConvertForm({...convertForm, time: e.target.value})} 
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">Guest Count</label>
+              <input 
+                type="number"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+                value={convertForm.guestCount} 
+                onChange={e => setConvertForm({...convertForm, guestCount: parseInt(e.target.value) || 0})} 
+              />
+            </div>
           </div>
 
-          <div className="bg-primary-50 border border-primary-100 text-primary-700 text-sm p-3 rounded-lg flex gap-2 items-start mt-2">
-            <Calendar size={18} className="shrink-0 mt-0.5" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">{`Advance Amount Paid (${CURRENCY}) - Optional`}</label>
+              <input 
+                type="number"
+                className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
+                value={convertForm.advanceAmount} 
+                onChange={e => setConvertForm({...convertForm, advanceAmount: parseInt(e.target.value) || 0})} 
+              />
+            </div>
+          </div>
+
+          <div className="bg-primary-50 border border-primary-100 text-primary-700 text-xs p-3 rounded-lg flex gap-2 items-start mt-2">
+            <Calendar size={14} className="shrink-0 mt-0.5" />
             <p>An Invoice for <strong>{CURRENCY}{Number(selectedQuote?.totalAmount || 0).toFixed(2)}</strong> will be automatically generated and linked to this event upon confirmation.</p>
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t border-slate-100">
             <button 
               onClick={() => setIsConvertOpen(false)}
-              className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer text-center"
+              className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer text-center"
             >
               Cancel
             </button>
             <button 
               onClick={handleConvert}
-              className="w-full sm:w-auto px-4 py-2.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center justify-center shadow-md shadow-primary-500/20 cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center justify-center shadow-sm cursor-pointer gap-2"
             >
               Confirm Event
             </button>
