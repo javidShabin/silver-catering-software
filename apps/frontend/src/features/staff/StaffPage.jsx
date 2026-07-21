@@ -50,10 +50,7 @@ const StaffPage = () => {
     <div className="space-y-6 pb-10">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-1">
-          <div className="inline-flex mx-auto lg:mx-0 items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1c1412] border border-orange-500/30 mb-2 shadow-[0_0_15px_rgba(249,115,22,0.15)]">
-            <Sparkles size={14} className="text-orange-500" />
-            <span className="text-[10px] font-bold text-white uppercase tracking-widest" style={{ textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>{t("staff.staff_management", "Staff Management")}</span>
-          </div>
+
           <h1 className="text-xl font-black text-slate-900 tracking-tight">{t("staff.staff_directory", "Staff Directory")}</h1>
           <p className="text-xs text-slate-500">{t("staff.staff_subtitle", "Manage your catering team, roles, and access.")}</p>
         </div>

@@ -85,10 +85,7 @@ const PackagesPage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
-          <div className="inline-flex mx-auto md:mx-0 items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1c1412] border border-orange-500/30 mb-2 shadow-[0_0_15px_rgba(249,115,22,0.15)]">
-            <Sparkles size={14} className="text-orange-500" />
-            <span className="text-[10px] font-bold text-white uppercase tracking-widest" style={{ textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>{t("packages.packages_and_bundles", "Packages & Bundles")}</span>
-          </div>
+
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("packages.catering_packages", "Catering Packages")}</h1>
           <p className="text-sm text-slate-500 mt-1">{t("packages.subtitle", "Manage standard packages and templates for your events")}</p>
         </div>

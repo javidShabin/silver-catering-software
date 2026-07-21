@@ -69,10 +69,7 @@ const MenuPage = () => {
     <div className="space-y-8 pb-10 max-w-7xl mx-auto">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-center lg:text-left">
         <div className="space-y-1">
-          <div className="inline-flex mx-auto lg:mx-0 items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1c1412] border border-orange-500/30 mb-2 shadow-[0_0_15px_rgba(249,115,22,0.15)]">
-            <Sparkles size={14} className="text-orange-500" />
-            <span className="text-[10px] font-bold text-white uppercase tracking-widest" style={{ textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>{t("menu.menu_management", "Menu Management")}</span>
-          </div>
+
           <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight">{t("menu.culinary_directory", "Culinary Directory")}</h1>
           <p className="text-[11px] sm:text-xs text-slate-500 font-medium max-w-md mx-auto lg:mx-0">{t("menu.menu_subtitle", "Plan and manage your event menus, plate pricing, and dietary options with ease.")}</p>
         </div>
