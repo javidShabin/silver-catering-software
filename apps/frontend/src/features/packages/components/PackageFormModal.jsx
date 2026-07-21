@@ -34,7 +34,7 @@ const PackageFormModal = ({ isOpen, onClose, onSuccess, initialData, menuItems }
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : type === "number" ? Number(value) : value
+      [name]: type === "checkbox" ? checked : type === "number" ? (value === "" ? "" : Number(value)) : value
     }));
   };
 

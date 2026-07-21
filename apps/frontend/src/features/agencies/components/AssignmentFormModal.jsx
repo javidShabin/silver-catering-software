@@ -17,8 +17,8 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
     numberOfStaff: 1,
     rentalItems: [],
     numberOfDays: 1,
-    totalAmount: 0,
-    advancePaid: 0,
+    totalAmount: "",
+    advancePaid: "",
     status: "pending",
     notes: ""
   });
@@ -39,8 +39,8 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
         numberOfStaff: assignment.numberOfStaff ?? (isRental ? 0 : 1),
         rentalItems: isRental ? assignment.rentalItems : [],
         numberOfDays: assignment.numberOfDays || 1,
-        totalAmount: assignment.totalAmount || 0,
-        advancePaid: assignment.advancePaid || 0,
+        totalAmount: assignment.totalAmount ?? "",
+        advancePaid: assignment.advancePaid ?? "",
         status: assignment.status || "pending",
         notes: assignment.notes || ""
       });
@@ -52,8 +52,8 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
         numberOfStaff: 1,
         rentalItems: [],
         numberOfDays: 1,
-        totalAmount: 0,
-        advancePaid: 0,
+        totalAmount: "",
+        advancePaid: "",
         status: "pending",
         notes: ""
       });
@@ -373,7 +373,7 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
                                     value={item.quantity}
                                     onChange={(e) => {
                                       const newItems = [...formData.rentalItems];
-                                      newItems[index].quantity = parseInt(e.target.value) || 1;
+                                      newItems[index].quantity = e.target.value === "" ? "" : (parseInt(e.target.value) || 1);
                                       setFormData({ ...formData, rentalItems: newItems });
                                     }}
                                   />
