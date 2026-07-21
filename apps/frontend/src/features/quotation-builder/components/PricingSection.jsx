@@ -22,10 +22,10 @@ const PricingSection = ({
           <div className="bg-slate-800 rounded px-1 py-0.5 border border-slate-700 flex items-center">
             <input 
               type="number"
-              disabled={isViewMode}
+              disabled={true}
               value={taxPercent}
-              onChange={(e) => onTaxPercentChange(Number(e.target.value) || 0)}
-              className="w-6 bg-transparent outline-none text-right text-[10px] text-white"
+              className="w-6 bg-transparent outline-none text-right text-[10px] text-slate-400 cursor-not-allowed"
+              title="Tax rate can only be edited in Settings"
             />
             <span className="text-[9px] ml-0.5 text-slate-400">%</span>
           </div>

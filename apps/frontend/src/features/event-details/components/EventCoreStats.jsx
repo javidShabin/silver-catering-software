@@ -248,15 +248,14 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
                 {isSaving ? "Saving..." : "Save"}
               </button>
             )}
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 rounded-lg px-2 py-1 transition-all focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-500/10">
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 rounded-lg px-2 py-1 transition-all" title="Tax rate can only be edited in Settings">
               <span className="text-[9px] font-bold text-slate-500 uppercase">Tax %</span>
               <input
                 type="number"
                 min="0"
                 value={localTaxRate}
-                onChange={(e) => setLocalTaxRate(e.target.value)}
-                disabled={isSaving}
-                className="w-10 bg-transparent text-xs font-bold text-slate-800 focus:outline-none text-right disabled:opacity-50"
+                disabled={true}
+                className="w-10 bg-transparent text-xs font-bold text-slate-500 focus:outline-none text-right cursor-not-allowed"
               />
             </div>
             

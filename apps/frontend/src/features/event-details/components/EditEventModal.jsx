@@ -167,17 +167,16 @@ const EditEventModal = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
+            <div className="space-y-1.5" title="Tax rate can only be edited in Settings">
               <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block px-1">Tax Rate (%)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">%</span>
                 <input
                   type="number"
-                  min="0"
+                  disabled={true}
                   placeholder="e.g. 5"
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl pl-7 pr-4 py-2.5 text-xs focus:outline-none focus:border-orange-500 focus:bg-white focus:ring-4 focus:ring-orange-500/5 transition-all text-slate-700 font-semibold"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl pl-7 pr-4 py-2.5 text-xs text-slate-400 font-semibold cursor-not-allowed"
                   value={editFormData.taxRate}
-                  onChange={(e) => setEditFormData({ ...editFormData, taxRate: e.target.value })}
                 />
               </div>
             </div>
