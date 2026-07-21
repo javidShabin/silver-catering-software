@@ -262,12 +262,17 @@ export const getMe = catchAsync(async (req, res) => {
 
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const uploadProfilePic = catchAsync(async (req, res) => {
   if (!req.file) throw new AppError("Please provide an image file", 400);
   const user = await prisma.auth.findUnique({ where: { id: req.user.id } });
   if (user.profilePic && user.profilePic.startsWith("/uploads/")) {
-    const oldPath = path.join(process.cwd(), user.profilePic);
+    const filename = user.profilePic.replace("/uploads/", "");
+    const oldPath = path.join(__dirname, "../../../uploads", filename);
     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
   }
   const profilePicUrl = `/uploads/${req.file.filename}`;

@@ -3,6 +3,10 @@ import catchAsync from "../../utils/catchAsync.js";
 import AppError from "../../utils/AppError.js";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const workspaceSettingsKey = "workspace_settings";
 
@@ -176,7 +180,8 @@ export const uploadWorkspaceLogo = catchAsync(async (req, res) => {
   const currentSettings = normalizeWorkspaceSettings(current.value);
 
   if (currentSettings.logoUrl?.startsWith("/uploads/")) {
-    const oldPath = path.join(process.cwd(), currentSettings.logoUrl);
+    const filename = currentSettings.logoUrl.replace("/uploads/", "");
+    const oldPath = path.join(__dirname, "../../../uploads", filename);
     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
   }
 
