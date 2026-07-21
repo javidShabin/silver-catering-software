@@ -93,7 +93,7 @@ app.use(morgan("dev"));
 
 // Serve static files (like generated PDFs)
 app.use("/public", express.static(path.join(__dirname, "../public")));
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/reports", reportsRoutes);
