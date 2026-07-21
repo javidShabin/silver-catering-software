@@ -12,7 +12,7 @@ import {
   Shield
 } from "lucide-react";
 
-export const StaffCard = React.memo(({ member, onEdit, onDelete }) => {
+export const StaffCard = React.memo(({ member, onEdit, onDelete, isCurrentUser }) => {
   const roleColors = {
     admin: "bg-rose-50 text-rose-600 border-rose-100",
     manager: "bg-amber-50 text-amber-600 border-amber-100",
@@ -71,12 +71,16 @@ export const StaffCard = React.memo(({ member, onEdit, onDelete }) => {
             </button>
           </div>
           <div className="flex items-center gap-0.5">
-            <button onClick={() => onEdit(member)} className="p-1.5 text-slate-350 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all">
-              <Edit2 size={14} />
-            </button>
-            <button onClick={() => onDelete(member)} className="p-1.5 text-slate-355 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
-              <Trash2 size={14} />
-            </button>
+            {!isCurrentUser && (
+              <>
+                <button onClick={() => onEdit(member)} className="p-1.5 text-slate-350 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all">
+                  <Edit2 size={14} />
+                </button>
+                <button onClick={() => onDelete(member)} className="p-1.5 text-slate-355 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
+                  <Trash2 size={14} />
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

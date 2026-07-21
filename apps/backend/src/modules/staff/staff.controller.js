@@ -286,7 +286,7 @@ export const addRole = catchAsync(async (req, res) => {
 
   // Check if role already exists for this tenant
   const existingRole = await prisma.role.findUnique({ 
-    where: { _name: {  name: lowercaseName } } 
+    where: { name: lowercaseName } 
   });
   if (existingRole) {
     throw new AppError("A role with this name already exists", 400);

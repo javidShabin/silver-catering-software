@@ -11,9 +11,11 @@ import CreateStaffForm from "./components/CreateStaffForm";
 import EmptyState from "../../components/ui/EmptyState";
 import { GridSkeleton } from "../../components/ui/Skeleton";
 import { useTranslation } from "react-i18next";
+import { useAuthStore } from "../../store/authStore";
 
 const StaffPage = () => {
   const { t } = useTranslation();
+  const user = useAuthStore((state) => state.user);
   const {
     staff, isLoading,
     search, setSearch,
@@ -96,6 +98,7 @@ const StaffPage = () => {
             <StaffCard 
               key={member.id} 
               member={member} 
+              isCurrentUser={member.id === user?.id}
               onEdit={() => openEditModal(member)} 
               onDelete={() => openDeleteModal(member)} 
             />
