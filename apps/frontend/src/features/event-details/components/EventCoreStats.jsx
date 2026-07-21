@@ -46,7 +46,7 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
         price = Number((sel.price !== undefined && sel.price !== null && sel.price !== "") ? sel.price : menu.minPrice);
       }
       if (sel.type === "PER_UNIT") {
-        qty = 1;
+        qty = Number(sel.quantity) || 1;
       }
     } else if (safeCustomPrices?.[menu.id] !== undefined) {
       price = Number(safeCustomPrices[menu.id]);
@@ -80,8 +80,8 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
   // Extract invoice data for accurate billing totals
   const invoice = event.invoices?.[0];
   
-  // Use invoice totals if available, otherwise fallback to local calculation
-  const subTotal = invoice ? Number(invoice.subtotal) : (menusTotal + eventFee + inventoryRentTotal + cateringBoysTotal);
+  // Use dynamic subtotal to reflect live changes on the frontend
+  const subTotal = menusTotal + eventFee + inventoryRentTotal + cateringBoysTotal;
   const taxAmount = invoice ? Number(invoice.tax) : 0;
   const discountAmount = invoice ? Number(invoice.discountAmount) : 0;
   const grandTotal = invoice ? Number(invoice.totalAmount) : subTotal;
