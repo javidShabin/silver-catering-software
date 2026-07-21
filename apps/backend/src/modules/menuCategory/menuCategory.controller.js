@@ -51,7 +51,7 @@ export const createCategory = catchAsync(async (req, res) => {
   }
 
   const existing = await prisma.menuCategory.findUnique({
-    where: { _name: {  name } }
+    where: { name }
   });
 
   if (existing) {
@@ -88,7 +88,7 @@ export const updateCategory = catchAsync(async (req, res) => {
   // If renaming, check for conflicts
   if (name && name !== existingName) {
     const nameExists = await prisma.menuCategory.findUnique({
-      where: { _name: {  name } }
+      where: { name }
     });
     if (nameExists) {
       throw new AppError("A category with this name already exists", 400);
@@ -134,7 +134,7 @@ export const deleteCategory = catchAsync(async (req, res) => {
 
   // Ensure "Uncategorized" exists for this tenant
   let uncategorized = await prisma.menuCategory.findUnique({
-    where: { _name: {  name: "Uncategorized" } }
+    where: { name: "Uncategorized" }
   });
 
   if (!uncategorized && category.name !== "Uncategorized") {
