@@ -11,6 +11,7 @@ import { useTenantStore } from "../../store/useTenantStore";
 
 const BackupSettings = () => {
   const [isRestoring, setIsRestoring] = useState(false);
+  const [isBackingUp, setIsBackingUp] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingFile, setPendingFile] = useState(null);
   const fileInputRef = useRef(null);
@@ -117,7 +118,20 @@ const BackupSettings = () => {
     }
   };
 
-
+  const handleTriggerBackup = async () => {
+    try {
+      setIsBackingUp(true);
+      const res = await api.post('/backup/trigger');
+      if (res.data.status === 'success') {
+        toast.success("Backup started! It will be saved to Google Drive shortly.");
+      }
+    } catch (err) {
+      console.error("Backup trigger failed:", err);
+      toast.error(err.response?.data?.message || "Failed to trigger backup.");
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
 
   const handleRestoreClick = () => {
     fileInputRef.current?.click();
@@ -199,11 +213,13 @@ const BackupSettings = () => {
           
           <div className="flex items-center gap-1.5 shrink-0">
             <button
-              onClick={handleConnectGoogleDrive}
-              disabled={isLoadingStatus}
+              onClick={backupStatus.isConnected ? handleTriggerBackup : handleConnectGoogleDrive}
+              disabled={isLoadingStatus || isBackingUp}
               className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
             >
-              {backupStatus.isConnected ? "Sync Now" : "Sync Now"}
+              {isBackingUp ? (
+                <><Loader2 size={12} className="animate-spin" /> ...</>
+              ) : backupStatus.isConnected ? "Backup Now" : "Connect Drive"}
             </button>
             <input 
               type="file" 
