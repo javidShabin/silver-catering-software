@@ -397,15 +397,22 @@ const QuotationsPage = () => {
         onClose={() => setIsConvertOpen(false)}
         title="Convert to Event"
         description={`Configure details for ${selectedQuote?.quotationNumber}`}
-        maxWidth="max-w-lg"
+        maxWidth="max-w-2xl"
       >
-        <div className="space-y-3">
-          <Input 
-            label="Event Title" 
-            value={convertForm.title} 
-            onChange={e => setConvertForm({...convertForm, title: e.target.value})} 
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input 
+              label="Event Title" 
+              value={convertForm.title} 
+              onChange={e => setConvertForm({...convertForm, title: e.target.value})} 
+            />
+            <Input 
+              label="Location" 
+              value={convertForm.location} 
+              onChange={e => setConvertForm({...convertForm, location: e.target.value})} 
+            />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <DatePicker 
               label="Date" 
               value={convertForm.date} 
@@ -417,13 +424,6 @@ const QuotationsPage = () => {
               value={convertForm.time} 
               onChange={e => setConvertForm({...convertForm, time: e.target.value})} 
             />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Input 
-              label="Location" 
-              value={convertForm.location} 
-              onChange={e => setConvertForm({...convertForm, location: e.target.value})} 
-            />
             <Input 
               label="Guest Count" 
               type="number"
@@ -431,7 +431,7 @@ const QuotationsPage = () => {
               onChange={e => setConvertForm({...convertForm, guestCount: parseInt(e.target.value) || 0})} 
             />
           </div>
-          <div className="grid grid-cols-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input 
               label={`Advance Amount Paid (${CURRENCY}) - Optional`} 
               type="number"
