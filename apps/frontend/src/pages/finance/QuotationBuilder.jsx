@@ -849,7 +849,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                                     type="number" min="0"
                                     value={sel?.price !== undefined ? sel.price : (formData.customMenuPrices?.[menuId] !== undefined ? formData.customMenuPrices[menuId] : menu.minPrice)}
                                     onChange={(e) => handleMenuSelectionChange(menuId, "price", e.target.value)}
-                                    className="w-16 h-6 rounded border border-slate-200 pl-5 pr-1 text-right text-xs outline-none focus:border-primary-500 bg-white"
+                                    className="w-24 h-6 rounded border border-slate-200 pl-5 pr-1 text-right text-xs outline-none focus:border-primary-500 bg-white"
                                   />
                                 </div>
                               </div>
