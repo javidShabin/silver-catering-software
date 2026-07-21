@@ -10,6 +10,19 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_REDIRECT_URI
 );
 
+const TABLES_IN_ORDER = [
+  'role', 'systemSetting', 'sequence',
+  'auth', 'customer', 'supplier', 'manpowerAgency',
+  'menuCategory', 'inventoryCategory',
+  'menu', 'inventory', 'package',
+  'event', 'quotation', 'invoice',
+  'invoiceItem', 'payment', 'purchase', 'expense',
+  'extraBill', 'dutyRoster', 'inventoryAllocation',
+  'recipeIngredient', 'eventIngredient', 'stockHistory',
+  'agencyAssignment', 'feedback', 'notification',
+  'announcement', 'supportTicket', 'supportMessage'
+];
+
 const SETTINGS_FILE = path.join(process.cwd(), "backup_settings.json");
 
 const getBackupSettings = () => {
@@ -116,16 +129,16 @@ export const triggerBackup = async (req, res, next) => {
         });
 
         // 1. Extract Data
-        const [customers, events, invoices] = await Promise.all([
-          prisma.customer.findMany(),
-          prisma.event.findMany(),
-          prisma.invoice.findMany()
-        ]);
-
         const backupData = {
           timestamp: new Date().toISOString(),
-          data: { customers, events, invoices }
+          data: {}
         };
+        
+        for (const table of TABLES_IN_ORDER) {
+          if (prisma[table]) {
+            backupData.data[table] = await prisma[table].findMany();
+          }
+        }
 
         // 2. Encrypt
         const encryptedPayload = encryptData(backupData);
@@ -183,16 +196,16 @@ export const runAllTenantsBackup = async () => {
       });
 
       // 1. Extract Data
-      const [customers, events, invoices] = await Promise.all([
-        prisma.customer.findMany(),
-        prisma.event.findMany(),
-        prisma.invoice.findMany()
-      ]);
-
       const backupData = {
         timestamp: new Date().toISOString(),
-        data: { customers, events, invoices }
+        data: {}
       };
+      
+      for (const table of TABLES_IN_ORDER) {
+        if (prisma[table]) {
+          backupData.data[table] = await prisma[table].findMany();
+        }
+      }
 
       // 2. Encrypt
       const encryptedPayload = encryptData(backupData);
@@ -265,35 +278,19 @@ export const restoreBackup = async (req, res, next) => {
       return res.status(400).json({ status: "error", message: "No data found in the backup file." });
     }
 
-    const { customers = [], events = [], invoices = [] } = backupData.data;
-
     // 4. Restore using Prisma Transaction (Upsert to prevent foreign key errors)
     await prisma.$transaction(async (tx) => {
-      // Restore Customers
-      for (const customer of customers) {
-        await tx.customer.upsert({
-          where: { id: customer.id },
-          update: customer,
-          create: customer
-        });
-      }
-
-      // Restore Events
-      for (const event of events) {
-        await tx.event.upsert({
-          where: { id: event.id },
-          update: event,
-          create: event
-        });
-      }
-
-      // Restore Invoices
-      for (const invoice of invoices) {
-        await tx.invoice.upsert({
-          where: { id: invoice.id },
-          update: invoice,
-          create: invoice
-        });
+      for (const table of TABLES_IN_ORDER) {
+        const records = backupData.data[table] || [];
+        if (tx[table] && records.length > 0) {
+          for (const record of records) {
+            await tx[table].upsert({
+              where: { id: record.id },
+              update: record,
+              create: record
+            });
+          }
+        }
       }
     });
 
