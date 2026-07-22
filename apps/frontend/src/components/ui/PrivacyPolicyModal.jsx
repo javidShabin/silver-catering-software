@@ -35,7 +35,8 @@ const PrivacyPolicyModal = ({ isOpen, onAccept }) => {
     
     setIsLoading(true);
     try {
-      await api.post('/auth/accept-privacy-policy');
+      // Use local storage to persist the acceptance flag across reloads
+      localStorage.setItem(`privacyPolicyAccepted_${user?.id || 'guest'}`, 'true');
       
       updateUser({
         ...user,

@@ -61,54 +61,36 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
-      {/* Left side: Image & Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gray-900 overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2070&auto=format&fit=crop" 
-            alt="Catering Background" 
-            className="object-cover w-full h-full opacity-60 transition-transform duration-1000 hover:scale-105" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
+    <div className="flex min-h-screen bg-slate-50 items-center justify-center p-4">
+      <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2 animate-in fade-in duration-300">
+        
+        {/* Back button */}
+        <div>
+          <Link 
+            to="/login"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            <ArrowLeft size={16} /> {t("auth.back_to_login", "Back to Login")}
+          </Link>
         </div>
-        <div className="relative z-10 flex flex-col justify-end p-12 w-full text-white">
-          <div className="flex items-center mb-6 space-x-3">
-            <img src="/logo.png" alt="Docateos" className="h-14 w-auto object-contain drop-shadow-md" />
+
+        <div className="text-center">
+          <div className="flex justify-center items-center gap-2 mb-2">
+            <img src="/software_logo.PNG" alt="Logo" className="h-10 w-auto object-contain" />
+            <div className="flex flex-col text-left leading-none">
+              <span className="font-black text-base tracking-tight text-slate-900">SILVER</span>
+              <span className="font-bold text-[8px] tracking-[0.2em] text-slate-500 uppercase">Catering</span>
+            </div>
           </div>
-          <p className="text-lg text-gray-300 max-w-lg leading-relaxed">
-            {t("auth.login_subtitle", "Elevate your events with our world-class catering management platform.")}
+          <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">
+            {step === 1 ? t("auth.forgot_password_title", "Forgot Password") : t("auth.reset_password", "Reset Password")}
+          </h2>
+          <p className="mt-1 text-sm text-gray-500">
+            {step === 1 
+              ? t("auth.enter_email_for_otp", "Enter your email address to receive a 6-digit verification code.") 
+              : `${t("auth.we_sent_otp", "We sent a verification code to")} ${email}`}
           </p>
         </div>
-      </div>
-
-      {/* Right side: Form */}
-      <div className="flex items-center justify-center w-full lg:w-1/2 px-4 py-12 sm:px-6 lg:px-8 bg-white">
-        <div className="w-full max-w-md space-y-8 animate-in fade-in duration-300">
-          
-          {/* Back button */}
-          <div>
-            <Link 
-              to="/login"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
-            >
-              <ArrowLeft size={16} /> {t("auth.back_to_login", "Back to Login")}
-            </Link>
-          </div>
-
-          <div className="text-center lg:text-left">
-            <div className="flex justify-center lg:justify-start lg:hidden mb-6">
-              <img src="/logo.png" alt="Docateos" className="h-12 w-auto object-contain" />
-            </div>
-            <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-              {step === 1 ? t("auth.forgot_password_title", "Forgot Password") : t("auth.reset_password", "Reset Password")}
-            </h2>
-            <p className="mt-2 text-sm text-gray-500 font-medium">
-              {step === 1 
-                ? t("auth.enter_email_for_otp", "Enter your email address to receive a 6-digit verification code.") 
-                : `${t("auth.we_sent_otp", "We sent a verification code to")} ${email}`}
-            </p>
-          </div>
 
           {error && (
             <div className="p-4 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl">
@@ -128,22 +110,21 @@ const ForgotPassword = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@elitecatering.com"
-                  className="rounded-xl"
+                  className="rounded-xl" inputClassName="!py-2 text-sm"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading || !email}
-                className="relative flex justify-center w-full px-4 py-3.5 text-sm font-semibold text-white transition-all bg-primary-600 rounded-xl hover:bg-primary-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                className="relative flex justify-center w-full px-4 py-2 text-sm font-semibold text-white transition-all bg-primary-600 rounded-xl hover:bg-primary-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isLoading ? t("auth.sending_otp", "Sending OTP...") : t("auth.send_otp", "Send Verification OTP")}
               </button>
             </form>
           ) : (
-            /* Step 2: Verification and Password Reset Form */
-            <form className="mt-8 space-y-6" onSubmit={handleResetPassword}>
-              <div className="space-y-5">
+            <form className="mt-4 space-y-2" onSubmit={handleResetPassword}>
+              <div className="space-y-2">
                 <Input
                   id="otp"
                   type="text"
@@ -164,7 +145,7 @@ const ForgotPassword = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="rounded-xl"
+                  className="rounded-xl" inputClassName="!py-2 text-sm"
                 />
 
                 <Input
@@ -175,7 +156,7 @@ const ForgotPassword = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="rounded-xl"
+                  className="rounded-xl" inputClassName="!py-2 text-sm"
                 />
               </div>
 
@@ -194,14 +175,12 @@ const ForgotPassword = () => {
               <button
                 type="submit"
                 disabled={isLoading || !otp || !newPassword || !confirmPassword}
-                className="relative flex justify-center w-full px-4 py-3.5 text-sm font-semibold text-white transition-all bg-primary-600 rounded-xl hover:bg-primary-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                className="relative flex justify-center w-full px-4 py-2 text-sm font-semibold text-white transition-all bg-primary-600 rounded-xl hover:bg-primary-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isLoading ? t("auth.resetting_password", "Resetting Password...") : t("auth.reset_password", "Reset Password")}
               </button>
             </form>
           )}
-
-        </div>
       </div>
     </div>
   );

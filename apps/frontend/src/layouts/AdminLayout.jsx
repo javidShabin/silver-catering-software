@@ -173,7 +173,7 @@ const AdminLayout = () => {
         </div>
       )}
 
-      {user?.role === "admin" && user?.privacyPolicyAccepted === false && (
+      {user && !localStorage.getItem(`privacyPolicyAccepted_${user.id || 'guest'}`) && !user.privacyPolicyAccepted && (
         <PrivacyPolicyModal isOpen={true} />
       )}
     </>

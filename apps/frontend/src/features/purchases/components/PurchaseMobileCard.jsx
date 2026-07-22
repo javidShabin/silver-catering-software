@@ -50,7 +50,7 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
   };
 
   return (
-    <div 
+    <div
       className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-2 transition-transform"
     >
       {/* Top Row: Date & Status */}
@@ -60,7 +60,7 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
           {p.paymentStatus}
         </span>
       </div>
-      
+
       {/* Item Details */}
       <div className="flex justify-between items-start">
         <div>
@@ -76,7 +76,7 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
         </div>
         <div className="flex items-center gap-1.5">
           {p.paymentStatus !== "paid" && (
-            <button 
+            <button
               className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 rounded-lg transition-colors mr-1 whitespace-nowrap shrink-0"
               onClick={handleCompleteClick}
               title="Mark as Paid"
@@ -84,14 +84,14 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
               <CheckCircle size={14} /> <span>Mark Paid</span>
             </button>
           )}
-          <button 
+          <button
             className="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
             onClick={() => onEdit(p)}
             title="Edit"
           >
             <Edit size={16} />
           </button>
-          <button 
+          <button
             className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
             onClick={handleDelete}
             title="Remove"
@@ -113,7 +113,7 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
             </div>
             <span className="text-[11px] text-slate-600 font-medium">{p.supplier?.name || "Legacy Supplier"}</span>
           </div>
-          
+
           {p.paymentHistory && p.paymentHistory.length > 0 && (
             <button
               onClick={() => setShowHistory(true)}
@@ -123,7 +123,7 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
             </button>
           )}
         </div>
-        
+
         <div className="flex justify-between items-end bg-slate-50/50 p-2 rounded-lg border border-slate-50">
           <div className="text-left">
             <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-wider block">Paid</span>
@@ -159,7 +159,7 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
           </div>
         </div>
       )}
-      
+
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

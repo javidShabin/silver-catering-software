@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { ChefHat } from "lucide-react";
+import { ChefHat, User, Mail, Lock, ArrowRight } from "lucide-react";
 import Input from "../../components/ui/Input";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../utils/firebase";
@@ -74,91 +74,87 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
-      {/* Left side: Image & Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gray-900 overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2070&auto=format&fit=crop" 
-            alt="Catering Background" 
-            className="object-cover w-full h-full opacity-60 transition-transform duration-1000 hover:scale-105" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
-        </div>
-        <div className="relative z-10 flex flex-col justify-end p-12 w-full text-white">
-          <div className="flex items-center mb-6 space-x-3">
-            <img src="/software_logo.PNG" alt="Docateos" className="h-14 w-auto object-contain drop-shadow-md" />
-          </div>
-          <p className="text-lg text-gray-300 max-w-lg leading-relaxed">
-            {t("auth.signup_subtitle", "Join us to deliver unforgettable culinary experiences with our world-class platform.")}
-          </p>
-        </div>
-      </div>
-
-      {/* Right side: Form */}
-      <div className="flex items-center justify-center w-full lg:w-1/2 px-4 py-12 sm:px-6 lg:px-8 bg-white overflow-y-auto">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center lg:text-left">
-            <div className="flex justify-center lg:justify-start lg:hidden mb-6">
-              <img src="/software_logo.PNG" alt="Docateos" className="h-12 w-auto object-contain" />
+    <div className="flex min-h-screen bg-slate-50 items-center justify-center p-4">
+      <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2">
+        <div className="text-center">
+          <div className="flex justify-center items-center gap-2 mb-2">
+            <img src="/software_logo.PNG" alt="Logo" className="h-10 w-auto object-contain" />
+            <div className="flex flex-col text-left leading-none">
+              <span className="font-black text-base tracking-tight text-slate-900">SILVER</span>
+              <span className="font-bold text-[8px] tracking-[0.2em] text-slate-500 uppercase">Catering</span>
             </div>
-            <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">{t("auth.create_account", "Create Account")}</h2>
-            <p className="mt-2 text-sm text-gray-500">{t("auth.join_today", "Join Docateos today")}</p>
           </div>
+          <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">
+            Create <span className="text-primary-600">Account</span>
+          </h2>
+          <p className="mt-1 text-sm text-gray-500">Join Silver Catering today</p>
+        </div>
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <form className="mt-4 space-y-2" onSubmit={handleSubmit}>
             {(error || validationError) && (
               <div className="p-4 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl">
                 {validationError || error}
               </div>
             )}
 
-            <div className="space-y-5">
+            <div className="space-y-2">
               {step === 1 ? (
-                <>
-                  <Input
-                    id="name"
-                    type="text"
-                    label={t("auth.full_name", "Full Name")}
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="John Doe"
-                    className="rounded-xl"
-                  />
-                  <Input
-                    id="email"
-                    type="email"
-                    label={t("auth.email", "Email Address")}
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@elitecatering.com"
-                    className="rounded-xl"
-                  />
-                  <Input
-                    id="password"
-                    type="password"
-                    label={t("auth.password", "Password")}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="rounded-xl"
-                  />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    label={t("auth.confirm_password", "Confirm Password")}
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="rounded-xl"
-                  />
-                </>
+                <div className="space-y-2">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Full Name</label>
+                    <Input
+                      id="name"
+                      type="text"
+                      leftIcon={User}
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="rounded-xl" inputClassName="!py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Email Address</label>
+                    <Input
+                      id="email"
+                      type="email"
+                      leftIcon={Mail}
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      className="rounded-xl" inputClassName="!py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Password</label>
+                    <Input
+                      id="password"
+                      type="password"
+                      leftIcon={Lock}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Create a password"
+                      className="rounded-xl" inputClassName="!py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Confirm Password</label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      leftIcon={Lock}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your password"
+                      className="rounded-xl" inputClassName="!py-2 text-sm"
+                    />
+                  </div>
+                </div>
               ) : (
-                <div className="space-y-4 animate-in fade-in duration-300">
+                <div className="space-y-2 animate-in fade-in duration-300">
                   <p className="text-sm text-gray-600 text-center">
                     We've sent a 6-digit OTP to <strong className="text-gray-900">{email}</strong>. Please enter it below.
                   </p>
@@ -170,7 +166,7 @@ const Signup = () => {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
                     placeholder="123456"
-                    className="rounded-xl text-center tracking-[0.5em] text-lg font-bold"
+                    className="rounded-xl text-center tracking-[0.5em] text-base font-bold"
                     maxLength={6}
                   />
                   <button type="button" onClick={() => setStep(1)} className="text-sm text-primary-600 hover:underline w-full text-center mt-2">
@@ -183,17 +179,18 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="relative flex justify-center w-full px-4 py-3.5 text-sm font-semibold text-white transition-all bg-primary-600 rounded-xl hover:bg-primary-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="relative flex justify-center items-center w-full px-4 py-2.5 text-sm font-semibold text-white transition-all bg-primary-600 rounded-xl hover:bg-primary-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed group"
             >
-              {isLoading ? (step === 1 ? "Sending OTP..." : "Verifying...") : (step === 1 ? t("auth.sign_up", "Sign Up") : "Verify & Create Account")}
+              {isLoading ? (step === 1 ? "Sending OTP..." : "Verifying...") : (step === 1 ? "Sign Up" : "Verify & Create Account")}
+              {step === 1 && !isLoading && <ArrowRight className="absolute right-4 w-4 h-4 group-hover:translate-x-1 transition-transform" />}
             </button>
             
-            <div className="relative my-8">
+            <div className="relative my-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 text-gray-500 bg-white">{t("auth.or_continue_with", "Or continue with")}</span>
+                <span className="px-4 text-gray-500 bg-white">{t("auth.or_continue_with", "or continue with")}</span>
               </div>
             </div>
 
@@ -201,7 +198,7 @@ const Signup = () => {
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="flex items-center justify-center w-full px-4 py-3.5 text-sm font-semibold text-gray-700 transition-all bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-70"
+              className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-gray-700 transition-all bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-70"
             >
               <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -221,7 +218,6 @@ const Signup = () => {
           </form>
         </div>
       </div>
-    </div>
   );
 };
 
