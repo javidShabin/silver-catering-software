@@ -7,7 +7,10 @@ import { emitToUser } from "../../utils/socket.js";
  * Get notifications for the authenticated user
  */
 export const getMyNotifications = catchAsync(async (req, res) => {
-  const where = { recipientId: req.user.id };
+  const where = { 
+    recipientId: req.user.id,
+    title: { notIn: ['Promised Payment Today', 'Overdue Promised Payment'] }
+  };
 
 
   const notifications = await prisma.notification.findMany({
