@@ -323,6 +323,22 @@ export const forgotPassword = catchAsync(async (req, res) => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
   await prisma.auth.update({ where: { id: user.id }, data: { resetOtp: otp, resetOtpExpires: otpExpires } });
+
+  const emailHtml = `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2>Password Reset Request</h2>
+      <p>You requested to reset your password. Please use the OTP below to reset it:</p>
+      <h1 style="color: #f97316; letter-spacing: 5px;">${otp}</h1>
+      <p>This code will expire in 10 minutes.</p>
+    </div>
+  `;
+
+  await sendEmail({
+    to: user.email,
+    subject: "Password Reset OTP - Catering System",
+    htmlContent: emailHtml
+  });
+
   res.status(200).json({ success: true, message: "If that email exists in our system, we have sent a 6-digit OTP code." });
 });
 
@@ -348,6 +364,22 @@ export const requestPasswordChange = catchAsync(async (req, res) => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
   await prisma.auth.update({ where: { id: user.id }, data: { resetOtp: otp, resetOtpExpires: otpExpires } });
+
+  const emailHtml = `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2>Password Change Request</h2>
+      <p>You requested to change your password from the settings. Please use the OTP below to confirm the change:</p>
+      <h1 style="color: #f97316; letter-spacing: 5px;">${otp}</h1>
+      <p>This code will expire in 10 minutes.</p>
+    </div>
+  `;
+
+  await sendEmail({
+    to: user.email,
+    subject: "Password Change OTP - Catering System",
+    htmlContent: emailHtml
+  });
+
   res.status(200).json({ success: true, message: "A 6-digit OTP code has been sent." });
 });
 
