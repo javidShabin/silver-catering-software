@@ -79,6 +79,7 @@ export const createQuotation = async (req, res, next) => {
       durationInDays,
       taxPercent, // Remove from rest to avoid Prisma error
       customMenuSelections,
+      staffAllocations,
       customer,
       customerId,
       ...rest
@@ -97,7 +98,8 @@ export const createQuotation = async (req, res, next) => {
       customMenuPrices: customMenuPrices || {},
       customMenuSelections: customMenuSelections || {},
       inventoryAllocations: inventoryAllocations || [],
-      customItems: customItems || []
+      customItems: customItems || [],
+      staffAllocations: staffAllocations || []
     };
 
     if (menuItems && Array.isArray(menuItems) && menuItems.length > 0) {
@@ -142,6 +144,7 @@ export const updateQuotation = async (req, res, next) => {
       durationInDays,
       taxPercent, // Remove from rest to avoid Prisma error
       customMenuSelections,
+      staffAllocations,
       customer,
       customerId,
       ...rest
@@ -158,6 +161,7 @@ export const updateQuotation = async (req, res, next) => {
     if (customMenuSelections !== undefined) updateData.customMenuSelections = customMenuSelections;
     if (inventoryAllocations !== undefined) updateData.inventoryAllocations = inventoryAllocations;
     if (customItems !== undefined) updateData.customItems = customItems;
+    if (staffAllocations !== undefined) updateData.staffAllocations = staffAllocations;
 
     if (menuItems && Array.isArray(menuItems)) {
       updateData.menuItems = {
@@ -245,6 +249,7 @@ export const approveQuotation = async (req, res, next) => {
         cateringBoyRate: quotation.cateringBoyRate,
         customMenuPrices: quotation.customMenuPrices || {},
         customMenuSelections: quotation.customMenuSelections || {},
+        staffAllocations: quotation.staffAllocations || [],
         packageId: quotation.packageId,
         advanceAmount: advanceAmount ? Number(advanceAmount) : 0
       };

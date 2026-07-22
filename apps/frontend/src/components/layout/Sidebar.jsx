@@ -42,6 +42,7 @@ const navigationGroups = [
       { name: "Calendar", path: "/calendar", icon: CalendarDays, roles: ["admin", "manager", "kitchen-staff", "accountant"], feature: "calendar" },
       { name: "Events", path: "/events", icon: PartyPopper, roles: ["admin", "manager"], feature: "events" },
       { name: "Customers", path: "/customers", icon: Users, roles: ["admin", "manager", "accountant"], feature: "customers" },
+      { name: "Staff Roles", path: "/staff-roles", icon: ClipboardList, roles: ["admin", "manager"] },
       { name: "Feedback", path: "/feedback", icon: MessageSquare, roles: ["admin", "manager"], feature: "POST_EVENT_FEEDBACK" },
     ]
   },
@@ -237,7 +238,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                   <nav className="space-y-0.5">
                     {filteredItems.map((item) => {
                       const Icon = item.icon;
-                      const isActive = location.pathname.startsWith(item.path);
+                      const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
                       
                       return (
                         <NavLink

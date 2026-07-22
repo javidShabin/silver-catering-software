@@ -15,6 +15,7 @@ import menuRoutes from "./modules/menu/menu.routes.js";
 import menuCategoryRoutes from "./modules/menuCategory/menuCategory.routes.js";
 import billingRoutes from "./modules/billing/billing.routes.js";
 import staffRoutes from "./modules/staff/staff.routes.js";
+import staffRoleRoutes from "./modules/staffRoles/staffRole.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
 import quotationRoutes from "./modules/quotations/quotation.routes.js";
 import expenseRoutes from "./modules/expenses/expense.routes.js";
@@ -106,6 +107,7 @@ app.use("/api/v1/menu", menuRoutes);
 app.use("/api/v1/menu-categories", menuCategoryRoutes);
 app.use("/api/v1/billing", billingRoutes);
 app.use("/api/v1/staff", staffRoutes);
+app.use("/api/v1/staff-roles", staffRoleRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/quotations", quotationRoutes);
 app.use("/api/v1/expenses", expenseRoutes);
@@ -131,6 +133,7 @@ app.use((req, res, next) => {
 app.use(globalErrorHandler);
 
 export default app;
+// Nodemon Trigger
 // nodemon restart
 
 // nodemon trigger

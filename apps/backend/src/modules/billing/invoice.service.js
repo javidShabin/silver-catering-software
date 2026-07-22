@@ -101,6 +101,30 @@ class InvoiceService {
         calculatedSubtotal = calculatedSubtotal.plus(cateringTotal);
       }
 
+      // Dynamic Staff Allocations
+      if (event.staffAllocations) {
+        let staffAllocations = event.staffAllocations;
+        if (typeof staffAllocations === 'string') {
+          try { staffAllocations = JSON.parse(staffAllocations); } catch (e) { staffAllocations = []; }
+        }
+        if (Array.isArray(staffAllocations) && staffAllocations.length > 0) {
+          staffAllocations.forEach((staff) => {
+            const staffCount = Number(staff.count) || 0;
+            const staffRate = new Prisma.Decimal(staff.rate || 0);
+            if (staffCount > 0 && staffRate.gt(0)) {
+              const staffTotal = staffRate.times(staffCount).times(duration);
+              invoiceItems.push({
+                description: `Staff: ${staff.role || 'Unknown'} (${staffCount} persons for ${duration} days)`,
+                quantity: staffCount * duration,
+                unitPrice: staffRate,
+                total: staffTotal
+              });
+              calculatedSubtotal = calculatedSubtotal.plus(staffTotal);
+            }
+          });
+        }
+      }
+
       // Extra bills (Food Shortages / Extra Cooking) added to the client's invoice subtotal
       if (event.extraBills && event.extraBills.length > 0) {
         event.extraBills.forEach((bill) => {
@@ -114,19 +138,17 @@ class InvoiceService {
       // Add Inventory Allocations (Equipment Rental per day)
       if (event.inventoryAllocations && event.inventoryAllocations.length > 0) {
         event.inventoryAllocations.forEach((allocation) => {
-          if (allocation.inventory && allocation.inventory.rentPerDay) {
-            const rentPrice = new Prisma.Decimal(allocation.inventory.rentPerDay);
-            if (rentPrice.gt(0)) {
-              const qty = new Prisma.Decimal(allocation.quantity || 1);
-              const totalRent = rentPrice.times(qty).times(duration);
-              calculatedSubtotal = calculatedSubtotal.plus(totalRent);
+          if (allocation.inventory) {
+            const rentPrice = new Prisma.Decimal(allocation.inventory.rentPerDay || 0);
+            const qty = new Prisma.Decimal(allocation.quantity || 1);
+            const totalRent = rentPrice.times(qty).times(duration);
+            calculatedSubtotal = calculatedSubtotal.plus(totalRent);
 
-              invoiceItems.push({
-                description: `Rental: ${allocation.inventory.name} (Qty: ${qty.toNumber()} for ${duration} days)`,
-                quantity: qty.toNumber() * duration,
-                unitPrice: rentPrice,
-                total: totalRent});
-            }
+            invoiceItems.push({
+              description: `Rental: ${allocation.inventory.name} (Qty: ${qty.toNumber()} for ${duration} days)`,
+              quantity: qty.toNumber() * duration,
+              unitPrice: rentPrice,
+              total: totalRent});
           }
         });
       }

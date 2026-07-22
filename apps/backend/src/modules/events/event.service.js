@@ -137,7 +137,7 @@ class EventService {
    * Create a new event
    */
   async createEvent(eventData, userId) {
-    const { date, time, location, customer, title, guestCount, assignedStaff, menuItems, type, inventoryAllocations, dutyRoster, extraBills, ...rest } = eventData;
+    const { date, time, location, customer, title, guestCount, assignedStaff, menuItems, type, inventoryAllocations, staffAllocations, dutyRoster, extraBills, ...rest } = eventData;
 
     // 1. Check for conflicts
     const conflict = await this.checkBookingConflict(date, time, location);
@@ -157,7 +157,8 @@ class EventService {
         guestCount,
         customerId: customer,
         customMenuPrices: eventData.customMenuPrices || {},
-        customMenuSelections: eventData.customMenuSelections || {}
+        customMenuSelections: eventData.customMenuSelections || {},
+        staffAllocations: staffAllocations || []
       };
 
       if (assignedStaff && assignedStaff.length > 0) {
@@ -253,7 +254,7 @@ class EventService {
    * Update an event
    */
   async updateEvent(eventId, updateDataParams, userId) {
-    const { date, time, location, assignedStaff, menuItems, inventoryItems, dutyRoster, extraBills, customer, type, taxRate, discountValue, ...rest } = updateDataParams;
+    const { date, time, location, assignedStaff, menuItems, inventoryItems, dutyRoster, extraBills, customer, type, taxRate, discountValue, staffAllocations, ...rest } = updateDataParams;
     let { inventoryAllocations } = updateDataParams;
 
     try {
@@ -280,6 +281,7 @@ class EventService {
         if (customer) updateData.customerId = customer;
         if (updateDataParams.customMenuPrices !== undefined) updateData.customMenuPrices = updateDataParams.customMenuPrices;
         if (updateDataParams.customMenuSelections !== undefined) updateData.customMenuSelections = updateDataParams.customMenuSelections;
+        if (staffAllocations !== undefined) updateData.staffAllocations = staffAllocations;
 
         if (assignedStaff) {
           updateData.assignedStaff = {

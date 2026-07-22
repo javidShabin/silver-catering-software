@@ -28,6 +28,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     menuItems,
     customMenuSelections,
     inventoryAllocations,
+    staffAllocations,
     customItems,
   } = quotation;
 
@@ -40,6 +41,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
 
   const selections = parseJson(customMenuSelections, {});
   const allocations = parseJson(inventoryAllocations, []);
+  const staff = parseJson(staffAllocations, []);
   const extras = parseJson(customItems, []);
   const menus = Array.isArray(menuItems) ? menuItems : [];
 
@@ -86,7 +88,6 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     ...packageLines,
     ...menuLines,
     ...allocations
-      .filter((a) => Number(a.rentPerDay || 0) > 0)
       .map((a) => ({
         description: `${a.name} (Equipment Rental)`,
         note: `${a.quantity} ${a.unit} × ${durationInDays} day(s)`,
@@ -96,13 +97,20 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       })),
     ...(cateringBoyCost > 0
       ? [{
-          description: "Catering Staff",
+          description: "Catering Staff (Legacy)",
           note: `${cateringBoysCount} staff × ${durationInDays} day(s)`,
           qty: Number(cateringBoysCount),
           unitPrice: Number(cateringBoyRate || 0),
           total: cateringBoyCost,
         }]
       : []),
+    ...staff.map((s) => ({
+      description: `Staff: ${s.role || "Unknown"}`,
+      note: `${Number(s.count) || 0} staff × ${durationInDays} day(s)`,
+      qty: Number(s.count) || 0,
+      unitPrice: Number(s.rate || 0),
+      total: (Number(s.count) || 0) * Number(s.rate || 0) * Number(durationInDays || 1),
+    })),
     ...extras.map((item) => ({
       description: item.description,
       note: null,
@@ -185,8 +193,11 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                 <div>Guests: <strong>{guestCount}</strong></div>
                 <div>Duration: <strong>{durationInDays} day(s)</strong></div>
                 {Number(cateringBoysCount) > 0 && (
-                  <div>Catering Staff: <strong>{cateringBoysCount}</strong></div>
+                  <div>Catering Boys: <strong>{cateringBoysCount}</strong> (Legacy)</div>
                 )}
+                {staff.map((s, idx) => (
+                  <div key={idx}>{s.role}: <strong>{s.count}</strong></div>
+                ))}
               </div>
             </td>
             <td style={{ verticalAlign: "top", textAlign: "right" }}>

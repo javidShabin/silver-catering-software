@@ -36,18 +36,32 @@ const EventCulinarySetup = ({ event, openMenuModal, openStaffModal, openInventor
           <Users size={16} className="text-primary-500 shrink-0 mt-0.5 group-hover/staff:scale-105 transition-transform" />
           <div className="space-y-1.5 w-full">
             <div className="flex justify-between items-center">
-              <p className="font-bold text-slate-800 group-hover/staff:text-primary-600 transition-colors">Staff Assigned</p>
+              <p className="font-bold text-slate-800 group-hover/staff:text-primary-600 transition-colors">Staff Roles</p>
               <button
                 onClick={(e) => { e.stopPropagation(); openStaffModal(); }}
                 className="text-[9px] font-bold text-primary-600 bg-primary-50 hover:bg-primary-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider transition-colors"
               >
-                Show
+                Manage
               </button>
             </div>
             <p className="text-[10px] text-slate-400">
-              {event.assignedStaff && event.assignedStaff.length > 0
-                ? `${event.assignedStaff.length} staff members assigned`
-                : "No staff assigned"}
+              {(() => {
+                let parsed = [];
+                if (event.staffAllocations) {
+                  if (typeof event.staffAllocations === 'string') {
+                    try {
+                      parsed = JSON.parse(event.staffAllocations);
+                    } catch (e) {
+                      parsed = [];
+                    }
+                  } else {
+                    parsed = event.staffAllocations;
+                  }
+                }
+                return parsed && parsed.length > 0
+                  ? `${parsed.reduce((acc, curr) => acc + (Number(curr.count) || 0), 0)} staff across ${parsed.length} roles`
+                  : "No staff roles allocated";
+              })()}
             </p>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { menuApi } from "../../api/menuApi";
 import { inventoryApi } from "../../api/inventoryApi";
 import { customerApi } from "../../api/customerApi";
 import { packagesApi } from "../../api/packagesApi";
+import { staffRoleApi } from "../../api/staffRoleApi";
 import { CURRENCY } from "../../config/currency";
 import SummarySection from "../../features/quotation-builder/components/SummarySection";
 import PricingSection from "../../features/quotation-builder/components/PricingSection";
@@ -18,6 +19,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   const [menus, setMenus] = useState([]);
   const [packages, setPackages] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
+  const [staffRoles, setStaffRoles] = useState([]);
   const [activeTab, setActiveTab] = useState("menus");
   const tenant = useTenantStore((state) => state.tenant) || {};
 
@@ -59,6 +61,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     customMenuPrices: safeJSON(initialData?.customMenuPrices, {}),
     customMenuSelections: safeJSON(initialData?.customMenuSelections, {}),
     inventoryAllocations: safeJSON(initialData?.inventoryAllocations, []),
+    staffAllocations: safeJSON(initialData?.staffAllocations, []),
     customItems: initCustomItems.map(item => ({
       ...item,
       quantity: Number(item.quantity) || 1,
@@ -73,17 +76,19 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [custRes, menuRes, invRes, pkgRes] = await Promise.all([
+        const [custRes, menuRes, invRes, pkgRes, staffRes] = await Promise.all([
           customerApi.getLookup(),
           menuApi.getLookup(),
           inventoryApi.getLookup(),
-          packagesApi.getAll().catch(() => ({ status: 'error', data: [] }))
+          packagesApi.getAll().catch(() => ({ status: 'error', data: [] })),
+          staffRoleApi.getAll().catch(() => ({ status: 'error', data: [] }))
         ]);
         
         if (custRes.status === "success") setCustomers(custRes.data || []);
         if (menuRes.status === "success") setMenus(menuRes.data || []);
         if (invRes.status === "success") setInventoryList(invRes.data || []);
         if (pkgRes.status === "success") setPackages(pkgRes.data || []);
+        if (staffRes.status === "success") setStaffRoles(staffRes.data || []);
       } catch (error) {
         console.error("Error fetching dependencies", error);
       }
@@ -136,6 +141,14 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     if (formData.cateringBoysCount > 0 && formData.cateringBoyRate > 0) {
        sub += Number(formData.cateringBoysCount) * Number(formData.cateringBoyRate) * formData.durationInDays;
     }
+    
+    formData.staffAllocations.forEach(staff => {
+       const staffCount = Number(staff.count) || 0;
+       const staffRate = Number(staff.rate) || 0;
+       if (staffCount > 0 && staffRate > 0) {
+         sub += staffCount * staffRate * formData.durationInDays;
+       }
+    });
     
     // 4. Custom Items
     formData.customItems.forEach(item => {
@@ -395,11 +408,29 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     });
   };
 
-  const removeCustomItem = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      customItems: prev.customItems.filter((_, i) => i !== index)
-    }));
+  const removeCustomItem = (idx) => {
+    const updated = [...formData.customItems];
+    updated.splice(idx, 1);
+    setFormData({...formData, customItems: updated});
+  };
+  
+  const addStaffAllocation = () => {
+    setFormData({
+      ...formData,
+      staffAllocations: [...formData.staffAllocations, { role: "", count: 1, rate: 0 }]
+    });
+  };
+
+  const updateStaffAllocation = (idx, field, value) => {
+    const updated = [...formData.staffAllocations];
+    updated[idx] = { ...updated[idx], [field]: value };
+    setFormData({...formData, staffAllocations: updated});
+  };
+
+  const removeStaffAllocation = (idx) => {
+    const updated = [...formData.staffAllocations];
+    updated.splice(idx, 1);
+    setFormData({...formData, staffAllocations: updated});
   };
 
   const handleSave = async () => {
@@ -409,9 +440,19 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     }
     setLoading(true);
     try {
+      // Enrich inventory allocations with rentPerDay for the PDF template
+      const enrichedAllocations = formData.inventoryAllocations.map(alloc => {
+        const inv = inventoryList.find(i => i.id === alloc.inventoryId);
+        return {
+          ...alloc,
+          rentPerDay: inv ? Number(inv.rentPerDay || 0) : Number(alloc.rentPerDay || 0)
+        };
+      });
+
       // Append calculated totals to payload before saving
       const payload = {
         ...formData,
+        inventoryAllocations: enrichedAllocations,
         packageId: formData.packageId || null,
         subtotal: totals.subtotal,
         tax: totals.tax,
@@ -959,37 +1000,146 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
 
           {/* STAFFING TAB */}
           {activeTab === "staffing" && (
-            <fieldset disabled={isViewMode} className="max-w-md space-y-3">
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-3">
-                <div>
-                  <label className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1">Number of Catering Boys</label>
-                  <input 
-                    type="number" min="0"
-                    value={formData.cateringBoysCount}
-                    onChange={(e) => setFormData({...formData, cateringBoysCount: Number(e.target.value) || 0})}
-                    className="w-full h-8 rounded border border-slate-200 px-2 text-xs outline-none focus:border-primary-500 bg-white"
-                  />
+            <fieldset disabled={isViewMode} className="space-y-3">
+              {!isViewMode && (
+                <div className="flex gap-2 items-center flex-wrap">
+                  <select
+                    className="flex-1 min-w-[150px] h-8 rounded border border-slate-200 px-2 text-xs outline-none focus:border-primary-500"
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        const selectedRole = staffRoles.find(r => r.id === e.target.value);
+                        if (selectedRole) {
+                          setFormData(prev => ({
+                            ...prev,
+                            staffAllocations: [
+                              ...prev.staffAllocations,
+                              { role: selectedRole.name, count: 1, rate: Number(selectedRole.defaultRate) }
+                            ]
+                          }));
+                        }
+                        e.target.value = "";
+                      }
+                    }}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Select staff role...</option>
+                    {staffRoles.map(role => (
+                      <option key={role.id} value={role.id}>
+                        {role.name} ({CURRENCY}{Number(role.defaultRate).toFixed(2)})
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        staffAllocations: [...prev.staffAllocations, { role: "", count: 1, rate: 0 }]
+                      }));
+                    }}
+                    className="shrink-0 whitespace-nowrap h-8 px-3 text-[10px] font-bold rounded flex items-center justify-center gap-1.5 transition-colors border bg-primary-50 text-primary-600 border-primary-100 hover:bg-primary-100"
+                  >
+                    <Plus size={12} /> Custom Role
+                  </button>
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1">Rate per Boy (Per Day)</label>
-                  <div className="relative">
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">{CURRENCY}</span>
-                    <input 
-                      type="number" min="0"
-                      value={formData.cateringBoyRate}
-                      onChange={(e) => setFormData({...formData, cateringBoyRate: Number(e.target.value) || 0})}
-                      className="w-full h-8 rounded border border-slate-200 pl-7 pr-2 text-xs outline-none focus:border-primary-500 bg-white"
-                    />
+              )}
+
+              {formData.staffAllocations.length > 0 ? (
+                <div className="space-y-2 max-h-[165px] overflow-y-auto pr-1 custom-scrollbar">
+                  {formData.staffAllocations.map((staff, idx) => {
+                    const staffCount = Number(staff.count) || 0;
+                    const staffRate = Number(staff.rate) || 0;
+                    const totalCost = staffCount * staffRate * formData.durationInDays;
+                    
+                    return (
+                      <div key={idx} className="flex items-center gap-3 p-1.5 bg-slate-50 border border-slate-200 rounded text-xs">
+                        <div className="flex-1 min-w-0">
+                          <input
+                            type="text"
+                            placeholder="Role (e.g. Security, Waiter)"
+                            value={staff.role}
+                            onChange={(e) => updateStaffAllocation(idx, 'role', e.target.value)}
+                            className="font-semibold text-slate-800 outline-none bg-transparent w-full truncate px-1"
+                          />
+                        </div>
+                        
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="flex items-center gap-1">
+                            <label className="text-[9px] font-bold text-slate-400">RATE:</label>
+                            <div className="relative flex items-center">
+                              <span className="absolute left-1.5 text-slate-400 font-bold text-[10px]">{CURRENCY}</span>
+                              <input
+                                type="number" min="0"
+                                value={staff.rate}
+                                onChange={(e) => updateStaffAllocation(idx, 'rate', Number(e.target.value))}
+                                className="w-20 h-6 rounded border border-slate-200 pl-4 pr-1 text-right text-xs outline-none focus:border-primary-500 bg-white"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="w-px h-4 bg-slate-200" />
+                          
+                          <div className="flex items-center gap-1">
+                            <label className="text-[9px] font-bold text-slate-400">COUNT:</label>
+                            <input
+                              type="number" min="1"
+                              value={staff.count}
+                              onChange={(e) => updateStaffAllocation(idx, 'count', Number(e.target.value))}
+                              className="w-14 h-6 rounded border border-slate-200 px-1 text-center text-xs outline-none focus:border-primary-500 bg-white"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="w-px h-4 bg-slate-200 shrink-0" />
+                        
+                        <div className="text-right font-black text-slate-700 w-16 shrink-0 truncate">
+                          {CURRENCY}{totalCost.toFixed(2)}
+                        </div>
+
+                        {!isViewMode && (
+                          <button onClick={() => removeStaffAllocation(idx)} className="p-1 text-slate-400 hover:text-rose-500 transition-colors shrink-0">
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-[11px] text-slate-400 italic text-center py-4">No staff roles added.</p>
+              )}
+              
+              {/* Legacy Catering Boys - Render only if it exists in historical data */}
+              {formData.cateringBoysCount > 0 && (
+                <div className="mt-6 pt-4 border-t border-slate-200">
+                  <h4 className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">Legacy Catering Boys (Deprecated)</h4>
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 space-y-3">
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <label className="text-[10px] font-bold tracking-wider text-orange-500 uppercase block mb-1">Number of Catering Boys</label>
+                        <input 
+                          type="number" min="0"
+                          value={formData.cateringBoysCount}
+                          onChange={(e) => setFormData({...formData, cateringBoysCount: Number(e.target.value) || 0})}
+                          className="w-full h-8 rounded border border-orange-200 px-2 text-xs outline-none focus:border-orange-500 bg-white"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-[10px] font-bold tracking-wider text-orange-500 uppercase block mb-1">Rate per Boy (Per Day)</label>
+                        <div className="relative">
+                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-orange-400 text-xs font-bold">{CURRENCY}</span>
+                          <input 
+                            type="number" min="0"
+                            value={formData.cateringBoyRate}
+                            onChange={(e) => setFormData({...formData, cateringBoyRate: Number(e.target.value) || 0})}
+                            className="w-full h-8 rounded border border-orange-200 pl-7 pr-2 text-xs outline-none focus:border-orange-500 bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
-                  <span className="text-[11px] font-bold text-slate-600">Total Staffing Cost:</span>
-                  <span className="text-sm font-black text-slate-900">
-                    {CURRENCY}{(formData.cateringBoysCount * formData.cateringBoyRate * formData.durationInDays).toFixed(2)}
-                  </span>
-                </div>
-              </div>
+              )}
             </fieldset>
           )}
 

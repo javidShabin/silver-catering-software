@@ -47,6 +47,7 @@ const BillingPage = lazy(() => import("../features/billing/BillingPage"));
 const ReportsPage = lazy(() => import("../pages/reports/ReportsPage"));
 const VendorsPage = lazy(() => import("../features/vendors/VendorsPage"));
 const StaffPage = lazy(() => import("../features/staff/StaffPage"));
+const StaffRoles = lazy(() => import("../pages/staffRoles/StaffRoles"));
 const FeedbackList = lazy(() => import("../features/feedback/FeedbackList"));
 const CalendarPage = lazy(() => import("../pages/calendar/CalendarPage"));
 const NotFound = lazy(() => import("../pages/error/NotFound"));
@@ -151,6 +152,7 @@ const AppRouter = () => {
             {/* Admin Specific */}
             <Route element={<ProtectedRoute allowedRoles={["admin", "manager"]} />}>
               <Route path="/staff" element={<StaffPage />} />
+              <Route path="/staff-roles" element={<StaffRoles />} />
               <Route path="/settings" element={<SettingsLayout />} />
               <Route path="/privacy-policy" element={<AdminPrivacyPolicyPage />} />
             </Route>

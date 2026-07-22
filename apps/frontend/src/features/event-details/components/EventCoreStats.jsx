@@ -72,16 +72,32 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
 
 
 
-  // Catering Boys Calculation
+  // Catering Boys Calculation (Legacy)
   const cateringBoysCount = Number(event.cateringBoysCount || 0);
   const cateringBoyRate = Number(event.cateringBoyRate || 0);
   const cateringBoysTotal = cateringBoysCount * cateringBoyRate * Number(event.durationInDays || 1);
+
+  // Dynamic Staff Allocations
+  let parsedStaffAllocations = [];
+  if (event.staffAllocations) {
+    if (typeof event.staffAllocations === 'string') {
+      try { parsedStaffAllocations = JSON.parse(event.staffAllocations); } catch(e) {}
+    } else {
+      parsedStaffAllocations = event.staffAllocations;
+    }
+  }
+
+  const staffAllocationsTotal = Array.isArray(parsedStaffAllocations) 
+    ? parsedStaffAllocations.reduce((acc, staff) => acc + (Number(staff.count || 0) * Number(staff.rate || 0) * Number(event.durationInDays || 1)), 0)
+    : 0;
+
+  const totalStaffCost = cateringBoysTotal + staffAllocationsTotal;
 
   // Extract invoice data for accurate billing totals
   const invoice = event.invoices?.[0];
   
   // Use dynamic subtotal to reflect live changes on the frontend
-  const subTotal = menusTotal + eventFee + inventoryRentTotal + cateringBoysTotal;
+  const subTotal = menusTotal + eventFee + inventoryRentTotal + totalStaffCost;
   const taxAmount = invoice ? Number(invoice.tax) : 0;
   const discountAmount = invoice ? Number(invoice.discountAmount) : 0;
   const grandTotal = invoice ? Number(invoice.totalAmount) : subTotal;
@@ -93,10 +109,6 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
   const [localTaxRate, setLocalTaxRate] = useState(invoice?.taxRate !== undefined ? invoice.taxRate : (tenant?.taxPercentage || 0));
   const [localDiscount, setLocalDiscount] = useState(invoice?.discountValue !== undefined ? invoice.discountValue : 0);
   
-  const [localBoysCount, setLocalBoysCount] = useState(event.cateringBoysCount || 0);
-  const [localBoyRate, setLocalBoyRate] = useState(event.cateringBoyRate || 0);
-  const [showStaffingModal, setShowStaffingModal] = useState(false);
-
   // Live calculation based on local inputs
   const liveTaxAmount = subTotal * (Number(localTaxRate) / 100);
   const liveDiscountAmount = Number(localDiscount);
@@ -115,11 +127,6 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
       setLocalTaxRate(tenant?.taxPercentage || 0);
     }
   }, [invoice, tenant]);
-
-  useEffect(() => {
-    setLocalBoysCount(event.cateringBoysCount || 0);
-    setLocalBoyRate(event.cateringBoyRate || 0);
-  }, [event.cateringBoysCount, event.cateringBoyRate]);
 
   const handleUpdateFinancials = async () => {
     try {
@@ -143,28 +150,6 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
     }
   };
 
-  const handleUpdateStaffing = async () => {
-    if (
-      Number(localBoysCount) === Number(event.cateringBoysCount || 0) &&
-      Number(localBoyRate) === Number(event.cateringBoyRate || 0)
-    ) return;
-
-    setIsSaving(true);
-    try {
-      await eventApi.update(event.id, {
-        cateringBoysCount: Number(localBoysCount),
-        cateringBoyRate: Number(localBoyRate)
-      });
-      const updatedEventRes = await eventApi.getById(event.id);
-      setEvent(updatedEventRes.data);
-      setToast({ message: "Staffing updated successfully", type: "success" });
-    } catch (err) {
-      setToast({ message: "Failed to update staffing", type: "error" });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-start gap-4">
@@ -177,14 +162,6 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
             </p>
           )}
         </div>
-
-        <button
-          onClick={() => setShowStaffingModal(true)}
-          className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5"
-        >
-          <Users size={14} />
-          <span>Staffing</span>
-        </button>
       </div>
 
       {/* Quick Fact Badges Grid */}
@@ -222,11 +199,11 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
         </div>
 
         <div className="bg-slate-50/70 border border-slate-100/60 rounded-2xl p-3.5 space-y-1">
-          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Catering Staff</span>
+          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Total Staffing</span>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 capitalize">
             <Users size={13} className="text-slate-400 shrink-0" />
             <span className="truncate">
-              {CURRENCY}{cateringBoysTotal.toLocaleString("en-IN")}
+              {CURRENCY}{totalStaffCost.toLocaleString("en-IN")}
             </span>
           </div>
         </div>
@@ -307,10 +284,10 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
 
 
           <div className="bg-white border border-slate-200/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-3.5 space-y-1.5">
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Staffing (Boys)</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Staffing Cost</span>
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
               <span className="text-slate-400">{CURRENCY}</span>
-              <span>{cateringBoysTotal.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>{totalStaffCost.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           </div>
 
@@ -352,81 +329,6 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
           </div>
         )}
       </div>
-
-      {/* Staffing Modal */}
-      {showStaffingModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
-              <h2 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                <div className="bg-slate-100 text-slate-600 p-1.5 rounded-md">
-                  <Users size={14} />
-                </div>
-                Manage Catering Boys
-              </h2>
-              <button 
-                onClick={() => setShowStaffingModal(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors outline-none"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-            
-            <div className="p-5 space-y-4">
-              <div>
-                <label className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1.5">Number of Catering Boys</label>
-                <input 
-                  type="number" min="0"
-                  value={localBoysCount}
-                  onChange={(e) => setLocalBoysCount(e.target.value)}
-                  className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all bg-white"
-                />
-              </div>
-              
-              <div>
-                <label className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1.5">Rate per Boy (Per Day)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{CURRENCY}</span>
-                  <input 
-                    type="number" min="0"
-                    value={localBoyRate}
-                    onChange={(e) => setLocalBoyRate(e.target.value)}
-                    className="w-full h-10 rounded-xl border border-slate-200 pl-8 pr-3 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all bg-white"
-                  />
-                </div>
-              </div>
-              
-              <div className="pt-3 border-t border-slate-100">
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex justify-between items-center">
-                  <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase block">Total Cost</span>
-                  <span className="text-lg font-bold text-slate-800">
-                    {CURRENCY}{(Number(localBoysCount) * Number(localBoyRate) * Number(event.durationInDays || 1)).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 bg-slate-50/50">
-              <button 
-                onClick={() => setShowStaffingModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/50 rounded-lg transition-colors outline-none border border-transparent hover:border-slate-300"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={async () => {
-                  await handleUpdateStaffing();
-                  setShowStaffingModal(false);
-                }}
-                disabled={isSaving}
-                className="px-5 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-colors disabled:opacity-50 outline-none"
-              >
-                {isSaving ? "Saving..." : "Save Details"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
