@@ -6,13 +6,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { purchaseApi } from "../../../api/purchaseApi";
 import { toast } from "react-hot-toast";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
+import RecordPurchasePaymentModal from "./RecordPurchasePaymentModal";
 
 const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = React.useState(false);
-  const [addExpense, setAddExpense] = React.useState(false);
+  const [showHistory, setShowHistory] = React.useState(false);
 
   const deleteMutation = useMutation({
     mutationFn: () => purchaseApi.deletePurchase(p.id),
@@ -24,14 +25,14 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
     onError: (error) => toast.error(error.response?.data?.message || "Failed to delete purchase")
   });
 
-  const completeMutation = useMutation({
-    mutationFn: () => purchaseApi.updatePaymentStatus(p.id, "paid"),
+  const recordPaymentMutation = useMutation({
+    mutationFn: (data) => purchaseApi.recordPayment(p.id, data),
     onSuccess: () => {
-      toast.success("Purchase marked as complete");
+      toast.success("Payment recorded successfully");
       queryClient.invalidateQueries({ queryKey: ['purchases'] });
       setIsCompleteModalOpen(false);
     },
-    onError: () => toast.error("Failed to update status")
+    onError: (error) => toast.error(error.response?.data?.message || "Failed to record payment")
   });
 
   const handleDelete = (e) => {
@@ -48,13 +49,9 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
     setIsCompleteModalOpen(true);
   };
 
-  const handleConfirmComplete = () => {
-    completeMutation.mutate();
-  };
-
   return (
     <div 
-      className="bg-white p-3 sm:p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-3 transition-transform"
+      className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-2 transition-transform"
     >
       {/* Top Row: Date & Status */}
       <div className="flex justify-between items-center">
@@ -107,19 +104,61 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
       {/* Divider */}
       <div className="h-px bg-slate-100 w-full" />
 
-      {/* Bottom Row: Supplier & Total */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 uppercase">
-            {p.supplier?.name?.charAt(0) || "S"}
+      {/* Bottom Row: Supplier, Paid, Balance, Total */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 uppercase">
+              {p.supplier?.name?.charAt(0) || "S"}
+            </div>
+            <span className="text-[11px] text-slate-600 font-medium">{p.supplier?.name || "Legacy Supplier"}</span>
           </div>
-          <span className="text-xs text-slate-600 font-medium">{p.supplier?.name || "Legacy Supplier"}</span>
+          
+          {p.paymentHistory && p.paymentHistory.length > 0 && (
+            <button
+              onClick={() => setShowHistory(true)}
+              className="text-[9px] font-bold text-primary-600 hover:text-primary-700 transition-colors bg-primary-50 hover:bg-primary-100 px-2 py-1 rounded-md border border-primary-200"
+            >
+              View History
+            </button>
+          )}
         </div>
-        <div className="flex flex-col items-end">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("common.total_amount", "Total Cost")}</span>
-          <span className="text-sm font-black text-slate-900">{CURRENCY}{p.totalAmount}</span>
+        
+        <div className="flex justify-between items-end bg-slate-50/50 p-2 rounded-lg border border-slate-50">
+          <div className="text-left">
+            <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-wider block">Paid</span>
+            <span className="text-[11px] font-bold text-emerald-600">{CURRENCY}{p.advancePaid || "0.00"}</span>
+          </div>
+          <div className="text-center">
+            <span className="text-[9px] font-bold text-rose-500 uppercase tracking-wider block">Balance</span>
+            <span className="text-[11px] font-bold text-rose-600">{CURRENCY}{p.balanceAmount || "0.00"}</span>
+          </div>
+          <div className="text-right">
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">{t("common.total_amount", "Total")}</span>
+            <span className="text-xs font-black text-slate-900">{CURRENCY}{p.totalAmount}</span>
+          </div>
         </div>
       </div>
+
+      {/* Payment History Modal */}
+      {showHistory && p.paymentHistory && p.paymentHistory.length > 0 && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md" onClick={() => setShowHistory(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+              <h3 className="font-bold text-slate-800 text-sm">Payment History</h3>
+              <button onClick={() => setShowHistory(false)} className="text-slate-400 hover:text-slate-800 w-6 h-6 flex items-center justify-center rounded-full bg-slate-100">&times;</button>
+            </div>
+            <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+              {p.paymentHistory.map(hist => (
+                <div key={hist.id} className="flex justify-between items-center text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  <span className="font-semibold text-slate-600">{new Date(hist.paymentDate).toLocaleDateString()} &bull; {hist.method}</span>
+                  <span className="font-black text-emerald-600">{CURRENCY}{hist.amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       
       <ConfirmModal
         isOpen={isDeleteModalOpen}
@@ -131,20 +170,11 @@ const PurchaseMobileCard = ({ purchase: p, statusColors, onEdit }) => {
         isDestructive={true}
         isLoading={deleteMutation.isPending}
       />
-      <ConfirmModal
+      <RecordPurchasePaymentModal
         isOpen={isCompleteModalOpen}
         onClose={() => setIsCompleteModalOpen(false)}
-        onConfirm={handleConfirmComplete}
-        title="Confirm Payment"
-        message="Are you sure you want to mark this purchase as Paid?"
-        confirmText="Confirm & Mark Paid"
-        type="success"
-        isLoading={completeMutation.isPending}
-        extraOption={{
-          label: "Log this as an Expense automatically",
-          checked: addExpense,
-          onChange: setAddExpense
-        }}
+        purchase={p}
+        recordPaymentMutation={recordPaymentMutation}
       />
     </div>
   );

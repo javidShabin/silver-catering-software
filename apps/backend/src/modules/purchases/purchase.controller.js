@@ -67,7 +67,8 @@ export const getAllPurchases = catchAsync(async (req, res) => {
     where: { },
     include: {
       supplier: true,
-      event: { select: { id: true, title: true, date: true } }
+      event: { select: { id: true, title: true, date: true } },
+      paymentHistory: true
     },
     orderBy: [{ purchaseDate: "desc" }, { id: "desc" }],
     take: limitNum + 1
@@ -98,14 +99,27 @@ export const getAllPurchases = catchAsync(async (req, res) => {
  * Create Purchase (Decoupled from Inventory)
  */
 export const createPurchase = catchAsync(async (req, res) => {
-  const { inventoryItem, itemName, quantityPurchased, supplier, totalAmount, purchaseDate, ...rest } = req.body;
+  const { inventoryItem, itemName, quantityPurchased, supplier, totalAmount, purchaseDate, advancePaid, ...rest } = req.body;
   const { id, createdAt, updatedAt, ...allowedRest } = rest;
   
+  const qty = Number(quantityPurchased);
+  const cost = Number(allowedRest.unitCost);
+  const calculatedTotal = qty * cost;
+  const initialAdvance = Number(advancePaid || 0);
+  const initialBalance = Math.max(0, calculatedTotal - initialAdvance);
+
+  let paymentStatus = "pending";
+  if (initialBalance <= 0) paymentStatus = "paid";
+  else if (initialAdvance > 0) paymentStatus = "partial";
+
   const purchaseData = {
     ...allowedRest,
     itemName: itemName || inventoryItem || "Unknown Item",
-    quantityPurchased: Number(quantityPurchased),
-    totalAmount: Number(quantityPurchased) * Number(allowedRest.unitCost),
+    quantityPurchased: qty,
+    totalAmount: calculatedTotal,
+    advancePaid: initialAdvance,
+    balanceAmount: initialBalance,
+    paymentStatus,
     supplierId: supplier,
     eventId: req.body.eventId || null
   };
@@ -127,6 +141,67 @@ export const createPurchase = catchAsync(async (req, res) => {
     data: newPurchase
   });
 
+  invalidateTenantReports();
+});
+
+export const recordPayment = catchAsync(async (req, res) => {
+  const { amount, method, date } = req.body;
+  const purchaseId = req.params.id;
+
+  const purchase = await prisma.purchase.findFirst({ where: { id: purchaseId } });
+
+  if (!purchase) {
+    throw new AppError("No purchase found with that ID", 404);
+  }
+
+  const updatedPurchase = await prisma.$transaction(async (tx) => {
+    await tx.purchase.updateMany({
+      where: { id: purchaseId },
+      data: {
+        advancePaid: { increment: amount },
+        balanceAmount: { decrement: amount }
+      }
+    });
+
+    await tx.purchasePayment.create({
+      data: {
+        purchaseId,
+        amount: Number(amount),
+        method,
+        paymentDate: date ? new Date(date) : new Date()
+      }
+    });
+
+    const partialUpdate = await tx.purchase.findFirst({
+      where: { id: purchaseId },
+      include: { paymentHistory: true }
+    });
+
+    let statusUpdate = partialUpdate.paymentStatus;
+    const currentBalance = new Prisma.Decimal(partialUpdate.balanceAmount);
+    const currentAdvance = new Prisma.Decimal(partialUpdate.advancePaid);
+
+    if (currentBalance.lte(0) && statusUpdate !== "paid") {
+      statusUpdate = "paid";
+    } else if (currentAdvance.gt(0) && currentBalance.gt(0) && statusUpdate === "pending") {
+      statusUpdate = "partial";
+    }
+
+    if (statusUpdate !== partialUpdate.paymentStatus) {
+      await tx.purchase.updateMany({
+        where: { id: purchaseId },
+        data: { paymentStatus: statusUpdate }
+      });
+      return await tx.purchase.findFirst({
+        where: { id: purchaseId },
+        include: { paymentHistory: true, supplier: true }
+      });
+    }
+
+    return partialUpdate;
+  });
+
+  res.status(200).json({ status: "success", data: updatedPurchase });
   invalidateTenantReports();
 });
 
@@ -159,7 +234,8 @@ export const getPurchaseById = catchAsync(async (req, res) => {
   const purchase = await prisma.purchase.findFirst({
     where: { id: req.params.id },
     include: {
-      supplier: true
+      supplier: true,
+      paymentHistory: true
     }
   });
 
@@ -195,7 +271,17 @@ export const updatePurchase = catchAsync(async (req, res) => {
 
   const finalQuantity = dataToUpdate.quantityPurchased !== undefined ? dataToUpdate.quantityPurchased : Number(existingPurchase.quantityPurchased);
   const finalUnitCost = dataToUpdate.unitCost !== undefined ? Number(dataToUpdate.unitCost) : Number(existingPurchase.unitCost);
-  dataToUpdate.totalAmount = finalQuantity * finalUnitCost;
+  const calculatedTotal = finalQuantity * finalUnitCost;
+  
+  dataToUpdate.totalAmount = calculatedTotal;
+  dataToUpdate.balanceAmount = Math.max(0, calculatedTotal - Number(existingPurchase.advancePaid));
+
+  let statusUpdate = existingPurchase.paymentStatus;
+  if (dataToUpdate.balanceAmount <= 0) statusUpdate = "paid";
+  else if (Number(existingPurchase.advancePaid) > 0) statusUpdate = "partial";
+  else statusUpdate = "pending";
+
+  dataToUpdate.paymentStatus = statusUpdate;
 
   const purchase = await prisma.purchase.update({
     where: { id },

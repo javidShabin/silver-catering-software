@@ -17,6 +17,7 @@ router.patch("/suppliers/:id", restrictTo("admin", "manager"), purchaseControlle
 router.get("/", purchaseController.getAllPurchases);
 router.post("/", restrictTo("admin", "manager"), validate(createPurchaseSchema), purchaseController.createPurchase);
 router.get("/:id", purchaseController.getPurchaseById);
+router.post("/:id/payments", restrictTo("admin", "manager"), purchaseController.recordPayment);
 router.patch("/:id/payment", restrictTo("admin", "manager"), validate(updatePurchaseSchema), purchaseController.updatePaymentStatus);
 router.patch("/:id", restrictTo("admin", "manager"), validate(updatePurchaseSchema), purchaseController.updatePurchase);
 router.delete("/:id", restrictTo("admin", "manager"), purchaseController.deletePurchase);

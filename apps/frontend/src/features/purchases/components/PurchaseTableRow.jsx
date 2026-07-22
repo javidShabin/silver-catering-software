@@ -7,6 +7,7 @@ import { purchaseApi } from "../../../api/purchaseApi";
 import { toast } from "react-hot-toast";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
 import { Edit } from "lucide-react";
+import RecordPurchasePaymentModal from "./RecordPurchasePaymentModal";
 
 const PurchaseTableRow = ({ purchase: p, statusColors, onEdit }) => {
   const navigate = useNavigate();
@@ -25,14 +26,14 @@ const PurchaseTableRow = ({ purchase: p, statusColors, onEdit }) => {
     onError: (error) => toast.error(error.response?.data?.message || "Failed to delete purchase")
   });
 
-  const completeMutation = useMutation({
-    mutationFn: () => purchaseApi.updatePaymentStatus(p.id, "paid"),
+  const recordPaymentMutation = useMutation({
+    mutationFn: (data) => purchaseApi.recordPayment(p.id, data),
     onSuccess: () => {
-      toast.success("Purchase marked as complete");
+      toast.success("Payment recorded successfully");
       queryClient.invalidateQueries({ queryKey: ['purchases'] });
       setIsCompleteModalOpen(false);
     },
-    onError: () => toast.error("Failed to update status")
+    onError: (error) => toast.error(error.response?.data?.message || "Failed to record payment")
   });
 
   const handleDelete = (e) => {
@@ -47,12 +48,6 @@ const PurchaseTableRow = ({ purchase: p, statusColors, onEdit }) => {
   const handleCompleteClick = (e) => {
     e.stopPropagation();
     setIsCompleteModalOpen(true);
-  };
-
-  const handleConfirmComplete = () => {
-    completeMutation.mutate();
-    // note: addExpense logic could be sent to backend if backend supported it.
-    // Since it was just requested as a UI extra option, it's captured in state.
   };
 
   return (
@@ -131,20 +126,11 @@ const PurchaseTableRow = ({ purchase: p, statusColors, onEdit }) => {
         isDestructive={true}
         isLoading={deleteMutation.isPending}
       />
-      <ConfirmModal
+      <RecordPurchasePaymentModal
         isOpen={isCompleteModalOpen}
         onClose={() => setIsCompleteModalOpen(false)}
-        onConfirm={handleConfirmComplete}
-        title="Confirm Payment"
-        message="Are you sure you want to mark this purchase as Paid?"
-        confirmText="Confirm & Mark Paid"
-        type="success"
-        isLoading={completeMutation.isPending}
-        extraOption={{
-          label: "Log this as an Expense automatically",
-          checked: addExpense,
-          onChange: setAddExpense
-        }}
+        purchase={p}
+        recordPaymentMutation={recordPaymentMutation}
       />
     </>
   );

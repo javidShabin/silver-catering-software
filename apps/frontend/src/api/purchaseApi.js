@@ -24,6 +24,10 @@ export const purchaseApi = {
     const response = await api.post("/purchases", data);
     return response.data;
   },
+  recordPayment: async (id, data) => {
+    const response = await api.post(`/purchases/${id}/payments`, data);
+    return response.data;
+  },
   updatePaymentStatus: async (id, paymentStatus) => {
     const response = await api.patch(`/purchases/${id}/payment`, { paymentStatus });
     return response.data;

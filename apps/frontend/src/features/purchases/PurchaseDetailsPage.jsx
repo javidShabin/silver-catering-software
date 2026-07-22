@@ -7,6 +7,7 @@ import { purchaseApi } from "../../api/purchaseApi";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import ConfirmModal from "../../components/ui/ConfirmModal";
+import RecordPurchasePaymentModal from "./components/RecordPurchasePaymentModal";
 
 const PurchaseDetailsPage = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const PurchaseDetailsPage = () => {
   const queryClient = useQueryClient();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = React.useState(false);
 
   const { data: purchaseData, isLoading, isError } = useQuery({
     queryKey: ['purchase', id],
@@ -36,6 +38,18 @@ const PurchaseDetailsPage = () => {
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || "Failed to delete purchase");
+    }
+  });
+
+  const recordPaymentMutation = useMutation({
+    mutationFn: (data) => purchaseApi.recordPayment(id, data),
+    onSuccess: () => {
+      toast.success("Payment recorded successfully");
+      queryClient.invalidateQueries({ queryKey: ['purchase', id] });
+      queryClient.invalidateQueries({ queryKey: ['purchases'] });
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to record payment");
     }
   });
 
@@ -71,12 +85,22 @@ const PurchaseDetailsPage = () => {
         >
           <ArrowLeft size={14} /> Back
         </button>
-        <button 
-          onClick={() => setIsDeleteModalOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 hover:shadow-md rounded-lg text-[11px] font-bold transition-all border border-rose-100"
-        >
-          <Trash2 size={14} /> <span className="max-md:hidden">Delete Record</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {Number(purchase.balanceAmount) > 0 && (
+            <button 
+              onClick={() => setIsPaymentModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:shadow-md rounded-lg text-[11px] font-bold transition-all border border-emerald-100"
+            >
+              <IndianRupee size={14} /> <span className="max-md:hidden">Record Payment</span>
+            </button>
+          )}
+          <button 
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 hover:shadow-md rounded-lg text-[11px] font-bold transition-all border border-rose-100"
+          >
+            <Trash2 size={14} /> <span className="max-md:hidden">Delete Record</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -97,11 +121,23 @@ const PurchaseDetailsPage = () => {
                 <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-800 tracking-tight">{purchase.itemName}</h1>
               </div>
             </div>
-            <div className="text-left md:text-right bg-slate-50 md:bg-transparent p-3 md:p-0 rounded-xl">
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Amount</p>
-              <h2 className="text-xl sm:text-2xl font-black text-primary-600">
-                {CURRENCY}{purchase.totalAmount}
-              </h2>
+            <div className="flex flex-col gap-1 text-left md:text-right bg-slate-50 md:bg-transparent p-3 md:p-0 rounded-xl">
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Amount</p>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-800">
+                  {CURRENCY}{purchase.totalAmount}
+                </h2>
+              </div>
+              <div className="flex gap-4 md:justify-end mt-2">
+                <div>
+                  <p className="text-[8px] font-bold text-emerald-500 uppercase tracking-widest">Paid</p>
+                  <p className="text-sm font-bold text-emerald-600">{CURRENCY}{purchase.advancePaid || "0.00"}</p>
+                </div>
+                <div>
+                  <p className="text-[8px] font-bold text-rose-500 uppercase tracking-widest">Balance</p>
+                  <p className="text-sm font-bold text-rose-600">{CURRENCY}{purchase.balanceAmount || "0.00"}</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -195,6 +231,47 @@ const PurchaseDetailsPage = () => {
         </div>
       </div>
 
+      {/* Payment History Section */}
+      {purchase.paymentHistory && purchase.paymentHistory.length > 0 && (
+        <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-xl shadow-slate-200/40 border border-slate-100">
+          <h3 className="text-xs font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <CreditCard size={14} className="text-primary-500" /> Payment History
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
+                  <th className="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Amount</th>
+                  <th className="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Method</th>
+                  <th className="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reference</th>
+                </tr>
+              </thead>
+              <tbody>
+                {purchase.paymentHistory.map((payment) => (
+                  <tr key={payment.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                    <td className="py-3 text-xs font-bold text-slate-700">
+                      {new Date(payment.paymentDate).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 text-xs font-black text-emerald-600">
+                      {CURRENCY}{payment.amount}
+                    </td>
+                    <td className="py-3">
+                      <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                        {payment.method}
+                      </span>
+                    </td>
+                    <td className="py-3 text-xs font-medium text-slate-500">
+                      {payment.reference || "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -204,6 +281,12 @@ const PurchaseDetailsPage = () => {
         confirmText="Delete"
         isDestructive={true}
         isLoading={deleteMutation.isPending}
+      />
+      <RecordPurchasePaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        purchase={purchase}
+        recordPaymentMutation={recordPaymentMutation}
       />
     </motion.div>
   );

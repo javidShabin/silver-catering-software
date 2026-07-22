@@ -230,10 +230,13 @@ model Purchase {
   unitCost          Decimal  @db.Decimal(12, 2)
   totalAmount       Decimal  @db.Decimal(12, 2)
   paymentStatus     String   @default("pending") // "pending", "partial", "paid"
+  advancePaid       Decimal  @default(0) @db.Decimal(12, 2)
+  balanceAmount     Decimal  @default(0) @db.Decimal(12, 2)
   purchaseDate      DateTime @default(now())
   notes             String   @default("")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  paymentHistory    PurchasePayment[]
 
   itemName          String
   supplierId String
@@ -247,6 +250,18 @@ model Purchase {
   @@index([eventId])
   @@index([purchaseDate])
   @@index([paymentStatus])
+}
+
+model PurchasePayment {
+  id          String   @id @default(uuid())
+  purchaseId  String
+  purchase    Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  amount      Decimal  @db.Decimal(12, 2)
+  paymentDate DateTime
+  method      String
+  reference   String?
+
+  @@index([purchaseId])
 }
 
 model Supplier {
