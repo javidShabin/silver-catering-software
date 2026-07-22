@@ -26,7 +26,7 @@ const Input = forwardRef(({
     <div className={`relative w-full ${className}`}>
       <div className="relative group">
         {LeftIcon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-500 transition-colors pointer-events-none z-10">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary-500 transition-colors pointer-events-none z-10">
             <LeftIcon size={18} strokeWidth={2} />
           </div>
         )}
@@ -45,11 +45,11 @@ const Input = forwardRef(({
             props.onBlur?.(e);
           }}
           className={`
-            peer block w-full px-4 pb-2.5 pt-5 text-[15px] max-md:text-[16px] font-medium text-slate-900 bg-slate-50/50 
-            rounded-2xl border border-slate-200/80 shadow-[0_2px_4px_rgba(0,0,0,0.01)] 
+            peer block w-full px-4 pb-2.5 pt-5 text-[15px] max-md:text-[16px] font-medium text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-800/80 
+            rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-[0_2px_4px_rgba(0,0,0,0.01)] 
             transition-all duration-200 ease-out outline-none
-            focus:bg-white focus:border-primary-300 focus:ring-[3px] focus:ring-primary-100/50
-            hover:border-slate-300 hover:bg-slate-50
+            focus:bg-white dark:focus:bg-slate-800 focus:border-primary-300 dark:focus:border-primary-500 focus:ring-[3px] focus:ring-primary-100/50 dark:focus:ring-primary-500/20
+            hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800
             disabled:opacity-50 disabled:bg-slate-100 disabled:cursor-not-allowed
             ${LeftIcon ? 'pl-11' : ''}
             ${(RightIcon || isPassword) ? 'pr-11' : ''}
@@ -63,7 +63,7 @@ const Input = forwardRef(({
           <label
             htmlFor={id}
             className={`
-              absolute text-slate-500 duration-200 transform -translate-y-3.5 scale-75 top-4 z-10 origin-[0]
+              absolute text-slate-500 dark:text-slate-400 dark:text-slate-500 duration-200 transform -translate-y-3.5 scale-75 top-4 z-10 origin-[0]
               ${LeftIcon ? 'left-11' : 'left-4'}
               peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 
               peer-focus:top-4 peer-focus:-translate-y-3.5 peer-focus:scale-75
@@ -80,14 +80,14 @@ const Input = forwardRef(({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none focus:text-primary-500"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 transition-colors focus:outline-none focus:text-primary-500"
           >
             {showPassword ? <EyeOff size={18} strokeWidth={2} /> : <Eye size={18} strokeWidth={2} />}
           </button>
         )}
 
         {RightIcon && !isPassword && (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">
             <RightIcon size={18} strokeWidth={2} />
           </div>
         )}

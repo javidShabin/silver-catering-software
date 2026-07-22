@@ -61,8 +61,8 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 items-center justify-center p-4">
-      <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2 animate-in fade-in duration-300">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-[#0b0f19] items-center justify-center p-4">
+      <div className="w-full max-w-[420px] bg-white dark:bg-[#121826] rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2 animate-in fade-in duration-300">
         
         {/* Back button */}
         <div>
@@ -78,14 +78,14 @@ const ForgotPassword = () => {
           <div className="flex justify-center items-center gap-2 mb-2">
             <img src="/software_logo.PNG" alt="Logo" className="h-10 w-auto object-contain" />
             <div className="flex flex-col text-left leading-none">
-              <span className="font-black text-base tracking-tight text-slate-900">SILVER</span>
+              <span className="font-black text-base tracking-tight text-slate-900 dark:text-white">SILVER</span>
               <span className="font-bold text-[8px] tracking-[0.2em] text-slate-500 uppercase">Catering</span>
             </div>
           </div>
-          <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             {step === 1 ? t("auth.forgot_password_title", "Forgot Password") : t("auth.reset_password", "Reset Password")}
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
             {step === 1 
               ? t("auth.enter_email_for_otp", "Enter your email address to receive a 6-digit verification code.") 
               : `${t("auth.we_sent_otp", "We sent a verification code to")} ${email}`}

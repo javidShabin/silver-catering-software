@@ -73,20 +73,20 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 items-center justify-center p-4">
-      <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-[#0b0f19] items-center justify-center p-4">
+      <div className="w-full max-w-[420px] bg-white dark:bg-[#121826] rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2">
         <div className="text-center">
           <div className="flex justify-center items-center gap-2 mb-2">
             <img src="/software_logo.PNG" alt="Logo" className="h-10 w-auto object-contain" />
             <div className="flex flex-col text-left leading-none">
-              <span className="font-black text-base tracking-tight text-slate-900">SILVER</span>
+              <span className="font-black text-base tracking-tight text-slate-900 dark:text-white">SILVER</span>
               <span className="font-bold text-[8px] tracking-[0.2em] text-slate-500 uppercase">Catering</span>
             </div>
           </div>
-          <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             Welcome <span className="text-primary-600">Back</span>
           </h2>
-          <p className="mt-1 text-sm text-gray-500">Please enter your details to sign in.</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Please enter your details to sign in.</p>
         </div>
 
           <form className="mt-4 space-y-2" onSubmit={handleSubmit}>
@@ -134,10 +134,10 @@ const Login = () => {
 
             <div className="relative my-5">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
+                <div className="w-full border-t border-gray-200 dark:border-slate-700"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 text-gray-500 bg-white">{t("auth.or_continue_with", "or continue with")}</span>
+                <span className="px-4 text-gray-500 dark:text-slate-400 bg-white dark:bg-[#121826]">{t("auth.or_continue_with", "or continue with")}</span>
               </div>
             </div>
 
@@ -145,7 +145,7 @@ const Login = () => {
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-gray-700 transition-all bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-70"
+              className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-gray-700 dark:text-slate-300 transition-all bg-white dark:bg-[#121826] border border-gray-200 dark:border-slate-700 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 hover:border-gray-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-70"
             >
               <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -158,7 +158,7 @@ const Login = () => {
             
             {/* Conditionally show Signup link if no admin exists yet */}
             {!hasAdmin && (
-              <p className="mt-8 text-center text-sm text-gray-600">
+              <p className="mt-8 text-center text-sm text-gray-600 dark:text-slate-400">
                 {t("auth.first_time_setup", "First time setup?")}{" "}
                 <Link to="/signup" className="font-semibold text-primary-600 hover:text-primary-500">
                   {t("auth.create_admin_account", "Create Admin Account")}

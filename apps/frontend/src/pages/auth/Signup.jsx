@@ -74,20 +74,20 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 items-center justify-center p-4">
-      <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-[#0b0f19] items-center justify-center p-4">
+      <div className="w-full max-w-[420px] bg-white dark:bg-[#121826] rounded-3xl shadow-xl p-5 sm:px-6 sm:py-5 space-y-2">
         <div className="text-center">
           <div className="flex justify-center items-center gap-2 mb-2">
             <img src="/software_logo.PNG" alt="Logo" className="h-10 w-auto object-contain" />
             <div className="flex flex-col text-left leading-none">
-              <span className="font-black text-base tracking-tight text-slate-900">SILVER</span>
+              <span className="font-black text-base tracking-tight text-slate-900 dark:text-white">SILVER</span>
               <span className="font-bold text-[8px] tracking-[0.2em] text-slate-500 uppercase">Catering</span>
             </div>
           </div>
-          <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             Create <span className="text-primary-600">Account</span>
           </h2>
-          <p className="mt-1 text-sm text-gray-500">Join Silver Catering today</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Join Silver Catering today</p>
         </div>
 
           <form className="mt-4 space-y-2" onSubmit={handleSubmit}>
@@ -101,7 +101,7 @@ const Signup = () => {
               {step === 1 ? (
                 <div className="space-y-2">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Full Name</label>
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 mb-1 ml-1">Full Name</label>
                     <Input
                       id="name"
                       type="text"
@@ -114,7 +114,7 @@ const Signup = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Email Address</label>
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 mb-1 ml-1">Email Address</label>
                     <Input
                       id="email"
                       type="email"
@@ -127,7 +127,7 @@ const Signup = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Password</label>
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 mb-1 ml-1">Password</label>
                     <Input
                       id="password"
                       type="password"
@@ -140,7 +140,7 @@ const Signup = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-1">Confirm Password</label>
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 mb-1 ml-1">Confirm Password</label>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -155,8 +155,8 @@ const Signup = () => {
                 </div>
               ) : (
                 <div className="space-y-2 animate-in fade-in duration-300">
-                  <p className="text-sm text-gray-600 text-center">
-                    We've sent a 6-digit OTP to <strong className="text-gray-900">{email}</strong>. Please enter it below.
+                  <p className="text-sm text-gray-600 dark:text-slate-400 text-center">
+                    We've sent a 6-digit OTP to <strong className="text-gray-900 dark:text-white">{email}</strong>. Please enter it below.
                   </p>
                   <Input
                     id="otp"
@@ -187,10 +187,10 @@ const Signup = () => {
             
             <div className="relative my-5">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
+                <div className="w-full border-t border-gray-200 dark:border-slate-700"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 text-gray-500 bg-white">{t("auth.or_continue_with", "or continue with")}</span>
+                <span className="px-4 text-gray-500 dark:text-slate-400 bg-white dark:bg-[#121826]">{t("auth.or_continue_with", "or continue with")}</span>
               </div>
             </div>
 
@@ -198,7 +198,7 @@ const Signup = () => {
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-gray-700 transition-all bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-70"
+              className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-gray-700 dark:text-slate-300 transition-all bg-white dark:bg-[#121826] border border-gray-200 dark:border-slate-700 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 hover:border-gray-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-70"
             >
               <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -210,7 +210,7 @@ const Signup = () => {
             </button>
 
             <div className="pt-4 text-sm text-center">
-              <span className="text-gray-500">{t("auth.already_have_account", "Already have an account?")} </span>
+              <span className="text-gray-500 dark:text-slate-400">{t("auth.already_have_account", "Already have an account?")} </span>
               <Link to="/login" className="font-semibold text-primary-600 hover:text-primary-500 transition-colors">
                 {t("auth.sign_in_link", "Sign in")}
               </Link>
