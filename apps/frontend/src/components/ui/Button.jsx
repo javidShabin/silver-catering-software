@@ -56,7 +56,7 @@ const Button = forwardRef(({
   };
 
   const sizes = {
-    sm: "h-8 max-md:h-9 max-md:px-4 text-[13px] rounded-lg gap-1.5",
+    sm: "h-8 px-3 max-md:h-9 max-md:px-4 text-[13px] rounded-lg gap-1.5",
     default: "h-10 max-md:h-11 px-4 text-[14px] rounded-xl gap-2",
     lg: "h-12 max-md:h-14 px-6 text-[15px] max-md:text-[16px] rounded-2xl gap-2",
     icon: "h-10 max-md:h-11 w-10 max-md:w-11 justify-center rounded-xl"

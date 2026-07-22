@@ -378,10 +378,10 @@ const CustomerDetailsPage = () => {
 
       {/* Set Promised Date Modal */}
       <Modal isOpen={dateModalOpen} onClose={() => setDateModalOpen(false)} title="Set Promised Date">
-        <form onSubmit={handleSetPromisedDate} className="space-y-3">
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-xl text-slate-600 dark:text-slate-300 text-[13px] mb-4 border border-slate-200 dark:border-slate-700/50 leading-relaxed">
-            Set a future date for when the customer promises to pay <strong className="font-semibold text-slate-900 dark:text-white">₹{selectedInvoice ? Number(selectedInvoice.balanceAmount).toLocaleString() : 0}</strong>.
-          </div>
+        <form onSubmit={handleSetPromisedDate} className="space-y-4">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Set a future date for when the customer promises to pay <span className="font-semibold text-slate-900 dark:text-white">₹{selectedInvoice ? Number(selectedInvoice.balanceAmount).toLocaleString() : 0}</span>.
+          </p>
           
           <DatePicker 
             label="Promised Date" 
@@ -391,7 +391,7 @@ const CustomerDetailsPage = () => {
             onChange={(e) => setPromisedDate(e.target.value)}
           />
           
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" size="sm" onClick={() => setDateModalOpen(false)}>Cancel</Button>
             <Button type="submit" variant="primary" size="sm" loading={dateLoading}>Confirm</Button>
           </div>
