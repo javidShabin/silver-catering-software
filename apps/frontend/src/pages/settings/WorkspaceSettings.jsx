@@ -306,7 +306,7 @@ const WorkspaceSettings = () => {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploading || !isEditing}
+                        disabled={isUploading}
                         className="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-slate-200 rounded-md text-[11px] font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm"
                       >
                         {isUploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
