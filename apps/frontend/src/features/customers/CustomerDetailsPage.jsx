@@ -379,8 +379,8 @@ const CustomerDetailsPage = () => {
       {/* Set Promised Date Modal */}
       <Modal isOpen={dateModalOpen} onClose={() => setDateModalOpen(false)} title="Set Promised Date">
         <form onSubmit={handleSetPromisedDate} className="space-y-4">
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Set a future date for when the customer promises to pay <span className="font-semibold text-slate-900 dark:text-white">₹{selectedInvoice ? Number(selectedInvoice.balanceAmount).toLocaleString() : 0}</span>.
+          <p className="text-sm text-slate-600">
+            Set a future date for when the customer promises to pay <span className="font-semibold text-slate-900">₹{selectedInvoice ? Number(selectedInvoice.balanceAmount).toLocaleString() : 0}</span>.
           </p>
           
           <DatePicker 
