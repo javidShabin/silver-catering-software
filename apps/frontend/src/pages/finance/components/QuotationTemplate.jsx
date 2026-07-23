@@ -157,14 +157,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
         <div className="text-right">
           <h1 className="text-3xl font-light text-slate-400 uppercase tracking-widest mb-4">Quotation</h1>
           <div className="text-sm space-y-1">
-            <p className="text-slate-500"><span className="font-semibold text-slate-700">Ref No:</span> {quotationNumber}</p>
             <p className="text-slate-500"><span className="font-semibold text-slate-700">Date:</span> {createdAt ? new Date(createdAt).toLocaleDateString("en-IN") : "—"}</p>
-            <div className="mt-2 inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded border border-slate-200">
-              Status: <span className={
-                status === 'approved' ? 'text-emerald-600' : 
-                status === 'rejected' ? 'text-red-600' : 'text-amber-600'
-              }>{status || "Draft"}</span>
-            </div>
           </div>
         </div>
       </div>
@@ -188,7 +181,6 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
           <div className="text-sm space-y-1 text-slate-700">
             <p>Guests: <span className="font-semibold text-slate-900">{guestCount}</span></p>
             <p>Duration: <span className="font-semibold text-slate-900">{durationInDays} day(s)</span></p>
-            {validUntil && <p className="mt-2 text-slate-500 italic text-xs">Valid Until: {new Date(validUntil).toLocaleDateString("en-IN")}</p>}
           </div>
         </div>
       </div>

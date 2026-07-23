@@ -79,12 +79,6 @@ const InvoiceTemplate = React.forwardRef(({ invoice, viewMode = 'client' }, ref)
           <div className="text-sm space-y-1">
             <p className="text-slate-500"><span className="font-semibold text-slate-700">Invoice No:</span> {invoiceNumber}</p>
             <p className="text-slate-500"><span className="font-semibold text-slate-700">Date:</span> {createdAt ? new Date(createdAt).toLocaleDateString() : ""}</p>
-            <div className="mt-2 inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded border border-slate-200">
-              Status: <span className={
-                status === 'paid' ? 'text-emerald-600' : 
-                status === 'overdue' ? 'text-red-600' : 'text-amber-600'
-              }>{status}</span>
-            </div>
           </div>
         </div>
       </div>
