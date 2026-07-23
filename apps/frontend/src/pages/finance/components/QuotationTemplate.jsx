@@ -219,7 +219,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
           <tr style={{ background: "#f8fafc", color: "#111", borderBottom: "2px solid #333" }}>
             <th style={{ padding: "9px 12px", textAlign: "left", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "36px" }}>#</th>
             <th style={{ padding: "9px 12px", textAlign: "left", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px" }}>Description</th>
-            <th style={{ padding: "9px 12px", textAlign: "right", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "100px" }}>Total</th>
+            <th style={{ padding: "9px 12px", textAlign: "right", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "100px" }}>Qty</th>
           </tr>
         </thead>
         <tbody>
@@ -237,7 +237,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                   <div style={{ fontSize: "12px", fontWeight: "600", color: "#111" }}>{line.description}</div>
                   {line.note && <div style={{ fontSize: "10px", color: "#888", marginTop: "2px" }}>{line.note}</div>}
                 </td>
-                <td style={{ padding: "9px 12px", textAlign: "right", fontSize: "12px", fontWeight: "700", color: "#111", borderBottom: "1px solid #e5e7eb" }}>{CURRENCY}{fmt(line.total)}</td>
+                <td style={{ padding: "9px 12px", textAlign: "right", fontSize: "12px", fontWeight: "700", color: "#111", borderBottom: "1px solid #e5e7eb" }}>{line.qty}</td>
               </tr>
             ))
           )}
