@@ -284,7 +284,7 @@ const WorkspaceSettings = () => {
                   onChange={handleChange}
                   disabled={!isEditing}
                   placeholder={`Company Name\n123 Street, City\nPhone: +1 234 567 8900`}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs min-h-[60px] h-[60px] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 disabled:opacity-50 transition-all resize-y"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs min-h-[60px] h-[60px] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 disabled:opacity-80 disabled:bg-slate-100/80 disabled:text-slate-700 transition-all resize-y"
                 />
               </div>
               <p className="text-[10px] text-slate-400 ml-1">This address will be printed on all generated Invoices, Quotations, and Ingredients lists exactly as formatted here.</p>

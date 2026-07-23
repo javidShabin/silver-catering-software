@@ -50,7 +50,7 @@ const Input = forwardRef(({
             transition-all duration-200 ease-out outline-none
             focus:bg-white dark:focus:bg-slate-800 focus:border-primary-300 dark:focus:border-primary-500 focus:ring-[3px] focus:ring-primary-100/50 dark:focus:ring-primary-500/20
             hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800
-            disabled:opacity-50 disabled:bg-slate-100 disabled:cursor-not-allowed
+            disabled:opacity-80 disabled:bg-slate-100/80 dark:disabled:bg-slate-800/80 disabled:text-slate-700 dark:disabled:text-slate-300 disabled:cursor-not-allowed
             ${LeftIcon ? 'pl-11' : ''}
             ${(RightIcon || isPassword) ? 'pr-11' : ''}
             ${error ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/30 text-red-900' : ''}
