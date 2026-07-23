@@ -237,7 +237,7 @@ const StaffRoles = () => {
                 </button>
                 <button 
                   type="submit"
-                  className="px-5 py-2.5 text-[13px] font-bold text-white bg-[#9333ea] hover:bg-[#7e22ce] rounded-lg transition-colors shadow-sm"
+                  className="px-5 py-2.5 text-[13px] font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors shadow-sm"
                 >
                   {editRole ? "Update Role" : "Create Role"}
                 </button>
