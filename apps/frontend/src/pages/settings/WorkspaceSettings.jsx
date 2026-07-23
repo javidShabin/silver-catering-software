@@ -206,93 +206,92 @@ const WorkspaceSettings = () => {
             )
           }
         >
-          <div className="space-y-3 mt-1">
+          <div className="space-y-4 mt-2">
             <div className="space-y-1.5">
-              <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Workspace Name</label>
-              <Input
+              <label className="text-[13px] font-bold text-slate-700 block">Workspace Name</label>
+              <input
+                type="text"
                 name="name"
-                leftIcon={Building}
                 value={form.name}
                 onChange={handleChange}
                 placeholder="e.g. DoCaterPro Events"
-                inputClassName="!py-2 !h-9 !text-xs font-semibold"
                 disabled={!isEditing}
+                className="w-full h-11 rounded-lg border border-slate-200 px-3.5 text-sm text-slate-800 outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-slate-50 placeholder:text-slate-400 disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 transition-shadow"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contact Email</label>
-                <Input
+                <label className="text-[13px] font-bold text-slate-700 block">Contact Email</label>
+                <input
+                  type="email"
                   name="contactEmail"
-                  leftIcon={Mail}
                   value={form.contactEmail}
                   onChange={handleChange}
                   placeholder="billing@example.com"
-                  inputClassName="!py-2 !h-9 !text-xs"
                   disabled={!isEditing}
+                  className="w-full h-11 rounded-lg border border-slate-200 px-3.5 text-sm text-slate-800 outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-slate-50 placeholder:text-slate-400 disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 transition-shadow"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contact Phone</label>
-                <Input
+                <label className="text-[13px] font-bold text-slate-700 block">Contact Phone</label>
+                <input
+                  type="tel"
                   name="contactPhone"
-                  leftIcon={Phone}
                   value={form.contactPhone}
                   onChange={handleChange}
                   placeholder="+1 (555) 000-0000"
-                  inputClassName="!py-2 !h-9 !text-xs"
                   disabled={!isEditing}
+                  className="w-full h-11 rounded-lg border border-slate-200 px-3.5 text-sm text-slate-800 outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-slate-50 placeholder:text-slate-400 disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 transition-shadow"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Website URL</label>
-                <Input
+                <label className="text-[13px] font-bold text-slate-700 block">Website URL</label>
+                <input
+                  type="text"
                   name="website"
-                  leftIcon={Globe}
                   value={form.website}
                   onChange={handleChange}
                   placeholder="www.yourdomain.com"
-                  inputClassName="!py-2 !h-9 !text-xs"
                   disabled={!isEditing}
+                  className="w-full h-11 rounded-lg border border-slate-200 px-3.5 text-sm text-slate-800 outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-slate-50 placeholder:text-slate-400 disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 transition-shadow"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Billing Address</label>
-                <Input
+                <label className="text-[13px] font-bold text-slate-700 block">Billing Address</label>
+                <input
+                  type="text"
                   name="address"
-                  leftIcon={MapPin}
                   value={form.address}
                   onChange={handleChange}
                   placeholder="123 Street Name, City"
-                  inputClassName="!py-2 !h-9 !text-xs"
                   disabled={!isEditing}
+                  className="w-full h-11 rounded-lg border border-slate-200 px-3.5 text-sm text-slate-800 outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-slate-50 placeholder:text-slate-400 disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 transition-shadow"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5 pt-2">
-              <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Your Catering Company Address (From Address)</label>
-              <div className="relative">
-                <MapPin size={14} className="absolute left-3 top-3 text-slate-400" />
+            <div className="space-y-1.5 pt-1">
+              <label className="text-[13px] font-bold text-slate-700 block">Your Catering Company Address (From Address)</label>
+              <div>
                 <textarea
                   name="pdfFromAddress"
                   value={form.pdfFromAddress}
                   onChange={handleChange}
                   disabled={!isEditing}
                   placeholder={`Company Name\n123 Street, City\nPhone: +1 234 567 8900`}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs min-h-[60px] h-[60px] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 disabled:opacity-80 disabled:bg-slate-100/80 disabled:text-slate-700 transition-all resize-y"
+                  className="w-full px-3.5 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 min-h-[70px] focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 transition-all resize-y"
                 />
               </div>
               <p className="text-[10px] text-slate-400 ml-1">This address will be printed on all generated Invoices, Quotations, and Ingredients lists exactly as formatted here.</p>
             </div>
 
-            <div className="pt-2 mt-0 border-t border-slate-100">
+            <div className="pt-4 mt-2 border-t border-slate-100">
               <div className="space-y-1.5">
-                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Workspace Logo</label>
+                <label className="text-[13px] font-bold text-slate-700 block">Workspace Logo</label>
                 <div className="flex items-center gap-3 mt-0.5">
                   <div className="w-12 h-12 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                     {form.logoUrl ? (
