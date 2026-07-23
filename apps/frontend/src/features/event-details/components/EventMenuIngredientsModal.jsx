@@ -71,24 +71,28 @@ const EventMenuIngredientsModal = ({ isOpen, onClose, event }) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
       
+      const scaleFactor = 0.85; // Shrink by 15% to fit more content per page
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      const finalWidth = pdfWidth * scaleFactor;
+      const finalImgHeight = (canvas.height * finalWidth) / canvas.width;
+      const xOffset = (pdfWidth - finalWidth) / 2;
       
       if (canvas.width === 0 || canvas.height === 0) {
         throw new Error("Canvas rendered with 0 width or height");
       }
       
-      let heightLeft = imgHeight;
-      let position = 0;
+      let heightLeft = finalImgHeight;
+      let position = 0; // Add top margin if needed, currently 0
       
-      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", xOffset, position, finalWidth, finalImgHeight);
       heightLeft -= pdfHeight;
       
       while (heightLeft >= 0) {
         position -= pdfHeight;
         pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+        pdf.addImage(imgData, "PNG", xOffset, position, finalWidth, finalImgHeight);
         heightLeft -= pdfHeight;
       }
       
