@@ -66,9 +66,20 @@ const InvoicePreviewModal = ({ invoice, tenant, onClose }) => {
       });
       
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
       
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      let finalWidth = pdfWidth;
+      let finalHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      if (finalHeight > pageHeight) {
+        const ratio = pageHeight / finalHeight;
+        finalHeight = pageHeight;
+        finalWidth = pdfWidth * ratio;
+      }
+      
+      const xOffset = (pdfWidth - finalWidth) / 2;
+      pdf.addImage(imgData, "PNG", xOffset, 0, finalWidth, finalHeight);
+      
       pdf.save(`invoice-${invoice.invoiceNumber}.pdf`);
       toast.success("PDF Downloaded successfully!", { id: "pdf-toast" });
     } catch (error) {

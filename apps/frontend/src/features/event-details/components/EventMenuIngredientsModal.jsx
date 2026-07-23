@@ -72,13 +72,23 @@ const EventMenuIngredientsModal = ({ isOpen, onClose, event }) => {
       const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
       
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      let finalWidth = pdfWidth;
+      let finalHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      if (finalHeight > pageHeight) {
+        const ratio = pageHeight / finalHeight;
+        finalHeight = pageHeight;
+        finalWidth = pdfWidth * ratio;
+      }
       
       if (canvas.width === 0 || canvas.height === 0) {
         throw new Error("Canvas rendered with 0 width or height");
       }
       
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const xOffset = (pdfWidth - finalWidth) / 2;
+      pdf.addImage(imgData, "PNG", xOffset, 0, finalWidth, finalHeight);
       
       const blob = pdf.output("blob");
       const url = URL.createObjectURL(blob);
