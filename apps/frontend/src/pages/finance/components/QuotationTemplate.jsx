@@ -126,180 +126,154 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     <div
       ref={ref}
       id="quotation-printable"
-      style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px", color: "#1a1a1a", background: "#fff", padding: "40px", maxWidth: "800px", margin: "0 auto" }}
+      className="bg-white p-10 max-w-[800px] mx-auto text-slate-800 font-sans print:max-w-none print:w-full print:mx-0 print:p-8"
     >
-      {/* Header */}
-      <table style={{ width: "100%", marginBottom: "28px" }}>
-        <tbody>
-          <tr>
-            <td style={{ verticalAlign: "top" }}>
-              {tenant.logoUrl && (
-                <div style={{ marginBottom: "12px" }}>
-                  <img 
-                    src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} 
-                    alt="Logo" 
-                    style={{ maxHeight: "100px", objectFit: "contain" }} 
-                  />
-                </div>
-              )}
-              <div style={{ fontSize: tenant.logoUrl ? "14px" : "22px", fontWeight: "800", letterSpacing: "-0.5px", color: "#111" }}>
-                {tenant.name || "Your Company"}
-              </div>
-              <div style={{ marginTop: "6px", fontSize: "11px", color: "#555", lineHeight: "1.8", whiteSpace: "pre-wrap" }}>
-                {tenant.pdfFromAddress || (
-                  <>
-                    {tenant.address && <div>{tenant.address}</div>}
-                    {tenant.contactEmail && <div>{tenant.contactEmail}</div>}
-                    {tenant.contactPhone && <div>{tenant.contactPhone}</div>}
-                  </>
-                )}
-              </div>
-            </td>
-            <td style={{ verticalAlign: "top", textAlign: "right" }}>
-              <div style={{ fontSize: "24px", fontWeight: "900", color: "#111", letterSpacing: "1px", textTransform: "uppercase" }}>
-                Quotation
-              </div>
-              <div style={{ marginTop: "8px", fontSize: "13px", fontWeight: "700", color: "#111" }}>
-                {quotationNumber}
-              </div>
-              <div style={{ marginTop: "4px", fontSize: "11px", color: "#777" }}>
-                Status: <span style={{ textTransform: "uppercase", fontWeight: "600" }}>{status || "Draft"}</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div style={{ borderTop: "2px solid #333", marginBottom: "24px" }} />
-
-      {/* Bill To + Details */}
-      <table style={{ width: "100%", marginBottom: "24px" }}>
-        <tbody>
-          <tr>
-            <td style={{ verticalAlign: "top", width: "40%" }}>
-              <div style={{ fontSize: "10px", fontWeight: "700", color: "#333", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>
-                Prepared For
-              </div>
-              <div style={{ fontSize: "13px", fontWeight: "700" }}>{customer?.name || "—"}</div>
-              {customer?.email && <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>{customer.email}</div>}
-              {customer?.phone && <div style={{ fontSize: "11px", color: "#555" }}>{customer.phone}</div>}
-              {customer?.address && <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>{customer.address}</div>}
-            </td>
-            <td style={{ verticalAlign: "top", width: "30%", paddingLeft: "20px" }}>
-              <div style={{ fontSize: "10px", fontWeight: "700", color: "#333", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>
-                Event Details
-              </div>
-              <div style={{ fontSize: "11px", color: "#555", lineHeight: "1.9" }}>
-                <div>Guests: <strong>{guestCount}</strong></div>
-                <div>Duration: <strong>{durationInDays} day(s)</strong></div>
-                {Number(cateringBoysCount) > 0 && (
-                  <div>Catering Boys: <strong>{cateringBoysCount}</strong> (Legacy)</div>
-                )}
-                {staff.map((s, idx) => (
-                  <div key={idx}>{s.role}: <strong>{s.count}</strong></div>
-                ))}
-              </div>
-            </td>
-            <td style={{ verticalAlign: "top", textAlign: "right" }}>
-              <div style={{ fontSize: "10px", fontWeight: "700", color: "#333", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>
-                Dates
-              </div>
-              <div style={{ fontSize: "11px", color: "#555", lineHeight: "1.9" }}>
-                <div>Issued: <strong>{createdAt ? new Date(createdAt).toLocaleDateString("en-IN") : "—"}</strong></div>
-                <div>Valid Until: <strong>{validUntil ? new Date(validUntil).toLocaleDateString("en-IN") : "—"}</strong></div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      {/* Items Table */}
-      <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "24px" }}>
-        <thead>
-          <tr style={{ background: "#f8fafc", color: "#111", borderBottom: "2px solid #333" }}>
-            <th style={{ padding: "9px 12px", textAlign: "left", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "36px" }}>#</th>
-            <th style={{ padding: "9px 12px", textAlign: "left", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px" }}>Description</th>
-            <th style={{ padding: "9px 12px", textAlign: "right", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", width: "100px" }}>Qty</th>
-          </tr>
-        </thead>
-        <tbody>
-          {allLines.length === 0 ? (
-            <tr>
-              <td colSpan={3} style={{ padding: "16px 12px", textAlign: "center", color: "#999", fontSize: "11px", borderBottom: "1px solid #e5e7eb" }}>
-                No items found
-              </td>
-            </tr>
-          ) : (
-            allLines.map((line, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? "#f8fafc" : "#fff" }}>
-                <td style={{ padding: "9px 12px", fontSize: "11px", color: "#666", textAlign: "center", borderBottom: "1px solid #e5e7eb" }}>{i + 1}</td>
-                <td style={{ padding: "9px 12px", borderBottom: "1px solid #e5e7eb" }}>
-                  <div style={{ fontSize: "12px", fontWeight: "600", color: "#111" }}>{line.description}</div>
-                  {line.note && <div style={{ fontSize: "10px", color: "#888", marginTop: "2px" }}>{line.note}</div>}
-                </td>
-                <td style={{ padding: "9px 12px", textAlign: "right", fontSize: "12px", fontWeight: "700", color: "#111", borderBottom: "1px solid #e5e7eb" }}>{line.qty}</td>
-              </tr>
-            ))
+      {/* Header Section */}
+      <div className="flex justify-between items-start mb-10">
+        <div>
+          {tenant.logoUrl && (
+            <div className="mb-3">
+              <img 
+                src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} 
+                alt="Logo" 
+                className="max-h-24 object-contain"
+              />
+            </div>
           )}
-        </tbody>
-      </table>
-
-      {/* Totals */}
-      <table style={{ width: "100%", marginBottom: "28px" }}>
-        <tbody>
-          <tr>
-            <td style={{ width: "55%" }} />
-            <td>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <tbody>
-                  <tr>
-                    <td style={{ padding: "5px 0", fontSize: "12px", color: "#555" }}>Subtotal</td>
-                    <td style={{ padding: "5px 0", fontSize: "12px", textAlign: "right", fontWeight: "600" }}>{CURRENCY}{fmt(subtotal)}</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: "5px 0", fontSize: "12px", color: "#555" }}>Tax</td>
-                    <td style={{ padding: "5px 0", fontSize: "12px", textAlign: "right", fontWeight: "600" }}>{CURRENCY}{fmt(tax)}</td>
-                  </tr>
-                  {Number(discountAmount) > 0 && (
-                    <tr>
-                      <td style={{ padding: "5px 0", fontSize: "12px", color: "#16a34a" }}>Discount</td>
-                      <td style={{ padding: "5px 0", fontSize: "12px", textAlign: "right", fontWeight: "600", color: "#16a34a" }}>-{CURRENCY}{fmt(discountAmount)}</td>
-                    </tr>
-                  )}
-                  <tr>
-                    <td colSpan={2} style={{ paddingTop: "8px" }}>
-                      <div style={{ borderTop: "2px solid #333" }} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: "8px 0 0", fontSize: "12px", fontWeight: "800", color: "#111" }}>Total</td>
-                    <td style={{ padding: "8px 0 0", fontSize: "14px", fontWeight: "900", textAlign: "right", color: "#111" }}>{CURRENCY}{fmt(totalAmount)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      {/* Notes / Terms */}
-      {notes && (
-        <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "16px", marginBottom: "24px" }}>
-          <div style={{ fontSize: "10px", fontWeight: "700", color: "#333", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>Notes</div>
-          <div style={{ fontSize: "11px", color: "#555", lineHeight: "1.7" }}>{notes}</div>
+          <h2 className={tenant.logoUrl ? "text-sm font-bold text-slate-900 uppercase tracking-wide" : "text-2xl font-bold text-slate-900 uppercase tracking-wide"}>
+            {tenant.name || "Your Company"}
+          </h2>
+          <div className="text-sm text-slate-500 mt-2 space-y-1 whitespace-pre-wrap leading-relaxed">
+            {tenant.pdfFromAddress || (
+              <>
+                {tenant.address && <p>{tenant.address}</p>}
+                {tenant.contactEmail && <p>{tenant.contactEmail}</p>}
+                {tenant.contactPhone && <p>{tenant.contactPhone}</p>}
+              </>
+            )}
+          </div>
         </div>
-      )}
 
-      {/* Signature */}
-      <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "24px", display: "flex", justifyContent: "flex-end" }}>
-        <div style={{ textAlign: "center" }}>
-          <div style={{ borderBottom: "1px solid #aaa", width: "180px", marginBottom: "6px" }} />
-          <div style={{ fontSize: "10px", color: "#888", textTransform: "uppercase", letterSpacing: "1px" }}>Authorized Signatory</div>
+        <div className="text-right">
+          <h1 className="text-3xl font-light text-slate-400 uppercase tracking-widest mb-4">Quotation</h1>
+          <div className="text-sm space-y-1">
+            <p className="text-slate-500"><span className="font-semibold text-slate-700">Ref No:</span> {quotationNumber}</p>
+            <p className="text-slate-500"><span className="font-semibold text-slate-700">Date:</span> {createdAt ? new Date(createdAt).toLocaleDateString("en-IN") : "—"}</p>
+            <div className="mt-2 inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded border border-slate-200">
+              Status: <span className={
+                status === 'approved' ? 'text-emerald-600' : 
+                status === 'rejected' ? 'text-red-600' : 'text-amber-600'
+              }>{status || "Draft"}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <div style={{ marginTop: "24px", textAlign: "center", fontSize: "10px", color: "#aaa" }}>
+      <div className="border-t border-slate-200 my-8"></div>
+
+      {/* Bill To & Details */}
+      <div className="flex justify-between items-start mb-10">
+        <div>
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Prepared For</h4>
+          <div className="text-sm space-y-1 text-slate-700">
+            <p className="font-semibold text-slate-900">{customer?.name || "—"}</p>
+            {customer?.email && <p>{customer.email}</p>}
+            {customer?.phone && <p>{customer.phone}</p>}
+            {customer?.address && <p className="max-w-[250px] whitespace-pre-wrap leading-relaxed">{customer.address}</p>}
+          </div>
+        </div>
+        
+        <div className="text-right">
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Event Details</h4>
+          <div className="text-sm space-y-1 text-slate-700">
+            <p>Guests: <span className="font-semibold text-slate-900">{guestCount}</span></p>
+            <p>Duration: <span className="font-semibold text-slate-900">{durationInDays} day(s)</span></p>
+            {validUntil && <p className="mt-2 text-slate-500 italic text-xs">Valid Until: {new Date(validUntil).toLocaleDateString("en-IN")}</p>}
+          </div>
+        </div>
+      </div>
+
+      {/* Items Table */}
+      <div className="mb-6">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b-2 border-slate-800 text-slate-900">
+              <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider w-12 text-center">#</th>
+              <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider">Description</th>
+              <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-24">Qty</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {allLines.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="py-8 text-center text-slate-400 text-sm">No items found</td>
+              </tr>
+            ) : (
+              allLines.map((line, i) => (
+                <tr key={i} className="hover:bg-slate-50 transition-colors">
+                  <td className="py-4 px-2 text-center text-sm text-slate-500">{i + 1}</td>
+                  <td className="py-4 px-2">
+                    <p className="text-sm font-medium text-slate-800">{line.description}</p>
+                    {line.note && <p className="text-xs text-slate-500 mt-1">{line.note}</p>}
+                  </td>
+                  <td className="py-4 px-2 text-right text-sm font-semibold text-slate-700">{line.qty}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Totals Section */}
+      <div className="flex justify-end mb-12">
+        <div className="w-[320px]">
+          <div className="space-y-2 px-2 text-sm text-slate-600">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span className="font-medium text-slate-900">{CURRENCY}{fmt(subtotal)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Tax</span>
+              <span className="font-medium text-slate-900">{CURRENCY}{fmt(tax)}</span>
+            </div>
+            {Number(discountAmount) > 0 && (
+              <div className="flex justify-between text-emerald-600">
+                <span>Discount</span>
+                <span className="font-medium">-{CURRENCY}{fmt(discountAmount)}</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="border-t border-slate-200 my-3"></div>
+          
+          <div className="flex justify-between items-center px-2 mb-4">
+            <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">Total Estimate</span>
+            <span className="text-xl font-bold text-slate-900">{CURRENCY}{fmt(totalAmount)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer (Terms & Signatory) */}
+      <div className="border-t border-slate-200 pt-8 mt-8">
+        <div className="grid grid-cols-2 gap-12">
+          <div>
+            {notes && (
+              <>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Terms & Notes</h4>
+                <div className="text-xs text-slate-500 leading-relaxed space-y-1">
+                  <p>{notes}</p>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="text-right flex flex-col justify-end items-end">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">Authorized Signatory</p>
+            <div className="border-b border-slate-400 w-48 mt-8"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-8 text-center text-[10px] text-slate-400">
         This is an estimate and not a final invoice. Prices may vary.
       </div>
     </div>
