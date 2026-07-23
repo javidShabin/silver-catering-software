@@ -134,11 +134,11 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
           <tr>
             <td style={{ verticalAlign: "top" }}>
               {tenant.logoUrl && (
-                <div style={{ marginBottom: "8px" }}>
+                <div style={{ marginBottom: "12px" }}>
                   <img 
                     src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} 
                     alt="Logo" 
-                    style={{ maxHeight: "60px", objectFit: "contain" }} 
+                    style={{ maxHeight: "100px", objectFit: "contain" }} 
                   />
                 </div>
               )}

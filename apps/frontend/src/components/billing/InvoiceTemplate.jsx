@@ -50,7 +50,7 @@ const InvoiceTemplate = React.forwardRef(({ invoice, viewMode = 'client' }, ref)
               <img 
                 src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} 
                 alt="Logo" 
-                className="max-h-16 object-contain"
+                className="max-h-24 object-contain"
               />
             </div>
           )}
