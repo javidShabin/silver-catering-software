@@ -224,7 +224,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
         const selectedPkg = prev.packageId ? packages.find(p => p.id === prev.packageId) : null;
         return {
           ...prev,
-          menuItems: [...prev.menuItems, newDish.id],
+          menuItems: [newDish.id, ...prev.menuItems],
           customMenuSelections: {
             ...prev.customMenuSelections,
             [newDish.id]: { 
@@ -267,7 +267,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
       const selectedPkg = prev.packageId ? packages.find(p => p.id === prev.packageId) : null;
       return {
         ...prev,
-        menuItems: [...prev.menuItems, menuId],
+        menuItems: [menuId, ...prev.menuItems],
         customMenuSelections: {
           ...prev.customMenuSelections,
           ...(selectedPkg ? {
@@ -482,7 +482,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     : 0;
 
   return (
-    <div className="space-y-3 max-h-[80vh] overflow-y-auto pr-1 custom-scrollbar">
+    <div className="space-y-3">
       {/* 1. Header Details (Customer, Dates, Scope) */}
       <fieldset disabled={isViewMode} className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-3">
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -698,7 +698,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
           </button>
         </div>
 
-        <div className="p-3 bg-white h-[180px] overflow-y-auto custom-scrollbar">
+        <div className="p-3 bg-white min-h-[520px] overflow-y-auto custom-scrollbar">
           {/* MENUS TAB */}
           {activeTab === "menus" && (
             <fieldset disabled={isViewMode} className="space-y-3">
@@ -827,7 +827,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
               )}
 
               {formData.menuItems.length > 0 ? (
-                <div className="space-y-2 max-h-[165px] overflow-y-auto pr-1 custom-scrollbar">
+                <div className="space-y-2 pr-1 custom-scrollbar">
                   {formData.menuItems.map((menuId) => {
                     const menu = menus.find(m => m.id === menuId);
                     if (!menu) return null;
@@ -1045,7 +1045,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
               )}
 
               {formData.staffAllocations.length > 0 ? (
-                <div className="space-y-2 max-h-[165px] overflow-y-auto pr-1 custom-scrollbar">
+                <div className="space-y-2 pr-1 custom-scrollbar">
                   {formData.staffAllocations.map((staff, idx) => {
                     const staffCount = Number(staff.count) || 0;
                     const staffRate = Number(staff.rate) || 0;
@@ -1148,11 +1148,6 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
 
       {/* 3. Bottom Totals Section */}
       <div className="flex flex-col lg:flex-row justify-between gap-3">
-        <SummarySection 
-          isViewMode={isViewMode}
-          notes={formData.notes}
-          onNotesChange={(notes) => setFormData({...formData, notes})}
-        />
         <PricingSection
           isViewMode={isViewMode}
           taxPercent={formData.taxPercent}

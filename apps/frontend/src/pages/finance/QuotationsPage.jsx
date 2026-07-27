@@ -1,13 +1,10 @@
 import { CURRENCY } from "../../config/currency";
 import { useState, useEffect } from "react";
-import { Plus, Search, CheckCircle, Trash2, Edit, Calendar, Eye } from "lucide-react";
-import Button from "../../components/ui/Button";
+import { Plus, Search, Trash2, Edit, Calendar, Eye, ArrowLeft, FileText } from "lucide-react";
 import PremiumModal from "../../components/ui/PremiumModal";
 import QuotationBuilder from "./QuotationBuilder";
 import QuotationPreviewModal from "./components/QuotationPreviewModal";
 import ConfirmModal from "../../components/ui/ConfirmModal";
-import Input from "../../components/ui/Input";
-import DatePicker from "../../components/ui/DatePicker";
 import api from "../../utils/axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -19,16 +16,30 @@ const QuotationsPage = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
-  // Modals state
-  const [isBuilderOpen, setIsBuilderOpen] = useState(false);
+  // Page view: 'list' | 'builder'
+  const [pageView, setPageView] = useState("list");
+
+  // Builder state
   const [isConvertOpen, setIsConvertOpen] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState(null);
   const [selectedQuoteForEdit, setSelectedQuoteForEdit] = useState(null);
   const [isViewMode, setIsViewMode] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
-  const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState(null);
+
+  // Helper to open builder page
+  const openBuilder = (quote = null, viewMode = false) => {
+    setSelectedQuoteForEdit(quote);
+    setIsViewMode(viewMode);
+    setPageView("builder");
+  };
+
+  const closeBuilder = () => {
+    setPageView("list");
+    setSelectedQuoteForEdit(null);
+    setIsViewMode(false);
+  };
   
   // Convert Form State
   const [convertForm, setConvertForm] = useState({
@@ -119,6 +130,58 @@ const QuotationsPage = () => {
     return (diffTime / (1000 * 3600 * 24)) <= 5;
   };
 
+  // ── Builder full-page view ─────────────────────────────────────────────
+  if (pageView === "builder") {
+    return (
+      <div className="space-y-6 pb-10 max-w-7xl mx-auto">
+        {/* Builder Page Header */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={closeBuilder}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all border border-slate-200"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </button>
+          <div className="space-y-0.5">
+            <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+              {isViewMode
+                ? "View Quotation Details"
+                : selectedQuoteForEdit
+                ? "Edit Quotation"
+                : t("quotations.create_quotation", "Create Quotation")}
+            </h1>
+            <p className="text-[11px] text-slate-500 font-medium">
+              {isViewMode ? "View the details of the selected quotation." : "Draft an estimate for your client."}
+            </p>
+          </div>
+        </div>
+
+        {/* Builder Component - rendered inline as full page */}
+        <QuotationBuilder
+          key={selectedQuoteForEdit ? selectedQuoteForEdit.id : "new"}
+          initialData={selectedQuoteForEdit}
+          isViewMode={isViewMode}
+          onSuccess={() => {
+            toast.success("Quotation saved successfully!");
+            closeBuilder();
+            fetchQuotations();
+          }}
+          onClose={closeBuilder}
+          onOpenPDF={() => setIsPdfModalOpen(true)}
+        />
+
+        {/* PDF Preview Modal */}
+        <QuotationPreviewModal
+          isOpen={isPdfModalOpen}
+          onClose={() => setIsPdfModalOpen(false)}
+          quotation={selectedQuoteForEdit}
+        />
+      </div>
+    );
+  }
+
+  // ── List page view ─────────────────────────────────────────────────────
   return (
     <div className="space-y-8 pb-10 max-w-7xl mx-auto">
       {/* Header */}
@@ -131,11 +194,7 @@ const QuotationsPage = () => {
         <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
           <div className="w-full flex justify-center sm:w-auto">
             <button 
-              onClick={() => {
-                setSelectedQuoteForEdit(null);
-                setIsViewMode(false);
-                setIsBuilderOpen(true);
-              }} 
+              onClick={() => openBuilder(null, false)}
               className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-extrabold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-md sm:shadow-lg shadow-primary-500/25 active:scale-95 shrink-0 max-md:fixed max-md:bottom-20 max-md:right-4 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:p-0 max-md:justify-center max-md:z-50 max-md:bg-primary-600 max-md:hover:bg-primary-500 max-md:shadow-primary-500/25"
             >
               <Plus className="w-4 h-4 max-md:w-6 max-md:h-6" /> <span className="max-md:hidden">{t("quotations.create_quotation", "Create Quotation")}</span>
@@ -230,11 +289,7 @@ const QuotationsPage = () => {
                           </button>
                         )}
                         <button 
-                          onClick={() => {
-                            setSelectedQuoteForEdit(quotation);
-                            setIsViewMode(true);
-                            setIsBuilderOpen(true);
-                          }}
+                          onClick={() => openBuilder(quotation, true)}
                           className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-flex"
                           title="View Details"
                         >
@@ -242,11 +297,7 @@ const QuotationsPage = () => {
                         </button>
                         {quotation.status !== "approved" && (
                           <button 
-                            onClick={() => {
-                              setSelectedQuoteForEdit(quotation);
-                              setIsViewMode(false);
-                              setIsBuilderOpen(true);
-                            }}
+                            onClick={() => openBuilder(quotation, false)}
                             className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors inline-flex"
                             title="Edit"
                           >
@@ -323,11 +374,7 @@ const QuotationsPage = () => {
                       </button>
                     )}
                     <button 
-                      onClick={() => {
-                        setSelectedQuoteForEdit(quotation);
-                        setIsViewMode(true);
-                        setIsBuilderOpen(true);
-                      }}
+                      onClick={() => openBuilder(quotation, true)}
                       className="p-1.5 text-slate-400 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 rounded-lg transition-colors"
                       title="View Details"
                     >
@@ -335,11 +382,7 @@ const QuotationsPage = () => {
                     </button>
                     {quotation.status !== "approved" && (
                       <button 
-                        onClick={() => {
-                          setSelectedQuoteForEdit(quotation);
-                          setIsViewMode(false);
-                          setIsBuilderOpen(true);
-                        }}
+                        onClick={() => openBuilder(quotation, false)}
                         className="p-1.5 text-slate-400 hover:text-primary-600 bg-slate-50 hover:bg-primary-50 rounded-lg transition-colors"
                         title="Edit"
                       >
@@ -360,31 +403,7 @@ const QuotationsPage = () => {
         </div>
       </div>
 
-      {/* Builder / View Modal */}
-      <PremiumModal
-        isOpen={isBuilderOpen}
-        onClose={() => setIsBuilderOpen(false)}
-        title={isViewMode ? "View Quotation Details" : "Create / Edit Quotation"}
-        description={isViewMode ? "View the details of the selected quotation." : "Draft an estimate for your client."}
-        maxWidth="max-w-5xl"
-      >
-        {isBuilderOpen && (
-          <QuotationBuilder 
-            key={selectedQuoteForEdit ? selectedQuoteForEdit.id : 'new'}
-            initialData={selectedQuoteForEdit}
-            isViewMode={isViewMode}
-            onSuccess={() => {
-              toast.success("Quotation saved successfully!");
-              setIsBuilderOpen(false);
-              fetchQuotations();
-            }}
-            onClose={() => setIsBuilderOpen(false)}
-            onOpenPDF={() => setIsPdfModalOpen(true)}
-          />
-        )}
-      </PremiumModal>
-
-      {/* PDF Preview Modal */}
+      {/* PDF Preview Modal (for list-view PDF trigger if needed) */}
       <QuotationPreviewModal
         isOpen={isPdfModalOpen}
         onClose={() => setIsPdfModalOpen(false)}

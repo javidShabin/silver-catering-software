@@ -8,7 +8,7 @@ import { useAuthStore } from "../store/authStore";
 
 const getRedirectPath = (user) => {
   if (user?.role === "admin") return "/dashboard";
-  
+
   // For non-admin staff, check user permissions
   const hasPerm = (perm) => user?.permissions?.includes(perm) || user?.permissions?.includes("all") || user?.role === perm || ["manager", "accountant"].includes(user?.role);
 
@@ -18,7 +18,7 @@ const getRedirectPath = (user) => {
   if (hasPerm("menu")) return "/menu";
   if (hasPerm("billing")) return "/billing";
   if (hasPerm("staff")) return "/staff";
-  
+
   return "/unauthorized";
 };
 
@@ -68,9 +68,9 @@ const Unauthorized = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-slate-50/50 p-6">
-      <EmptyState 
-        title="403 - Unauthorized Access" 
-        description="You do not have the required permissions to access this page." 
+      <EmptyState
+        title="403 - Unauthorized Access"
+        description="You do not have the required permissions to access this page."
         actionLabel="Return to Dashboard"
         onAction={() => window.location.href = redirectPath}
       />
@@ -108,11 +108,11 @@ const AppRouter = () => {
         <Route element={<ProtectedRoute />}>
           {/* Regular Admin/Staff Layout */}
           <Route element={<AdminLayout />}>
-            
+
             {/* Root Redirect */}
             <Route path="/" element={<RootRedirect />} />
 
-            
+
             {/* Shared Admin/Manager/Staff Routes */}
             <Route element={<ProtectedRoute allowedRoles={["admin", "manager", "accountant"]} />}>
               <Route path="/events" element={<EventsPage />} />
@@ -148,7 +148,7 @@ const AppRouter = () => {
               <Route path="/agencies" element={<AgenciesPage />} />
               <Route path="/agency-assignments" element={<AgencyAssignmentsPage />} />
             </Route>
-            
+
             {/* Admin Specific */}
             <Route element={<ProtectedRoute allowedRoles={["admin", "manager"]} />}>
               <Route path="/staff" element={<StaffPage />} />

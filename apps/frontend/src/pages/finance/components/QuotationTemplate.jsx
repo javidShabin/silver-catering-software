@@ -70,10 +70,12 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     const price = isPackageItem ? 0 : Number(sel.price) || 0;
     const qty = isPackageItem ? 1 : type === "PER_HEAD" ? Number(guestCount) || 1 : Number(sel.quantity) || 1;
     const total = price * qty;
+    const unit = isPackageItem ? "" : type === "PER_HEAD" ? "pax" : (sel.unit || "pcs");
     return {
       description: menu.name,
       note: isPackageItem ? "Package item" : type === "PER_HEAD" ? `Per head × ${qty} guests` : `Fixed price`,
       qty,
+      unit,
       unitPrice: price,
       total,
     };
@@ -89,9 +91,10 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     ...menuLines,
     ...allocations
       .map((a) => ({
-        description: `${a.name} (Equipment Rental)`,
+        description: a.name,
         note: `${a.quantity} ${a.unit} × ${durationInDays} day(s)`,
         qty: Number(a.quantity) || 1,
+        unit: a.unit || "unit",
         unitPrice: Number(a.rentPerDay || 0),
         total: Number(a.quantity || 1) * Number(a.rentPerDay || 0) * Number(durationInDays || 1),
       })),
@@ -108,6 +111,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       description: `Staff: ${s.role || "Unknown"}`,
       note: `${Number(s.count) || 0} staff × ${durationInDays} day(s)`,
       qty: Number(s.count) || 0,
+      unit: "staff",
       unitPrice: Number(s.rate || 0),
       total: (Number(s.count) || 0) * Number(s.rate || 0) * Number(durationInDays || 1),
     })),
@@ -115,6 +119,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       description: item.description,
       note: null,
       qty: Number(item.quantity) || 1,
+      unit: item.unit || "pcs",
       unitPrice: Number(item.unitPrice) || 0,
       total: Number(item.total) || 0,
     })),
@@ -208,7 +213,9 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                     <p className="text-sm font-medium text-slate-800">{line.description}</p>
                     {line.note && <p className="text-xs text-slate-500 mt-1">{line.note}</p>}
                   </td>
-                  <td className="py-4 px-2 text-right text-sm font-semibold text-slate-700">{line.qty}</td>
+                  <td className="py-4 px-2 text-right text-sm font-semibold text-slate-700">
+                    {line.qty}{line.unit ? <span className="text-xs font-normal text-slate-400 ml-1">{line.unit}</span> : null}
+                  </td>
                 </tr>
               ))
             )}
