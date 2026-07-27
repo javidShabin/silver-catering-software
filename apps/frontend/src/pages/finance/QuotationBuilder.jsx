@@ -1147,7 +1147,12 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
       </div>
 
       {/* 3. Bottom Totals Section */}
-      <div className="flex flex-col lg:flex-row justify-between gap-3">
+      <div className="flex flex-col lg:flex-row justify-between gap-3 items-start">
+        <SummarySection 
+          isViewMode={isViewMode}
+          notes={formData.notes}
+          onNotesChange={(notes) => setFormData({...formData, notes})}
+        />
         <PricingSection
           isViewMode={isViewMode}
           taxPercent={formData.taxPercent}
