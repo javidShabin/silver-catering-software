@@ -713,7 +713,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                     defaultValue=""
                   >
                     <option value="" disabled>Select menu item...</option>
-                    {menus.filter(m => !formData.menuItems.includes(m.id)).map(menu => (
+                    {menus.filter(m => !formData.menuItems.includes(m.id)).sort((a, b) => a.name.localeCompare(b.name)).map(menu => (
                       <option key={menu.id} value={menu.id}>{menu.name} - {menu.category} ({CURRENCY}{Number(menu.minPrice).toFixed(2)})</option>
                     ))}
                   </select>
@@ -828,7 +828,11 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
 
               {formData.menuItems.length > 0 ? (
                 <div className="space-y-2 pr-1 custom-scrollbar">
-                  {formData.menuItems.map((menuId) => {
+                  {[...formData.menuItems].sort((a, b) => {
+                    const nameA = (menus.find(m => m.id === a)?.name || "").toLowerCase();
+                    const nameB = (menus.find(m => m.id === b)?.name || "").toLowerCase();
+                    return nameA.localeCompare(nameB);
+                  }).map((menuId) => {
                     const menu = menus.find(m => m.id === menuId);
                     if (!menu) return null;
                     
@@ -949,7 +953,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                     defaultValue=""
                   >
                     <option value="" disabled>Select inventory to allocate...</option>
-                    {inventoryList.map(inv => (
+                    {[...inventoryList].sort((a, b) => a.name.localeCompare(b.name)).map(inv => (
                       <option key={inv.id} value={inv.id}>
                         {inv.name} {Number(inv.rentPerDay) > 0 ? `(${CURRENCY}${Number(inv.rentPerDay).toFixed(2)}/day)` : ''}
                       </option>

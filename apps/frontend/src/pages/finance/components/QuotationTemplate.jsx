@@ -62,14 +62,13 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     ];
   }, []);
 
-  // Build line items from real data
-  const menuLines = menus.map((menu) => {
+  // Helper: build a line item from a menu entry
+  const buildMenuLine = (menu) => {
     const sel = selections[menu.id] || {};
     const isPackageItem = Boolean(sel.packageId);
     const type = sel.type || "PER_HEAD";
     const price = isPackageItem ? 0 : Number(sel.price) || 0;
     const qty = isPackageItem ? 1 : type === "PER_HEAD" ? Number(guestCount) || 1 : Number(sel.quantity) || 1;
-    const total = price * qty;
     const unit = isPackageItem ? "" : type === "PER_HEAD" ? "pax" : (sel.unit || "pcs");
     return {
       description: menu.name,
@@ -77,27 +76,45 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       qty,
       unit,
       unitPrice: price,
-      total,
+      total: price * qty,
     };
-  });
+  };
+
+  // Category order for menu items in the PDF
+  const CATEGORY_ORDER = [
+    "Beverages",   // Welcome Drinks
+    "Starters",
+    "Main Course",
+    // Arrangements (inventory) inserted between Main Course and Desserts
+    "Desserts",
+    "Snacks",
+  ];
+
+  // Build categorised menu sections in the required order
+  const welcomeDrinkLines  = menus.filter(m => m.category === "Beverages").map(buildMenuLine);
+  const starterLines       = menus.filter(m => m.category === "Starters").map(buildMenuLine);
+  const mainCourseLines    = menus.filter(m => m.category === "Main Course").map(buildMenuLine);
+  const dessertLines       = menus.filter(m => m.category === "Desserts").map(buildMenuLine);
+  // Any menu category not in the explicit order (e.g. Snacks, or custom categories)
+  const otherMenuLines     = menus
+    .filter(m => !["Beverages", "Starters", "Main Course", "Desserts"].includes(m.category))
+    .map(buildMenuLine);
+
+  const arrangementLines = allocations.map((a) => ({
+    description: a.name,
+    note: `${a.quantity} ${a.unit} × ${durationInDays} day(s)`,
+    qty: Number(a.quantity) || 1,
+    unit: a.unit || "unit",
+    unitPrice: Number(a.rentPerDay || 0),
+    total: Number(a.quantity || 1) * Number(a.rentPerDay || 0) * Number(durationInDays || 1),
+  }));
 
   const cateringBoyCost =
     Number(cateringBoysCount) > 0
       ? Number(cateringBoysCount) * Number(cateringBoyRate || 0) * Number(durationInDays || 1)
       : 0;
 
-  const allLines = [
-    ...packageLines,
-    ...menuLines,
-    ...allocations
-      .map((a) => ({
-        description: a.name,
-        note: `${a.quantity} ${a.unit} × ${durationInDays} day(s)`,
-        qty: Number(a.quantity) || 1,
-        unit: a.unit || "unit",
-        unitPrice: Number(a.rentPerDay || 0),
-        total: Number(a.quantity || 1) * Number(a.rentPerDay || 0) * Number(durationInDays || 1),
-      })),
+  const staffLines = [
     ...(cateringBoyCost > 0
       ? [{
           description: "Catering Staff (Legacy)",
@@ -124,6 +141,19 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       total: Number(item.total) || 0,
     })),
   ];
+
+  // Final ordered sections for rendering
+  const sections = [
+    { label: "Welcome Drinks",  lines: welcomeDrinkLines },
+    { label: "Starters",        lines: starterLines },
+    { label: "Main Course",     lines: [...packageLines, ...mainCourseLines] },
+    { label: "Arrangements",    lines: arrangementLines },
+    { label: "Desserts",        lines: [...dessertLines, ...otherMenuLines] },
+    { label: "Staffs",          lines: staffLines },
+  ].filter(section => section.lines.length > 0);
+
+  // Flat list still needed for numbering (sequential across all sections)
+  const allLines = sections.flatMap(s => s.lines);
 
   const fmt = (n) => Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -200,25 +230,43 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
               <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-24">Qty</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody>
             {allLines.length === 0 ? (
               <tr>
                 <td colSpan={3} className="py-8 text-center text-slate-400 text-sm">No items found</td>
               </tr>
-            ) : (
-              allLines.map((line, i) => (
-                <tr key={i} className="hover:bg-slate-50 transition-colors">
-                  <td className="py-4 px-2 text-center text-sm text-slate-500">{i + 1}</td>
-                  <td className="py-4 px-2">
-                    <p className="text-sm font-medium text-slate-800">{line.description}</p>
-                    {line.note && <p className="text-xs text-slate-500 mt-1">{line.note}</p>}
-                  </td>
-                  <td className="py-4 px-2 text-right text-sm font-semibold text-slate-700">
-                    {line.qty}{line.unit ? <span className="text-xs font-normal text-slate-400 ml-1">{line.unit}</span> : null}
-                  </td>
-                </tr>
-              ))
-            )}
+            ) : (() => {
+              let counter = 0;
+              return sections.map((section) => (
+                <React.Fragment key={section.label}>
+                  {/* Section header row */}
+                  <tr>
+                    <td colSpan={3} className="py-2 px-2 bg-slate-100 border-t border-b border-slate-200">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                        {section.label}
+                      </span>
+                    </td>
+                  </tr>
+                  {/* Section line items */}
+                  {section.lines.map((line) => {
+                    counter += 1;
+                    const rowNum = counter;
+                    return (
+                      <tr key={rowNum} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                        <td className="py-3 px-2 text-center text-sm text-slate-500">{rowNum}</td>
+                        <td className="py-3 px-2">
+                          <p className="text-sm font-medium text-slate-800">{line.description}</p>
+                          {line.note && <p className="text-xs text-slate-500 mt-1">{line.note}</p>}
+                        </td>
+                        <td className="py-3 px-2 text-right text-sm font-semibold text-slate-700">
+                          {line.qty}{line.unit ? <span className="text-xs font-normal text-slate-400 ml-1">{line.unit}</span> : null}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </React.Fragment>
+              ));
+            })()}
           </tbody>
         </table>
       </div>
