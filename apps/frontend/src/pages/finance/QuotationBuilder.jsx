@@ -21,6 +21,8 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   const [inventoryList, setInventoryList] = useState([]);
   const [staffRoles, setStaffRoles] = useState([]);
   const [activeTab, setActiveTab] = useState("menus");
+  const [menuSearchQuery, setMenuSearchQuery] = useState("");
+  const [isMenuDropdownOpen, setIsMenuDropdownOpen] = useState(false);
   const tenant = useTenantStore((state) => state.tenant) || {};
 
   // Custom Dish Creation State
@@ -704,19 +706,55 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
             <fieldset disabled={isViewMode} className="space-y-3">
               {!isViewMode && (
                 <div className="flex gap-2 items-center flex-wrap">
-                  <select 
-                    className="flex-1 min-w-[150px] h-8 rounded border border-slate-200 px-2 text-xs outline-none focus:border-primary-500"
-                    onChange={(e) => { 
-                      if (e.target.value) handleMenuToggle(e.target.value); 
-                      e.target.value = ""; 
-                    }}
-                    defaultValue=""
-                  >
-                    <option value="" disabled>Select menu item...</option>
-                    {menus.filter(m => !formData.menuItems.includes(m.id)).sort((a, b) => a.name.localeCompare(b.name)).map(menu => (
-                      <option key={menu.id} value={menu.id}>{menu.name} - {menu.category} ({CURRENCY}{Number(menu.minPrice).toFixed(2)})</option>
-                    ))}
-                  </select>
+                  <div className="relative flex-1 min-w-[200px]">
+                    <div 
+                      className="flex items-center justify-between w-full h-8 rounded border border-slate-200 px-2 text-xs cursor-text bg-white focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 transition-all"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Search or select menu item..."
+                        value={menuSearchQuery}
+                        onChange={(e) => {
+                          setMenuSearchQuery(e.target.value);
+                          setIsMenuDropdownOpen(true);
+                        }}
+                        onFocus={() => setIsMenuDropdownOpen(true)}
+                        onBlur={() => setTimeout(() => setIsMenuDropdownOpen(false), 200)}
+                        className="w-full h-full outline-none bg-transparent"
+                      />
+                      <ChevronDown size={14} className="text-slate-400 pointer-events-none" />
+                    </div>
+                    
+                    {isMenuDropdownOpen && (
+                      <div className="absolute z-[100] w-full mt-1 bg-white border border-slate-200 rounded shadow-lg max-h-60 overflow-y-auto custom-scrollbar py-1">
+                        {menus
+                          .filter(m => !formData.menuItems.includes(m.id))
+                          .filter(m => m.name.toLowerCase().startsWith(menuSearchQuery.toLowerCase()))
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map(menu => (
+                          <div 
+                            key={menu.id} 
+                            className="px-3 py-2 text-xs hover:bg-primary-50 cursor-pointer text-slate-700 border-b border-slate-50 last:border-0 flex justify-between items-center"
+                            onMouseDown={(e) => {
+                               e.preventDefault();
+                               handleMenuToggle(menu.id);
+                               setMenuSearchQuery("");
+                               setIsMenuDropdownOpen(false);
+                            }}
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-semibold">{menu.name}</span>
+                              <span className="text-[10px] text-slate-400 bg-slate-100 px-1 rounded">({menu.category})</span>
+                            </div>
+                            <span className="text-[10px] font-medium text-slate-500">{CURRENCY}{Number(menu.minPrice).toFixed(2)}</span>
+                          </div>
+                        ))}
+                        {menus.filter(m => !formData.menuItems.includes(m.id)).filter(m => m.name.toLowerCase().startsWith(menuSearchQuery.toLowerCase())).length === 0 && (
+                          <div className="px-3 py-3 text-xs text-slate-400 text-center italic">No items found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <button
                     type="button"
                     onClick={() => setShowCustomDishForm(!showCustomDishForm)}
