@@ -95,10 +95,22 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
   const starterLines       = menus.filter(m => m.category === "Starters").map(buildMenuLine);
   const mainCourseLines    = menus.filter(m => m.category === "Main Course").map(buildMenuLine);
   const dessertLines       = menus.filter(m => m.category === "Desserts").map(buildMenuLine);
-  // Any menu category not in the explicit order (e.g. Snacks, or custom categories)
-  const otherMenuLines     = menus
-    .filter(m => !["Beverages", "Starters", "Main Course", "Desserts"].includes(m.category))
-    .map(buildMenuLine);
+  
+  // Group any other custom categories (like Snacks, Pickles, etc.) dynamically
+  const explicitCategories = ["Beverages", "Starters", "Main Course", "Desserts"];
+  const otherMenus = menus.filter(m => !explicitCategories.includes(m.category));
+  
+  const otherSectionsMap = {};
+  otherMenus.forEach(m => {
+    const cat = m.category || "Other Items";
+    if (!otherSectionsMap[cat]) otherSectionsMap[cat] = [];
+    otherSectionsMap[cat].push(buildMenuLine(m));
+  });
+
+  const otherSections = Object.keys(otherSectionsMap).map(cat => ({
+    label: cat,
+    lines: otherSectionsMap[cat]
+  }));
 
   const arrangementLines = allocations.map((a) => ({
     description: a.name,
@@ -148,7 +160,8 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     { label: "Starters",        lines: starterLines },
     { label: "Main Course",     lines: [...packageLines, ...mainCourseLines] },
     { label: "Arrangements",    lines: arrangementLines },
-    { label: "Desserts",        lines: [...dessertLines, ...otherMenuLines] },
+    { label: "Desserts",        lines: dessertLines },
+    ...otherSections,
     { label: "Staffs",          lines: staffLines },
   ].filter(section => section.lines.length > 0);
 
