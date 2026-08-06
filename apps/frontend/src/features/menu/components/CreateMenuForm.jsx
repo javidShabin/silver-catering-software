@@ -13,6 +13,7 @@ const CreateMenuForm = ({ onSubmit, onCancel, isLoading, initialData, categories
     minPrice: initialData?.minPrice ? Number(initialData.minPrice) : 0,
     maxPrice: initialData?.maxPrice ? Number(initialData.maxPrice) : 0,
     isAvailable: initialData?.isAvailable !== undefined ? initialData.isAvailable : true,
+    unit: initialData?.unit || "plate",
     dietaryTags: initialData?.dietaryTags || ["None"],
     recipeIngredients: initialData?.recipeIngredients || []
   });
@@ -191,7 +192,53 @@ const CreateMenuForm = ({ onSubmit, onCancel, isLoading, initialData, categories
                 </div>
               )}
             </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-slate-600 ml-0.5 block mb-1">
+                  Base Price ({CURRENCY})
+                </label>
+                <div className="relative">
+                  <IndianRupee size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'minPrice' ? 'text-primary-500' : 'text-slate-400'}`} />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    className={inputClasses('minPrice')}
+                    onFocus={() => setActiveField('minPrice')}
+                    onBlur={() => setActiveField(null)}
+                    value={formData.minPrice}
+                    onChange={e => setFormData({ ...formData, minPrice: Number(e.target.value) })}
+                    required
+                  />
+                </div>
+              </div>
 
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-slate-600 ml-0.5 block mb-1">
+                  Unit (e.g. kg, liter, plate)
+                </label>
+                <div className="relative">
+                  <Box size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <select 
+                    className="w-full pl-9 pr-8 py-1.5 bg-white border border-slate-300 hover:border-slate-400 rounded-lg text-[13px] text-slate-800 focus:outline-none focus:border-primary-500 transition-all appearance-none cursor-pointer shadow-sm"
+                    value={formData.unit}
+                    onChange={e => setFormData({ ...formData, unit: e.target.value })}
+                    required
+                  >
+                    <option value="plate">Plate</option>
+                    <option value="kg">Kg</option>
+                    <option value="liter">Liter</option>
+                    <option value="piece">Piece</option>
+                    <option value="box">Box</option>
+                    <option value="pax">Pax</option>
+                    <option value="portion">Portion</option>
+                  </select>
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
 
           </div>
 

@@ -169,6 +169,7 @@ model Menu {
   maxPrice    Decimal  @db.Decimal(12, 2)
   isAvailable Boolean  @default(true)
   dietaryTags String[] // "Vegan", "Vegetarian", "Gluten-Free", "Halal", "Dairy-Free", "Nut-Free", "None"
+  unit        String   @default("plate")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -257,6 +257,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   };
 
   const handleMenuToggle = (menuId) => {
+    const menu = menus.find(m => m.id === menuId);
     setFormData(prev => {
       const isSelected = prev.menuItems.includes(menuId);
       if (isSelected) {
@@ -272,17 +273,20 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
         menuItems: [menuId, ...prev.menuItems],
         customMenuSelections: {
           ...prev.customMenuSelections,
-          ...(selectedPkg ? {
-            [menuId]: {
-              type: "PER_UNIT", 
-              price: 0, 
-              quantity: 1, 
-              unit: "plate",
-              packageId: selectedPkg.id,
-              packageName: selectedPkg.name,
-              packagePricePerHead: Number(selectedPkg.pricePerHead || 0)
-            }
-          } : {})
+          [menuId]: selectedPkg ? {
+            type: "PER_UNIT", 
+            price: 0, 
+            quantity: 1, 
+            unit: menu?.unit || "plate",
+            packageId: selectedPkg.id,
+            packageName: selectedPkg.name,
+            packagePricePerHead: Number(selectedPkg.pricePerHead || 0)
+          } : {
+            type: "PER_UNIT",
+            price: menu?.minPrice || 0,
+            quantity: 1,
+            unit: menu?.unit || "plate"
+          }
         }
       };
     });
@@ -320,7 +324,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
           type: "PER_UNIT",
           price: 0,
           quantity: 1,
-          unit: "plate",
+          unit: item.unit || "plate",
           packageId: pkg.id,
           packageName: pkg.name,
           packagePricePerHead
@@ -345,8 +349,9 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   };
 
   const handleMenuSelectionChange = (menuId, field, value) => {
+    const menu = menus.find(m => m.id === menuId);
     setFormData(prev => {
-      const current = prev.customMenuSelections?.[menuId] || { type: "PER_UNIT", price: "", quantity: 1, unit: "plate" };
+      const current = prev.customMenuSelections?.[menuId] || { type: "PER_UNIT", price: menu?.minPrice || "", quantity: 1, unit: menu?.unit || "plate" };
       if (current.packageId) return prev;
       return {
         ...prev,
