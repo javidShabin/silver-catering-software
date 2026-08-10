@@ -59,7 +59,7 @@ export const getMenuLookup = catchAsync(async (req, res) => {
   
   const items = await prisma.menu.findMany({
     where: {  isAvailable: true },
-    select: { id: true, name: true, category: true, minPrice: true },
+    select: { id: true, name: true, category: true, minPrice: true, unit: true },
     orderBy: [{ category: "asc" }, { name: "asc" }]
   });
   res.status(200).json({
