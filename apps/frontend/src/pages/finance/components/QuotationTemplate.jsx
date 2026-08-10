@@ -70,8 +70,10 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     const price = isPackageItem ? 0 : Number(sel.price) || 0;
     const qty = isPackageItem ? 1 : type === "PER_HEAD" ? Number(guestCount) || 1 : Number(sel.quantity) || 1;
     const unit = isPackageItem ? "" : type === "PER_HEAD" ? "pax" : (sel.unit || "pcs");
+    const shortDesc = menu.description ? (menu.description.length > 50 ? menu.description.substring(0, 50) + "..." : menu.description) : null;
     return {
       description: menu.name,
+      shortDesc,
       note: isPackageItem ? "Package item" : type === "PER_HEAD" ? `Per head × ${qty} guests` : `Fixed price`,
       qty,
       unit,
@@ -269,6 +271,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                         <td className="py-3 px-2 text-center text-sm text-slate-500">{rowNum}</td>
                         <td className="py-3 px-2">
                           <p className="text-sm font-medium text-slate-800">{line.description}</p>
+                          {line.shortDesc && <p className="text-[10px] text-slate-400 mt-0.5">{line.shortDesc}</p>}
                           {line.note && <p className="text-xs text-slate-500 mt-1">{line.note}</p>}
                         </td>
                         <td className="py-3 px-2 text-right text-sm font-semibold text-slate-700">
