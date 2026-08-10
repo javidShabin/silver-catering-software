@@ -3,7 +3,8 @@ import AppError from "../../utils/AppError.js";
 import {
   parsePaginationParams,
   buildPrismaPageArgs,
-  buildPageResponse} from "../../utils/pagination.js";
+  buildPageResponse
+} from "../../utils/pagination.js";
 import notificationService from "../notifications/notification.service.js";
 import invoiceService from "../billing/invoice.service.js";
 
@@ -16,10 +17,10 @@ function generateQuotationNumber() {
 export const getAllQuotations = async (req, res, next) => {
   try {
     const { limit, cursor, direction } = parsePaginationParams(req);
-    
+
 
     // Optional filters
-    const where = { };
+    const where = {};
     if (req.query.status) where.status = req.query.status;
     if (req.query.customerId) where.customerId = req.query.customerId;
 
@@ -29,8 +30,10 @@ export const getAllQuotations = async (req, res, next) => {
       ...pageArgs,
       include: {
         customer: true,
-        menuItems: true},
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }]});
+        menuItems: true
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }]
+    });
 
     const { data: quotations, pagination } = buildPageResponse(raw, limit, direction);
 
@@ -38,7 +41,8 @@ export const getAllQuotations = async (req, res, next) => {
       status: "success",
       pagination,
       results: quotations.length,
-      data: { quotations }});
+      data: { quotations }
+    });
   } catch (error) {
     next(error);
   }
@@ -49,8 +53,9 @@ export const getAllQuotations = async (req, res, next) => {
 export const getQuotation = async (req, res, next) => {
   try {
     const quotation = await prisma.quotation.findFirst({
-      where: { id: req.params.id},
-      include: { customer: true, menuItems: true }});
+      where: { id: req.params.id },
+      include: { customer: true, menuItems: true }
+    });
 
     if (!quotation) {
       return next(new AppError("No quotation found with that ID", 404));
@@ -58,7 +63,8 @@ export const getQuotation = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      data: { quotation }});
+      data: { quotation }
+    });
   } catch (error) {
     next(error);
   }
@@ -85,10 +91,10 @@ export const createQuotation = async (req, res, next) => {
       ...rest
     } = req.body;
 
-    
+
     const data = {
       ...rest,
-      
+
       customerId: customerId || customer,
       quotationNumber: generateQuotationNumber(),
       guestCount: guestCount ? Number(guestCount) : 50,
@@ -110,11 +116,13 @@ export const createQuotation = async (req, res, next) => {
 
     const newQuotation = await prisma.quotation.create({
       data,
-      include: { menuItems: true, customer: true }});
+      include: { menuItems: true, customer: true }
+    });
 
     res.status(201).json({
       status: "success",
-      data: { quotation: newQuotation }});
+      data: { quotation: newQuotation }
+    });
   } catch (error) {
     next(error);
   }
@@ -124,9 +132,9 @@ export const createQuotation = async (req, res, next) => {
 
 export const updateQuotation = async (req, res, next) => {
   try {
-    
+
     const existing = await prisma.quotation.findFirst({
-      where: { id: req.params.id}
+      where: { id: req.params.id }
     });
 
     if (!existing) {
@@ -172,11 +180,56 @@ export const updateQuotation = async (req, res, next) => {
     const updatedQuotation = await prisma.quotation.update({
       where: { id: req.params.id },
       data: updateData,
-      include: { menuItems: true, customer: true }});
+      include: { menuItems: true, customer: true }
+    });
+
+    if (updatedQuotation.status === "approved") {
+      let linkedEvent = await prisma.event.findFirst({
+        where: { quotationId: updatedQuotation.id }
+      });
+
+      if (!linkedEvent) {
+        linkedEvent = await prisma.event.findFirst({
+          where: { notes: { contains: `Created from Quotation ${updatedQuotation.quotationNumber}` } }
+        });
+        
+        if (linkedEvent) {
+          await prisma.event.update({
+            where: { id: linkedEvent.id },
+            data: { quotationId: updatedQuotation.id }
+          });
+        }
+      }
+
+      if (linkedEvent) {
+        const eventUpdateData = {
+          guestCount: updatedQuotation.guestCount,
+          durationInDays: updatedQuotation.durationInDays,
+          cateringBoysCount: updatedQuotation.cateringBoysCount,
+          cateringBoyRate: updatedQuotation.cateringBoyRate,
+          customMenuPrices: updatedQuotation.customMenuPrices,
+          customMenuSelections: updatedQuotation.customMenuSelections,
+          staffAllocations: updatedQuotation.staffAllocations,
+          packageId: updatedQuotation.packageId
+        };
+
+        if (updateData.menuItems) {
+          eventUpdateData.menuItems = updateData.menuItems;
+        }
+
+        await prisma.event.update({
+          where: { id: linkedEvent.id },
+          data: eventUpdateData
+        });
+
+        await invoiceService.syncEventInvoice(linkedEvent.id);
+      }
+    }
 
     res.status(200).json({
       status: "success",
-      data: { quotation: updatedQuotation }});
+      data: { quotation: updatedQuotation }
+    });
   } catch (error) {
     next(error);
   }
@@ -187,7 +240,7 @@ export const updateQuotation = async (req, res, next) => {
 export const deleteQuotation = async (req, res, next) => {
   try {
     const existing = await prisma.quotation.findFirst({
-      where: { id: req.params.id}
+      where: { id: req.params.id }
     });
 
     if (!existing) {
@@ -195,11 +248,13 @@ export const deleteQuotation = async (req, res, next) => {
     }
 
     await prisma.quotation.delete({
-      where: { id: req.params.id }});
+      where: { id: req.params.id }
+    });
 
     res.status(204).json({
       status: "success",
-      data: null});
+      data: null
+    });
   } catch (error) {
     next(error);
   }
@@ -210,11 +265,11 @@ export const deleteQuotation = async (req, res, next) => {
 export const approveQuotation = async (req, res, next) => {
   try {
     const quotationId = req.params.id;
-    
+
     const { title, date, time, location, guestCount, advanceAmount } = req.body;
 
     const existingQuotation = await prisma.quotation.findFirst({
-      where: { id: quotationId},
+      where: { id: quotationId },
       include: {
         customer: true,
         menuItems: true
@@ -231,11 +286,12 @@ export const approveQuotation = async (req, res, next) => {
       const quotation = await tx.quotation.update({
         where: { id: quotationId },
         data: { status: "approved" },
-        include: { customer: true, menuItems: true }});
+        include: { customer: true, menuItems: true }
+      });
 
       // Prepare Event Data
       const eventData = {
-        
+
         title: title || `Event for ${quotation.customer.name}`,
         date: date ? new Date(date) : quotation.validUntil,
         time: time || "09:00",
@@ -251,7 +307,8 @@ export const approveQuotation = async (req, res, next) => {
         customMenuSelections: quotation.customMenuSelections || {},
         staffAllocations: quotation.staffAllocations || [],
         packageId: quotation.packageId,
-        advanceAmount: advanceAmount ? Number(advanceAmount) : 0
+        advanceAmount: advanceAmount ? Number(advanceAmount) : 0,
+        quotationId: quotation.id
       };
 
       if (quotation.menuItems && quotation.menuItems.length > 0) {
@@ -272,7 +329,7 @@ export const approveQuotation = async (req, res, next) => {
       if (parsedAllocations && Array.isArray(parsedAllocations)) {
         eventData.inventoryAllocations = {
           create: parsedAllocations.map(a => ({
-            
+
             inventoryId: a.inventoryId,
             name: a.name || "",
             quantity: Number(a.quantity) || 0,
@@ -301,7 +358,7 @@ export const approveQuotation = async (req, res, next) => {
           `Event '${event.title}' has been scheduled for ${new Date(event.date).toLocaleDateString()}`,
           "info",
           "event",
-          
+
           tx
         );
       }
@@ -353,7 +410,8 @@ export const approveQuotation = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      data: result});
+      data: result
+    });
   } catch (error) {
     next(error);
   }

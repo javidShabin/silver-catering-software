@@ -87,6 +87,8 @@ model Event {
   deletedAt            DateTime?
 
   packageId String?
+  quotationId String? @unique
+  quotation   Quotation? @relation(fields: [quotationId], references: [id], onDelete: SetNull)
   package   Package? @relation(fields: [packageId], references: [id], onDelete: Restrict)
 
   customerId String
@@ -368,6 +370,8 @@ model Quotation {
   customItems          Json?    @default("[]")
 
   menuItems Menu[] @relation("QuotationMenu")
+
+  event Event?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

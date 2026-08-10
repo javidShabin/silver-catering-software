@@ -27,6 +27,10 @@ const QuotationsPage = () => {
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState(null);
+  
+  // Edit confirmation state
+  const [isEditConfirmModalOpen, setIsEditConfirmModalOpen] = useState(false);
+  const [quoteToEdit, setQuoteToEdit] = useState(null);
 
   // Helper to open builder page
   const openBuilder = (quote = null, viewMode = false) => {
@@ -88,6 +92,23 @@ const QuotationsPage = () => {
       setIsDeleteModalOpen(false);
       setQuoteToDelete(null);
     }
+  };
+
+  const handleEditClick = (quote) => {
+    if (quote.status === "approved") {
+      setQuoteToEdit(quote);
+      setIsEditConfirmModalOpen(true);
+    } else {
+      openBuilder(quote, false);
+    }
+  };
+
+  const handleEditConfirm = () => {
+    if (quoteToEdit) {
+      openBuilder(quoteToEdit, false);
+    }
+    setIsEditConfirmModalOpen(false);
+    setQuoteToEdit(null);
   };
 
   const openConvertModal = (quote) => {
@@ -295,15 +316,13 @@ const QuotationsPage = () => {
                         >
                           <Eye size={16} />
                         </button>
-                        {quotation.status !== "approved" && (
-                          <button 
-                            onClick={() => openBuilder(quotation, false)}
-                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors inline-flex"
-                            title="Edit"
-                          >
-                            <Edit size={16} />
-                          </button>
-                        )}
+                        <button 
+                          onClick={() => handleEditClick(quotation)}
+                          className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors inline-flex"
+                          title="Edit"
+                        >
+                          <Edit size={16} />
+                        </button>
                         <button onClick={() => handleDeleteClick(quotation.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer" title="Delete">
                           <Trash2 size={16} />
                         </button>
@@ -380,15 +399,13 @@ const QuotationsPage = () => {
                     >
                       <Eye size={16} />
                     </button>
-                    {quotation.status !== "approved" && (
-                      <button 
-                        onClick={() => openBuilder(quotation, false)}
-                        className="p-1.5 text-slate-400 hover:text-primary-600 bg-slate-50 hover:bg-primary-50 rounded-lg transition-colors"
-                        title="Edit"
-                      >
-                        <Edit size={16} />
-                      </button>
-                    )}
+                    <button 
+                      onClick={() => handleEditClick(quotation)}
+                      className="p-1.5 text-slate-400 hover:text-primary-600 bg-slate-50 hover:bg-primary-50 rounded-lg transition-colors"
+                      title="Edit"
+                    >
+                      <Edit size={16} />
+                    </button>
                     <button 
                       onClick={() => handleDelete(quotation.id)}
                       className="p-1.5 text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 rounded-lg transition-colors"
@@ -513,6 +530,17 @@ const QuotationsPage = () => {
         title="Delete Quotation"
         message="Are you sure you want to delete this quotation? This action cannot be undone."
         type="danger"
+      />
+
+      <ConfirmModal
+        isOpen={isEditConfirmModalOpen}
+        onClose={() => { setIsEditConfirmModalOpen(false); setQuoteToEdit(null); }}
+        onConfirm={handleEditConfirm}
+        title="Edit Approved Quotation"
+        message="This quotation has already been approved and converted to an event/invoice. Editing it will change the quotation details, but you may need to manually update the linked event or invoice. Are you sure you want to proceed?"
+        type="warning"
+        confirmText="Yes, Edit Anyway"
+        cancelText="Cancel"
       />
     </div>
   );
