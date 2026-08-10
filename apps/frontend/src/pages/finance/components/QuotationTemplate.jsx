@@ -70,7 +70,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     const price = isPackageItem ? 0 : Number(sel.price) || 0;
     const qty = isPackageItem ? 1 : type === "PER_HEAD" ? Number(guestCount) || 1 : Number(sel.quantity) || 1;
     const unit = isPackageItem ? "" : type === "PER_HEAD" ? "pax" : (sel.unit || "pcs");
-    const shortDesc = menu.description ? (menu.description.length > 50 ? menu.description.substring(0, 50) + "..." : menu.description) : null;
+    const shortDesc = menu.description ? (menu.description.length > 100 ? menu.description.substring(0, 100) + "..." : menu.description) : null;
     return {
       description: menu.name,
       shortDesc,
