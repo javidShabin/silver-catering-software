@@ -537,7 +537,7 @@ const QuotationsPage = () => {
         onClose={() => { setIsEditConfirmModalOpen(false); setQuoteToEdit(null); }}
         onConfirm={handleEditConfirm}
         title="Edit Approved Quotation"
-        message="This quotation has already been approved and converted to an event/invoice. Editing it will change the quotation details, but you may need to manually update the linked event or invoice. Are you sure you want to proceed?"
+        message="This quotation has already been approved and converted. Any changes you make here will automatically update the linked event and invoice. Are you sure you want to proceed?"
         type="warning"
         confirmText="Yes, Edit Anyway"
         cancelText="Cancel"

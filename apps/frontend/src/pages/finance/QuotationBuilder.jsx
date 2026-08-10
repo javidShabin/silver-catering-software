@@ -871,11 +871,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
 
               {formData.menuItems.length > 0 ? (
                 <div className="space-y-2 pr-1 custom-scrollbar">
-                  {[...formData.menuItems].sort((a, b) => {
-                    const nameA = (menus.find(m => m.id === a)?.name || "").toLowerCase();
-                    const nameB = (menus.find(m => m.id === b)?.name || "").toLowerCase();
-                    return nameA.localeCompare(nameB);
-                  }).map((menuId) => {
+                  {formData.menuItems.map((menuId) => {
                     const menu = menus.find(m => m.id === menuId);
                     if (!menu) return null;
                     
