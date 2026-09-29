@@ -518,28 +518,66 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
             </div>
           </div>
 
-          {/* Footer (Terms & Signatory) */}
-          <div className="border-t border-slate-200 pt-8 mt-8">
-            <div className="grid grid-cols-2 gap-12">
-              <div>
-                {notes && (
-                  <>
-                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Terms & Notes</h4>
-                    <div className="text-xs text-slate-500 leading-relaxed space-y-1">
-                      <p>{notes}</p>
-                    </div>
-                  </>
-                )}
+          {/* Footer (Terms, Signatures & Bottom Branding) matching reference */}
+          <div className="border-t border-[#E8E2D5] pt-5 mt-6">
+            <div className="flex justify-between items-start gap-8">
+              {/* Left: STANDARD CATERING TERMS */}
+              <div className="flex-1 max-w-[420px]">
+                <h4 className="text-[11px] font-serif font-bold tracking-[0.14em] text-[#163A2B] uppercase">
+                  STANDARD CATERING TERMS
+                </h4>
+                <div className="border-b border-[#E8E2D5] my-1.5 w-full"></div>
+                <div className="text-[9.5px] leading-relaxed text-slate-600 space-y-1">
+                  <p>1. Advance payment of 50% is required to confirm the date and kitchen booking.</p>
+                  <p>2. Final guest headcount, menu adjustments & balance payment must be settled on or before event day.</p>
+                  <p>3. All food preparations and arrangements are maintained under strict gourmet hygiene standards.</p>
+                  <p>4. Chaffing dishes, cutlery, and presentation materials remain the property of Silver Catering.</p>
+                  {notes && (
+                    <p className="pt-1 text-slate-700 italic border-t border-[#F0ECE1] mt-1">
+                      <strong className="not-italic text-[#163A2B]">Additional Notes: </strong>{notes}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="text-right flex flex-col justify-end items-end">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">Authorized Signatory</p>
-                <div className="border-b border-slate-400 w-48 mt-8"></div>
+
+              {/* Right: Dual Signatures (CLIENT ACCEPTANCE & FOR SILVER CATERING) */}
+              <div className="flex items-end gap-6 pt-5 shrink-0">
+                {/* Client Signature */}
+                <div className="text-center w-36 sm:w-40">
+                  <div className="border-b border-slate-900 w-full mb-1.5"></div>
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">
+                    CLIENT ACCEPTANCE
+                  </p>
+                  <p className="text-[9px] text-slate-500 italic mt-0.5">
+                    Sign & Date
+                  </p>
+                </div>
+
+                {/* Company Signature */}
+                <div className="text-center w-36 sm:w-40">
+                  <div className="border-b border-slate-900 w-full mb-1.5"></div>
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-wider truncate">
+                    FOR {tenant.name ? tenant.name.toUpperCase() : "SILVER CATERING"}
+                  </p>
+                  <p className="text-[9px] text-slate-500 mt-0.5">
+                    Authorized Signatory
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="mt-8 text-center text-[10px] text-slate-400">
-            This is an estimate and not a final invoice. Prices may vary.
+
+            {/* Dotted Divider */}
+            <div className="border-t border-dotted border-[#D8D2C4] my-3.5"></div>
+
+            {/* Bottom Centered Thank You Message & Contact */}
+            <div className="text-center space-y-0.5 text-slate-600">
+              <p className="text-[10.5px]">
+                Thank you for trusting <strong className="font-bold text-slate-900">{tenant.name || "SILVER CATERING"}</strong> — Making your celebrations memorable & flavorful.
+              </p>
+              <p className="text-[9px] text-slate-400 tracking-wide">
+                {tenant.website || "www.silvercatering.in"} • Contact: {tenant.contactPhone || "+91 98464 15767"} • Computer Generated Quotation
+              </p>
+            </div>
           </div>
         </div>
       </div>
