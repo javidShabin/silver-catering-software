@@ -183,72 +183,170 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
 
   const fmt = (n) => Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+  // Format date as d.m.yyyy (matching reference 2.10.2026)
+  const formatDate = (d) => {
+    if (!d) return "—";
+    const date = new Date(d);
+    if (isNaN(date.getTime())) return "—";
+    return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+  };
+
+  // Calculate validity period
+  const getValidityDays = () => {
+    if (!validUntil) return 15;
+    const start = createdAt ? new Date(createdAt).getTime() : Date.now();
+    const end = new Date(validUntil).getTime();
+    const diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 15;
+  };
+  const validityDays = getValidityDays();
+
+  // Occasion, Date, Timing, and Venue
+  const occasion = quotation.event?.title || 
+    notes?.match(/Occasion:\s*([^\n\r]+)/i)?.[1] || 
+    (quotation.package?.name ? `${quotation.package.name}` : "Wedding");
+
+  const eventDate = quotation.event?.date || quotation.date || validUntil || createdAt;
+
+  const timingSlot = quotation.event?.time ? (
+    quotation.event.time.includes(":") ? `TIME ${quotation.event.time}` : quotation.event.time.toUpperCase()
+  ) : (notes?.match(/Timing:\s*([^\n\r]+)/i)?.[1] || "EVENING 5 PM");
+
+  const venuePlace = quotation.event?.location || customer?.address || "—";
+
   return (
     <div
       ref={ref}
       id="quotation-printable"
-      className="bg-white p-10 max-w-[800px] mx-auto text-slate-800 font-sans print:max-w-none print:w-full print:mx-0 print:p-8"
+      className="bg-white p-3 max-w-[850px] mx-auto text-slate-800 font-sans print:max-w-none print:w-full print:mx-0 print:p-0"
     >
-      {/* Header Section */}
-      <div className="flex justify-between items-start mb-10">
-        <div>
-          {tenant.logoUrl && (
-            <div className="mb-3">
-              <img 
-                src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} 
-                alt="Logo" 
-                className="max-h-24 object-contain"
-              />
+      {/* Royal Green Double Border Frame matching reference */}
+      <div className="border-[2.5px] border-[#163A2B] p-1 bg-white">
+        <div className="border border-[#163A2B] p-6 sm:p-7 bg-white">
+          {/* Top Header Section */}
+          <div className="flex justify-between items-start gap-4 mb-3">
+            {/* Left: Branding & Contact Details */}
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-hidden pt-1">
+                {tenant.logoUrl ? (
+                  <img 
+                    src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} 
+                    alt="Logo" 
+                    className="max-h-16 max-w-16 object-contain"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-full border border-[#A37B3E] flex items-center justify-center text-center p-1">
+                    <span className="font-serif font-bold text-[9px] text-[#163A2B] leading-tight">SILVER<br/>CATERING</span>
+                  </div>
+                )}
+              </div>
+              <div className="space-y-0.5">
+                <h2 className="font-serif text-2xl font-bold tracking-[0.2em] text-[#163A2B] uppercase leading-none">
+                  {tenant.name || "SILVER CATERING"}
+                </h2>
+                <p className="text-[10px] font-bold tracking-[0.25em] text-[#A37B3E] uppercase pt-0.5">
+                  CATERING & EVENTS
+                </p>
+                <div className="text-[11px] text-slate-700 space-y-0.5 pt-1.5 leading-snug">
+                  <p>
+                    <span className="font-bold text-slate-900">Tel:</span> {tenant.contactPhone || "+91 98464 15767 | +91 75939 82800"}
+                  </p>
+                  <p>
+                    <span className="font-bold text-slate-900">Web:</span> {tenant.website || "www.silvercatering.in"}
+                    <span className="mx-2 text-slate-400">•</span>
+                    <span className="font-bold text-slate-900">Email:</span> {tenant.contactEmail || "Silvereventsandcaters@gmail.com"}
+                  </p>
+                  <p className="text-slate-600">
+                    {tenant.pdfFromAddress || tenant.address || "Thalakuttiparambil house, Mecheriparambu, Irimbiliyam PO - 679572, Valanchery"}
+                  </p>
+                </div>
+              </div>
             </div>
-          )}
-          <h2 className={tenant.logoUrl ? "text-sm font-bold text-slate-900 uppercase tracking-wide" : "text-2xl font-bold text-slate-900 uppercase tracking-wide"}>
-            {tenant.name || "Your Company"}
-          </h2>
-          <div className="text-sm text-slate-500 mt-2 space-y-1 whitespace-pre-wrap leading-relaxed">
-            {tenant.pdfFromAddress || (
-              <>
-                {tenant.address && <p>{tenant.address}</p>}
-                {tenant.contactEmail && <p>{tenant.contactEmail}</p>}
-                {tenant.contactPhone && <p>{tenant.contactPhone}</p>}
-              </>
-            )}
-          </div>
-        </div>
 
-        <div className="text-right">
-          <h1 className="text-3xl font-light text-slate-400 uppercase tracking-widest mb-4">Quotation</h1>
-          <div className="text-sm space-y-1">
-            <p className="text-slate-500"><span className="font-semibold text-slate-700">Date:</span> {createdAt ? new Date(createdAt).toLocaleDateString("en-IN") : "—"}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-slate-200 my-8"></div>
-
-      {/* Bill To & Details */}
-      <div className="flex justify-between items-start mb-10">
-        <div>
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Prepared For</h4>
-          <div className="text-sm space-y-1 text-slate-700">
-            <p className="font-semibold text-slate-900">{customer?.name || "—"}</p>
-            {quotationPdfSettings.showCustomerContact !== false && customer?.email && <p>{customer.email}</p>}
-            {quotationPdfSettings.showCustomerContact !== false && customer?.phone && <p>{customer.phone}</p>}
-            {quotationPdfSettings.showCustomerAddress !== false && customer?.address && (
-              <p className="max-w-[250px] whitespace-pre-wrap leading-relaxed">{customer.address}</p>
-            )}
-          </div>
-        </div>
-        
-        {quotationPdfSettings.showEventDetails !== false && (
-          <div className="text-right">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Event Details</h4>
-            <div className="text-sm space-y-1 text-slate-700">
-              <p>Guests: <span className="font-semibold text-slate-900">{guestCount}</span></p>
-              <p>Duration: <span className="font-semibold text-slate-900">{durationInDays} day(s)</span></p>
+            {/* Right: Quotation Proposal Card matching reference */}
+            <div className="border border-[#c5aa78] rounded-lg bg-white p-3 min-w-[210px] shrink-0 shadow-2xs">
+              <h3 className="text-center font-serif font-black text-base tracking-[0.18em] text-[#163A2B] uppercase leading-tight">
+                QUOTATION
+              </h3>
+              <p className="text-center text-[8.5px] font-bold tracking-[0.16em] text-[#A37B3E] uppercase mt-0.5">
+                EVENT PACKAGE PROPOSAL
+              </p>
+              <div className="border-b border-[#e5d8c3] my-2"></div>
+              <div className="space-y-1.5 text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium text-[11px]">Quote Ref:</span>
+                  <span className="font-black text-slate-900 font-mono tracking-tight text-[11px]">{quotationNumber || "QT-0009"}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium text-[11px]">Date:</span>
+                  <span className="font-bold text-slate-900 text-[11px]">{formatDate(createdAt)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium text-[11px]">Validity:</span>
+                  <span className="px-2 py-0.5 bg-[#f2ece2] text-[#8a6833] rounded text-[10px] font-bold leading-none">{validityDays} Days</span>
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Dividing Bar */}
+          <div className="border-b-2 border-[#163A2B] my-4"></div>
+
+          {/* Specification Boxes Side-by-Side matching reference */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {/* CLIENT INFORMATION */}
+            <div className="border border-[#d8d3c5] rounded-lg overflow-hidden bg-white shadow-2xs">
+              <div className="bg-[#f4f2ec] px-3.5 py-1.5 border-b border-[#d8d3c5]">
+                <h4 className="text-[10px] font-bold tracking-[0.15em] text-[#163A2B] uppercase">CLIENT INFORMATION</h4>
+              </div>
+              <div className="p-3 space-y-1.5 text-xs">
+                <div className="flex items-center">
+                  <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Client Name:</span>
+                  <span className="font-black text-slate-900 uppercase tracking-wide text-xs">{customer?.name || "—"}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Contact No:</span>
+                  <span className="font-bold text-slate-800 text-xs">
+                    {quotationPdfSettings.showCustomerContact !== false ? (customer?.phone || customer?.email || "—") : "—"}
+                  </span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Venue / Place:</span>
+                  <span className="font-semibold text-slate-800 text-xs leading-snug">
+                    {quotationPdfSettings.showCustomerAddress !== false ? venuePlace : "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* EVENT SPECIFICATIONS */}
+            <div className="border border-[#d8d3c5] rounded-lg overflow-hidden bg-white shadow-2xs">
+              <div className="bg-[#f4f2ec] px-3.5 py-1.5 border-b border-[#d8d3c5]">
+                <h4 className="text-[10px] font-bold tracking-[0.15em] text-[#163A2B] uppercase">EVENT SPECIFICATIONS</h4>
+              </div>
+              <div className="p-3 space-y-1.5 text-xs">
+                <div className="flex items-center">
+                  <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Occasion:</span>
+                  <span className="font-bold text-slate-900 text-xs">{occasion}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Event Date:</span>
+                  <span className="font-bold text-slate-900 text-xs">{formatDate(eventDate)}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Timing / Slot:</span>
+                  <span className="font-bold text-slate-900 uppercase text-xs">{timingSlot}</span>
+                </div>
+                <div className="border-t border-dashed border-slate-200 my-1"></div>
+                <div className="flex items-center">
+                  <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Guest Count:</span>
+                  <span className="bg-[#163A2B] text-white px-2.5 py-0.5 rounded text-[11px] font-bold tracking-wider uppercase inline-block">
+                    {guestCount} GUESTS (PAX)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
 
       {/* Items Table */}
       <div className="mb-6">
@@ -384,6 +482,8 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       
       <div className="mt-8 text-center text-[10px] text-slate-400">
         This is an estimate and not a final invoice. Prices may vary.
+      </div>
+        </div>
       </div>
     </div>
   );
