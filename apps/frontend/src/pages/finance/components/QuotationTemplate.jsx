@@ -3,8 +3,9 @@ import React from "react";
 import { useTenantStore } from "../../../store/useTenantStore";
 
 /**
- * Clean Quotation PDF Template
- * Renders actual saved data: menus, inventory, catering staff, custom items.
+ * Royal Green Luxury Quotation PDF Template
+ * Features double-border royal green frame, proposal card, client & event cards,
+ * categorized item blocks (Welcome Drinks, Main Course, Arrangements, etc.) matching reference designs.
  */
 const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
   const tenant = useTenantStore((state) => state.tenant) || {};
@@ -67,8 +68,10 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
         description: sel.packageName || "Package",
         note: `Package x ${qty} pax`,
         qty,
+        unit: "PAX",
         unitPrice: price,
         total: price * qty,
+        isIncluded: false,
       }
     ];
   }, []);
@@ -77,10 +80,17 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
   const buildMenuLine = (menu) => {
     const sel = selections[menu.id] || {};
     const isPackageItem = Boolean(sel.packageId);
-    const type = sel.type || "PER_HEAD";
+    const hasCustomQty = sel.quantity !== undefined && sel.quantity !== null && sel.quantity !== "";
+    const type = sel.type || (isPackageItem ? "PACKAGE" : "PER_HEAD");
     const price = isPackageItem ? 0 : Number(sel.price) || 0;
-    const qty = isPackageItem ? 1 : type === "PER_HEAD" ? Number(guestCount) || 1 : Number(sel.quantity) || 1;
-    const unit = isPackageItem ? "" : type === "PER_HEAD" ? "pax" : (sel.unit || "pcs");
+    const qty = hasCustomQty 
+      ? Number(sel.quantity) 
+      : isPackageItem 
+        ? null 
+        : type === "PER_HEAD" 
+          ? Number(guestCount) || 1 
+          : Number(sel.quantity) || 1;
+    const unit = sel.unit ? sel.unit.toUpperCase() : (type === "PER_HEAD" ? "PAX" : "NOS");
     const shortDesc = menu.description ? (menu.description.length > 100 ? menu.description.substring(0, 100) + "..." : menu.description) : null;
     return {
       description: menu.name,
@@ -89,27 +99,18 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       qty,
       unit,
       unitPrice: price,
-      total: price * qty,
+      total: price * (qty || 1),
+      isIncluded: isPackageItem && !hasCustomQty,
     };
   };
 
-  // Category order for menu items in the PDF
-  const CATEGORY_ORDER = [
-    "Beverages",   // Welcome Drinks
-    "Starters",
-    "Main Course",
-    // Arrangements (inventory) inserted between Main Course and Desserts
-    "Desserts",
-    "Snacks",
-  ];
-
-  // Build categorised menu sections in the required order
-  const welcomeDrinkLines  = menus.filter(m => m.category === "Beverages").map(buildMenuLine);
-  const starterLines       = menus.filter(m => m.category === "Starters").map(buildMenuLine);
-  const mainCourseLines    = menus.filter(m => m.category === "Main Course").map(buildMenuLine);
-  const dessertLines       = menus.filter(m => m.category === "Desserts").map(buildMenuLine);
+  // Build categorised menu sections in required order
+  const welcomeDrinkLines = menus.filter(m => m.category === "Beverages").map(buildMenuLine);
+  const starterLines      = menus.filter(m => m.category === "Starters").map(buildMenuLine);
+  const mainCourseLines   = menus.filter(m => m.category === "Main Course").map(buildMenuLine);
+  const dessertLines      = menus.filter(m => m.category === "Desserts").map(buildMenuLine);
   
-  // Group any other custom categories (like Snacks, Pickles, etc.) dynamically
+  // Group other custom categories dynamically
   const explicitCategories = ["Beverages", "Starters", "Main Course", "Desserts"];
   const otherMenus = menus.filter(m => !explicitCategories.includes(m.category));
   
@@ -129,9 +130,10 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     description: a.name,
     note: `${a.quantity} ${a.unit} × ${durationInDays} day(s)`,
     qty: Number(a.quantity) || 1,
-    unit: a.unit || "unit",
+    unit: (a.unit || "NOS").toUpperCase(),
     unitPrice: Number(a.rentPerDay || 0),
     total: Number(a.quantity || 1) * Number(a.rentPerDay || 0) * Number(durationInDays || 1),
+    isIncluded: false,
   }));
 
   const cateringBoyCost =
@@ -145,29 +147,33 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
           description: "Catering Staff (Legacy)",
           note: `${cateringBoysCount} staff × ${durationInDays} day(s)`,
           qty: Number(cateringBoysCount),
+          unit: "STAFF",
           unitPrice: Number(cateringBoyRate || 0),
           total: cateringBoyCost,
+          isIncluded: false,
         }]
       : []),
     ...staff.map((s) => ({
-      description: `Staff: ${s.role || "Unknown"}`,
+      description: `Staff: ${s.role || "Staff"}`,
       note: `${Number(s.count) || 0} staff × ${durationInDays} day(s)`,
       qty: Number(s.count) || 0,
-      unit: "staff",
+      unit: "STAFF",
       unitPrice: Number(s.rate || 0),
       total: (Number(s.count) || 0) * Number(s.rate || 0) * Number(durationInDays || 1),
+      isIncluded: false,
     })),
     ...extras.map((item) => ({
       description: item.description,
       note: null,
       qty: Number(item.quantity) || 1,
-      unit: item.unit || "pcs",
+      unit: (item.unit || "NOS").toUpperCase(),
       unitPrice: Number(item.unitPrice) || 0,
       total: Number(item.total) || 0,
+      isIncluded: false,
     })),
   ];
 
-  // Final ordered sections for rendering
+  // Final ordered sections matching reference
   const sections = [
     { label: "Welcome Drinks",  lines: welcomeDrinkLines },
     { label: "Starters",        lines: starterLines },
@@ -177,9 +183,6 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     ...otherSections,
     { label: "Staffs",          lines: staffLines },
   ].filter(section => section.lines.length > 0);
-
-  // Flat list still needed for numbering (sequential across all sections)
-  const allLines = sections.flatMap(s => s.lines);
 
   const fmt = (n) => Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -349,141 +352,174 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
             </div>
           </div>
 
-      {/* Items Table */}
-      <div className="mb-6">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b-2 border-slate-800 text-slate-900">
-              <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider w-12 text-center">#</th>
-              <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider">Description</th>
-              {quotationPdfSettings.showItemQuantity !== false && (
-                <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-24">Qty</th>
-              )}
-              {quotationPdfSettings.showItemUnitPrice && (
-                <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-32">Unit Price</th>
-              )}
-              {quotationPdfSettings.showItemTotalPrice && (
-                <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-32">Total</th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {(() => {
-              let colSpanCount = 2;
-              if (quotationPdfSettings.showItemQuantity !== false) colSpanCount++;
-              if (quotationPdfSettings.showItemUnitPrice) colSpanCount++;
-              if (quotationPdfSettings.showItemTotalPrice) colSpanCount++;
-
-              if (allLines.length === 0) {
-                return (
-                  <tr>
-                    <td colSpan={colSpanCount} className="py-8 text-center text-slate-400 text-sm">No items found</td>
-                  </tr>
-                );
-              }
-
-              let counter = 0;
-              return sections.map((section) => (
-                <React.Fragment key={section.label}>
-                  {/* Section header row */}
-                  <tr>
-                    <td colSpan={colSpanCount} className="py-2 px-2 bg-slate-100 border-t border-b border-slate-200">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                        {section.label}
-                      </span>
-                    </td>
-                  </tr>
-                  {/* Section line items */}
-                  {section.lines.map((line) => {
-                    counter += 1;
-                    const rowNum = counter;
-                    return (
-                      <tr key={rowNum} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                        <td className="py-3 px-2 text-center text-sm text-slate-500">{rowNum}</td>
-                        <td className="py-3 px-2">
-                          <p className="text-sm font-medium text-slate-800">{line.description}</p>
-                          {line.shortDesc && <p className="text-[10px] text-slate-400 mt-0.5">{line.shortDesc}</p>}
-                          {line.note && <p className="text-xs text-slate-500 mt-1">{line.note}</p>}
-                        </td>
-                        {quotationPdfSettings.showItemQuantity !== false && (
-                          <td className="py-3 px-2 text-right text-sm font-semibold text-slate-700">
-                            {line.qty}{line.unit ? <span className="text-xs font-normal text-slate-400 ml-1">{line.unit}</span> : null}
-                          </td>
-                        )}
-                        {quotationPdfSettings.showItemUnitPrice && (
-                          <td className="py-3 px-2 text-right text-sm font-medium text-slate-700">
-                            {line.unitPrice ? `${CURRENCY}${fmt(line.unitPrice)}` : "—"}
-                          </td>
-                        )}
-                        {quotationPdfSettings.showItemTotalPrice && (
-                          <td className="py-3 px-2 text-right text-sm font-bold text-slate-900">
-                            {line.total ? `${CURRENCY}${fmt(line.total)}` : "—"}
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </React.Fragment>
-              ));
-            })()}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Totals Section */}
-      <div className="flex justify-end mb-12">
-        <div className="w-[320px]">
-          <div className="space-y-2 px-2 text-sm text-slate-600">
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span className="font-medium text-slate-900">{CURRENCY}{fmt(subtotal)}</span>
+          {/* Items Sections matching reference media_1790706617324.png */}
+          <div className="relative mb-6">
+            {/* Subtle Watermark in background */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.035] overflow-hidden select-none">
+              <img src="/software_logo.PNG" alt="" className="w-96 max-w-full object-contain" />
             </div>
-            {quotationPdfSettings.showTax !== false && (
-              <div className="flex justify-between">
-                <span>Tax</span>
-                <span className="font-medium text-slate-900">{CURRENCY}{fmt(tax)}</span>
-              </div>
-            )}
-            {quotationPdfSettings.showDiscount !== false && Number(discountAmount) > 0 && (
-              <div className="flex justify-between text-emerald-600">
-                <span>Discount</span>
-                <span className="font-medium">-{CURRENCY}{fmt(discountAmount)}</span>
-              </div>
-            )}
-          </div>
-          
-          <div className="border-t border-slate-200 my-3"></div>
-          
-          <div className="flex justify-between items-center px-2 mb-4">
-            <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">Total Estimate</span>
-            <span className="text-xl font-bold text-slate-900">{CURRENCY}{fmt(totalAmount)}</span>
-          </div>
-        </div>
-      </div>
 
-      {/* Footer (Terms & Signatory) */}
-      <div className="border-t border-slate-200 pt-8 mt-8">
-        <div className="grid grid-cols-2 gap-12">
-          <div>
-            {notes && (
-              <>
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Terms & Notes</h4>
-                <div className="text-xs text-slate-500 leading-relaxed space-y-1">
-                  <p>{notes}</p>
-                </div>
-              </>
+            {sections.length === 0 ? (
+              <div className="py-8 text-center text-slate-400 text-sm border border-[#D8D2C4] rounded-md bg-white">
+                No items found
+              </div>
+            ) : (
+              sections.map((section, sIdx) => {
+                const sectionNum = String(sIdx + 1).padStart(2, '0');
+                return (
+                  <div
+                    key={section.label}
+                    className="border border-[#D8D2C4] rounded-md overflow-hidden bg-white shadow-2xs mb-4.5 last:mb-0 relative z-10"
+                  >
+                    {/* Royal Green Section Header with Bronze Number Badge */}
+                    <div className="bg-[#163A2B] px-3.5 py-1.5 flex items-center gap-2.5 border-b-2 border-[#A37B3E]">
+                      <span className="bg-[#7A5E2E] text-white text-[9.5px] font-bold px-1.5 py-0.5 rounded-[3px] tracking-wider leading-none">
+                        {sectionNum}
+                      </span>
+                      <h3 className="font-serif font-black text-xs tracking-[0.18em] text-white uppercase leading-none">
+                        {section.label}
+                      </h3>
+                    </div>
+
+                    {/* Section Items Table */}
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-[#F8F6F0] border-b border-[#E8E2D5] text-[#8B8374]">
+                          <th className="py-2 px-3 text-[9.5px] font-bold uppercase tracking-wider w-12 text-center">
+                            #
+                          </th>
+                          <th className="py-2 px-3 text-[9.5px] font-bold uppercase tracking-wider">
+                            MENU / SERVICE INCLUSION
+                          </th>
+                          {quotationPdfSettings.showItemQuantity !== false && (
+                            <th className="py-2 px-3 text-[9.5px] font-bold uppercase tracking-wider text-right w-36">
+                              QUANTITY & UNIT
+                            </th>
+                          )}
+                          {quotationPdfSettings.showItemUnitPrice && (
+                            <th className="py-2 px-3 text-[9.5px] font-bold uppercase tracking-wider text-right w-28">
+                              UNIT PRICE
+                            </th>
+                          )}
+                          {quotationPdfSettings.showItemTotalPrice && (
+                            <th className="py-2 px-3 text-[9.5px] font-bold uppercase tracking-wider text-right w-28">
+                              TOTAL
+                            </th>
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#F0ECE1]">
+                        {section.lines.map((line, lIdx) => {
+                          const rowNum = String(lIdx + 1).padStart(2, '0');
+                          const isIncluded = line.isIncluded || (!line.qty && Number(line.unitPrice || 0) === 0);
+                          return (
+                            <tr key={lIdx} className="hover:bg-[#FAF9F5] transition-colors">
+                              <td className="py-2 px-3 text-center text-xs font-bold text-[#8B8374] font-mono">
+                                {rowNum}
+                              </td>
+                              <td className="py-2 px-3">
+                                <span className="font-bold text-xs text-slate-900 uppercase tracking-wide">
+                                  {line.description}
+                                </span>
+                                {line.shortDesc && (
+                                  <p className="text-[10px] text-slate-400 mt-0.5 leading-snug">
+                                    {line.shortDesc}
+                                  </p>
+                                )}
+                              </td>
+                              {quotationPdfSettings.showItemQuantity !== false && (
+                                <td className="py-2 px-3 text-right">
+                                  {isIncluded ? (
+                                    <span className="text-[11px] font-black tracking-wider text-[#A37B3E] uppercase">
+                                      INCLUDED
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-[4px] bg-[#F4F1EA] border border-[#DCD6C8] text-xs font-bold text-slate-800">
+                                      {line.qty}{" "}
+                                      {line.unit ? (
+                                        <span className="text-[10px] text-slate-600 ml-1 font-bold uppercase">
+                                          {line.unit}
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  )}
+                                </td>
+                              )}
+                              {quotationPdfSettings.showItemUnitPrice && (
+                                <td className="py-2 px-3 text-right text-xs font-medium text-slate-700">
+                                  {line.unitPrice ? `${CURRENCY}${fmt(line.unitPrice)}` : "—"}
+                                </td>
+                              )}
+                              {quotationPdfSettings.showItemTotalPrice && (
+                                <td className="py-2 px-3 text-right text-xs font-bold text-slate-900">
+                                  {line.total ? `${CURRENCY}${fmt(line.total)}` : "—"}
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })
             )}
           </div>
-          <div className="text-right flex flex-col justify-end items-end">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">Authorized Signatory</p>
-            <div className="border-b border-slate-400 w-48 mt-8"></div>
+
+          {/* Totals Section */}
+          <div className="flex justify-end mb-8">
+            <div className="w-[320px]">
+              <div className="space-y-2 px-2 text-sm text-slate-600">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span className="font-medium text-slate-900">{CURRENCY}{fmt(subtotal)}</span>
+                </div>
+                {quotationPdfSettings.showTax !== false && (
+                  <div className="flex justify-between">
+                    <span>Tax</span>
+                    <span className="font-medium text-slate-900">{CURRENCY}{fmt(tax)}</span>
+                  </div>
+                )}
+                {quotationPdfSettings.showDiscount !== false && Number(discountAmount) > 0 && (
+                  <div className="flex justify-between text-emerald-600">
+                    <span>Discount</span>
+                    <span className="font-medium">-{CURRENCY}{fmt(discountAmount)}</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="border-t border-slate-200 my-3"></div>
+              
+              <div className="flex justify-between items-center px-2 mb-4">
+                <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">Total Estimate</span>
+                <span className="text-xl font-bold text-slate-900">{CURRENCY}{fmt(totalAmount)}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      
-      <div className="mt-8 text-center text-[10px] text-slate-400">
-        This is an estimate and not a final invoice. Prices may vary.
-      </div>
+
+          {/* Footer (Terms & Signatory) */}
+          <div className="border-t border-slate-200 pt-8 mt-8">
+            <div className="grid grid-cols-2 gap-12">
+              <div>
+                {notes && (
+                  <>
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Terms & Notes</h4>
+                    <div className="text-xs text-slate-500 leading-relaxed space-y-1">
+                      <p>{notes}</p>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="text-right flex flex-col justify-end items-end">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">Authorized Signatory</p>
+                <div className="border-b border-slate-400 w-48 mt-8"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-8 text-center text-[10px] text-slate-400">
+            This is an estimate and not a final invoice. Prices may vary.
+          </div>
         </div>
       </div>
     </div>
