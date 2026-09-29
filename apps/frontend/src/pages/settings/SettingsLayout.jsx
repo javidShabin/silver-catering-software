@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 
 const SettingsLayout = () => {
   const { t } = useTranslation();
+  const user = useAuthStore(state => state.user);
   const isAdmin = user?.role === "admin" || user?.role === "super_admin";
 
   return (

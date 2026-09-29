@@ -11,6 +11,28 @@ import { useTenantStore } from "../../store/useTenantStore";
 import SubscriptionPackageCard from "../../components/super-admin/SubscriptionPackageCard";
 import SecuritySettings from "./SecuritySettings";
 
+const defaultPdfSettings = {
+  showCustomerContact: true,
+  showCustomerAddress: true,
+  showEventDetails: true,
+  showTax: true,
+  showDiscount: true,
+  showItemQuantity: true,
+  showItemUnitPrice: true,
+  showItemTotalPrice: true
+};
+
+const defaultQuotationPdfSettings = {
+  showCustomerContact: true,
+  showCustomerAddress: true,
+  showEventDetails: true,
+  showTax: true,
+  showDiscount: true,
+  showItemQuantity: true,
+  showItemUnitPrice: false,
+  showItemTotalPrice: false
+};
+
 const WorkspaceSettings = () => {
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const { tenant, fetchSettings, updateSettings, uploadLogo, isLoading: isFetching } = useTenantStore(
@@ -22,35 +44,12 @@ const WorkspaceSettings = () => {
       isLoading: state.isLoading,
     }))
   );
+  const [activePdfTab, setActivePdfTab] = useState("invoice");
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
-
-  const defaultPdfSettings = {
-    showCustomerContact: true,
-    showCustomerAddress: true,
-    showEventDetails: true,
-    showTax: true,
-    showDiscount: true,
-    showItemQuantity: true,
-    showItemUnitPrice: true,
-    showItemTotalPrice: true
-  };
-
-  const defaultQuotationPdfSettings = {
-    showCustomerContact: true,
-    showCustomerAddress: true,
-    showEventDetails: true,
-    showTax: true,
-    showDiscount: true,
-    showItemQuantity: true,
-    showItemUnitPrice: false,
-    showItemTotalPrice: false
-  };
-
-  const [activePdfTab, setActivePdfTab] = useState("invoice");
 
   const [form, setForm] = useState({
     name: "",
@@ -126,11 +125,13 @@ const WorkspaceSettings = () => {
 
   const handleToggle = (key) => {
     const targetGroup = activePdfTab === "invoice" ? "pdfSettings" : "quotationPdfSettings";
+    const currentGroup = form[targetGroup] || (activePdfTab === "invoice" ? defaultPdfSettings : defaultQuotationPdfSettings);
+    const currentValue = currentGroup[key] !== false;
     setForm(prev => ({
       ...prev,
       [targetGroup]: {
-        ...prev[targetGroup],
-        [key]: !prev[targetGroup]?.[key]
+        ...(prev[targetGroup] || (activePdfTab === "invoice" ? defaultPdfSettings : defaultQuotationPdfSettings)),
+        [key]: !currentValue
       }
     }));
     setIsDirty(true);
@@ -342,86 +343,93 @@ const WorkspaceSettings = () => {
           <SecuritySettings />
           
           {/* Document PDF Settings */}
-          <SettingsModule
-            title="Document PDF Settings"
-            description="Select which details should be visible on your generated PDFs."
-            icon={FileText}
-          >
-            <div className="space-y-3 mt-1">
-              {/* Tab Switcher */}
-              <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setActivePdfTab("invoice")}
-                  className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    activePdfTab === "invoice"
-                      ? "bg-slate-900 text-white shadow-sm dark:bg-[#0b0f19] dark:text-white dark:border dark:border-slate-800"
-                      : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
-                  }`}
-                >
-                  Invoice PDFs
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActivePdfTab("quotation")}
-                  className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    activePdfTab === "quotation"
-                      ? "bg-slate-900 text-white shadow-sm dark:bg-[#0b0f19] dark:text-white dark:border dark:border-slate-800"
-                      : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
-                  }`}
-                >
-                  Quotation PDFs
-                </button>
+          <div className="relative group bg-[#0d1527] rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col p-5">
+            {/* Header */}
+            <div className="flex items-start gap-3.5 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-[#141f36] border border-slate-700/60 flex items-center justify-center text-slate-300 shrink-0 shadow-inner">
+                <FileText size={20} />
               </div>
-
-              {/* Toggles List */}
-              <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1.5 custom-scrollbar">
-                {[
-                  { key: 'showCustomerContact', label: 'Customer Phone & Email' },
-                  { key: 'showCustomerAddress', label: 'Customer Address' },
-                  { key: 'showEventDetails', label: 'Event Details' },
-                  { key: 'showTax', label: 'Tax Breakdown' },
-                  { key: 'showDiscount', label: 'Discount Amount' },
-                  { key: 'showItemQuantity', label: 'Item Quantity (Qty)' },
-                  { key: 'showItemUnitPrice', label: 'Item Unit Price' },
-                  { key: 'showItemTotalPrice', label: 'Item Total Price' }
-                ].map((item) => {
-                  const currentPdfSettings = activePdfTab === "invoice"
-                    ? (form.pdfSettings || defaultPdfSettings)
-                    : (form.quotationPdfSettings || defaultQuotationPdfSettings);
-                  const isChecked = currentPdfSettings?.[item.key] !== false;
-
-                  return (
-                    <div
-                      key={item.key}
-                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl"
-                    >
-                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide">
-                        {item.label}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleToggle(item.key)}
-                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-                          isChecked ? 'bg-primary-500' : 'bg-slate-200 dark:bg-slate-700'
-                        }`}
-                      >
-                        <span
-                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                            isChecked ? 'translate-x-4' : 'translate-x-0'
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  );
-                })}
+              <div>
+                <h3 className="text-[16px] sm:text-[17px] font-bold text-white tracking-tight">Document PDF Settings</h3>
+                <p className="text-[12px] sm:text-[13px] text-slate-400 mt-0.5 leading-snug">
+                  Select which details should be visible on your generated PDFs.
+                </p>
               </div>
-
-              <p className="text-[10px] text-slate-400 mt-2 ml-1">
-                Note: Unchecking these options will hide the respective sections from your printed {activePdfTab === "invoice" ? "invoices" : "quotations"}.
-              </p>
             </div>
-          </SettingsModule>
+
+            {/* Tab Switcher */}
+            <div className="grid grid-cols-2 p-1 bg-[#080d19] rounded-xl border border-slate-800/80 mb-3.5">
+              <button
+                type="button"
+                onClick={() => setActivePdfTab("invoice")}
+                className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  activePdfTab === "invoice"
+                    ? "bg-[#131d34] text-white shadow-sm border border-slate-700/60"
+                    : "text-slate-400 hover:text-slate-200 border border-transparent"
+                }`}
+              >
+                Invoice PDFs
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePdfTab("quotation")}
+                className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  activePdfTab === "quotation"
+                    ? "bg-[#131d34] text-white shadow-sm border border-slate-700/60"
+                    : "text-slate-400 hover:text-slate-200 border border-transparent"
+                }`}
+              >
+                Quotation PDFs
+              </button>
+            </div>
+
+            {/* Toggles List */}
+            <div className="space-y-2.5 max-h-[240px] overflow-y-auto pr-1.5 custom-scrollbar">
+              {[
+                { key: 'showCustomerContact', label: 'CUSTOMER PHONE & EMAIL' },
+                { key: 'showCustomerAddress', label: 'CUSTOMER ADDRESS' },
+                { key: 'showEventDetails', label: 'EVENT DETAILS' },
+                { key: 'showTax', label: 'TAX BREAKDOWN' },
+                { key: 'showDiscount', label: 'DISCOUNT AMOUNT' },
+                { key: 'showItemQuantity', label: 'ITEM QUANTITY (QTY)' },
+                { key: 'showItemUnitPrice', label: 'ITEM UNIT PRICE' },
+                { key: 'showItemTotalPrice', label: 'ITEM TOTAL PRICE' }
+              ].map((item) => {
+                const currentPdfSettings = activePdfTab === "invoice"
+                  ? (form.pdfSettings || defaultPdfSettings)
+                  : (form.quotationPdfSettings || defaultQuotationPdfSettings);
+                const isChecked = currentPdfSettings?.[item.key] !== false;
+
+                return (
+                  <div
+                    key={item.key}
+                    className="flex items-center justify-between p-3.5 bg-[#101b30] border border-[#1c2a44] rounded-xl transition-colors hover:border-slate-700"
+                  >
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-200 uppercase tracking-wider select-none">
+                      {item.label}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleToggle(item.key)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
+                        isChecked ? 'bg-[#ea580c]' : 'bg-[#1b253b] border border-slate-700/60'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-[#0a101f] shadow-md ring-0 transition duration-200 ease-in-out ${
+                          isChecked ? 'translate-x-5' : 'translate-x-0 bg-slate-400'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="text-[11px] text-slate-400 mt-3 ml-0.5 leading-relaxed">
+              Note: Unchecking these options will hide the respective sections from your printed {activePdfTab === "invoice" ? "invoices" : "quotations"}.
+            </p>
+          </div>
 
           {tenant?.plan && (
             <SubscriptionPackageCard tenant={tenant} />
