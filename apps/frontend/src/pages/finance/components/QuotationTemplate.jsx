@@ -466,33 +466,54 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
             )}
           </div>
 
-          {/* Totals Section */}
-          <div className="flex justify-end mb-8">
-            <div className="w-[320px]">
-              <div className="space-y-2 px-2 text-sm text-slate-600">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span className="font-medium text-slate-900">{CURRENCY}{fmt(subtotal)}</span>
+          {/* Totals Section (Luxury Royal Green & Gold Estimate Card) */}
+          <div className="flex justify-between items-end gap-6 mb-8 pt-2">
+            {/* Left helper note / validity notice */}
+            <div className="flex-1 max-w-[360px] pb-1">
+              <div className="border border-[#E2DDD3] rounded-lg p-3 bg-[#FAF8F5] text-[11px] text-slate-600 space-y-1">
+                <p className="font-bold text-[#163A2B] flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A37B3E]"></span>
+                  Pricing & Quotation Notice
+                </p>
+                <p className="text-[10.5px] leading-relaxed text-slate-500">
+                  This proposal is calculated for <strong className="text-slate-700 font-semibold">{guestCount || 0} Guests</strong>. Total price is an estimate and subject to final menu confirmation and headcount adjustments.
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Luxury Estimate Summary Card */}
+            <div className="w-[330px] border border-[#D8D2C4] rounded-lg overflow-hidden bg-white shadow-2xs">
+              <div className="bg-[#F4F1EA] px-3.5 py-1.5 border-b border-[#D8D2C4] flex items-center justify-between">
+                <span className="text-[10px] font-bold tracking-[0.15em] text-[#163A2B] uppercase">ESTIMATE SUMMARY</span>
+                <span className="text-[9px] font-bold text-[#A37B3E] uppercase tracking-wider">ALL AMOUNTS IN {CURRENCY}</span>
+              </div>
+              <div className="p-3 space-y-2 text-xs">
+                <div className="flex justify-between items-center text-slate-600">
+                  <span className="font-medium text-[11px]">Subtotal</span>
+                  <span className="font-bold text-slate-900 font-mono text-[11.5px]">{CURRENCY}{fmt(subtotal)}</span>
                 </div>
                 {quotationPdfSettings.showTax !== false && (
-                  <div className="flex justify-between">
-                    <span>Tax</span>
-                    <span className="font-medium text-slate-900">{CURRENCY}{fmt(tax)}</span>
+                  <div className="flex justify-between items-center text-slate-600">
+                    <span className="font-medium text-[11px]">Estimated Tax</span>
+                    <span className="font-semibold text-slate-800 font-mono text-[11.5px]">{CURRENCY}{fmt(tax)}</span>
                   </div>
                 )}
                 {quotationPdfSettings.showDiscount !== false && Number(discountAmount) > 0 && (
-                  <div className="flex justify-between text-emerald-600">
-                    <span>Discount</span>
-                    <span className="font-medium">-{CURRENCY}{fmt(discountAmount)}</span>
+                  <div className="flex justify-between items-center text-emerald-700">
+                    <span className="font-medium text-[11px]">Discount Applied</span>
+                    <span className="font-bold font-mono text-[11.5px]">-{CURRENCY}{fmt(discountAmount)}</span>
                   </div>
                 )}
               </div>
-              
-              <div className="border-t border-slate-200 my-3"></div>
-              
-              <div className="flex justify-between items-center px-2 mb-4">
-                <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">Total Estimate</span>
-                <span className="text-xl font-bold text-slate-900">{CURRENCY}{fmt(totalAmount)}</span>
+              {/* Grand Total Bar */}
+              <div className="bg-[#163A2B] px-3.5 py-2.5 flex justify-between items-center border-t-2 border-[#A37B3E]">
+                <div>
+                  <span className="text-[8.5px] font-bold text-[#D4AF37] uppercase tracking-[0.16em] block">NET ESTIMATE</span>
+                  <span className="text-xs font-serif font-black tracking-widest text-white uppercase block">TOTAL AMOUNT</span>
+                </div>
+                <span className="text-lg font-black text-white font-mono tracking-tight">
+                  {CURRENCY}{fmt(totalAmount)}
+                </span>
               </div>
             </div>
           </div>
