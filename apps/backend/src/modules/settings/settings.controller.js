@@ -21,6 +21,17 @@ const defaultPdfSettings = {
   showItemTotalPrice: true
 };
 
+const defaultQuotationPdfSettings = {
+  showCustomerContact: true,
+  showCustomerAddress: true,
+  showEventDetails: true,
+  showTax: true,
+  showDiscount: true,
+  showItemQuantity: true,
+  showItemUnitPrice: false,
+  showItemTotalPrice: false
+};
+
 const defaultWorkspaceSettings = {
   name: "",
   contactEmail: "",
@@ -32,7 +43,8 @@ const defaultWorkspaceSettings = {
   taxNumber: "",
   taxPercentage: "",
   taxDetails: "",
-  pdfSettings: defaultPdfSettings
+  pdfSettings: defaultPdfSettings,
+  quotationPdfSettings: defaultQuotationPdfSettings
 };
 
 const getWorkspaceSettingsRecord = async () => {
@@ -58,6 +70,10 @@ const normalizeWorkspaceSettings = (value = {}) => ({
   pdfSettings: {
     ...defaultPdfSettings,
     ...(value.pdfSettings || {})
+  },
+  quotationPdfSettings: {
+    ...defaultQuotationPdfSettings,
+    ...(value.quotationPdfSettings || {})
   }
 });
 
@@ -159,6 +175,10 @@ export const updateWorkspaceSettings = catchAsync(async (req, res) => {
     pdfSettings: {
       ...(current.value?.pdfSettings || {}),
       ...(req.body?.pdfSettings || {})
+    },
+    quotationPdfSettings: {
+      ...(current.value?.quotationPdfSettings || {}),
+      ...(req.body?.quotationPdfSettings || {})
     }
   });
 

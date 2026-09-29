@@ -28,6 +28,30 @@ const WorkspaceSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
 
+  const defaultPdfSettings = {
+    showCustomerContact: true,
+    showCustomerAddress: true,
+    showEventDetails: true,
+    showTax: true,
+    showDiscount: true,
+    showItemQuantity: true,
+    showItemUnitPrice: true,
+    showItemTotalPrice: true
+  };
+
+  const defaultQuotationPdfSettings = {
+    showCustomerContact: true,
+    showCustomerAddress: true,
+    showEventDetails: true,
+    showTax: true,
+    showDiscount: true,
+    showItemQuantity: true,
+    showItemUnitPrice: false,
+    showItemTotalPrice: false
+  };
+
+  const [activePdfTab, setActivePdfTab] = useState("invoice");
+
   const [form, setForm] = useState({
     name: "",
     contactEmail: "",
@@ -36,16 +60,8 @@ const WorkspaceSettings = () => {
     website: "",
     logoUrl: "",
     pdfFromAddress: "",
-    pdfSettings: {
-      showCustomerContact: true,
-      showCustomerAddress: true,
-      showEventDetails: true,
-      showTax: true,
-      showDiscount: true,
-      showItemQuantity: true,
-      showItemUnitPrice: true,
-      showItemTotalPrice: true
-    }
+    pdfSettings: defaultPdfSettings,
+    quotationPdfSettings: defaultQuotationPdfSettings
   });
 
   useEffect(() => {
@@ -62,16 +78,8 @@ const WorkspaceSettings = () => {
         website: tenant.website || "",
         logoUrl: tenant.logoUrl || "",
         pdfFromAddress: tenant.pdfFromAddress || "",
-        pdfSettings: tenant.pdfSettings || {
-          showCustomerContact: true,
-          showCustomerAddress: true,
-          showEventDetails: true,
-          showTax: true,
-          showDiscount: true,
-          showItemQuantity: true,
-          showItemUnitPrice: true,
-          showItemTotalPrice: true
-        }
+        pdfSettings: tenant.pdfSettings || defaultPdfSettings,
+        quotationPdfSettings: tenant.quotationPdfSettings || defaultQuotationPdfSettings
       });
       setIsDirty(false);
       if (tenant.name) setIsEditing(false);
@@ -104,16 +112,8 @@ const WorkspaceSettings = () => {
         website: tenant.website || "",
         logoUrl: tenant.logoUrl || "",
         pdfFromAddress: tenant.pdfFromAddress || "",
-        pdfSettings: tenant.pdfSettings || {
-          showCustomerContact: true,
-          showCustomerAddress: true,
-          showEventDetails: true,
-          showTax: true,
-          showDiscount: true,
-          showItemQuantity: true,
-          showItemUnitPrice: true,
-          showItemTotalPrice: true
-        }
+        pdfSettings: tenant.pdfSettings || defaultPdfSettings,
+        quotationPdfSettings: tenant.quotationPdfSettings || defaultQuotationPdfSettings
       });
       setIsDirty(false);
     }
@@ -125,11 +125,12 @@ const WorkspaceSettings = () => {
   };
 
   const handleToggle = (key) => {
+    const targetGroup = activePdfTab === "invoice" ? "pdfSettings" : "quotationPdfSettings";
     setForm(prev => ({
       ...prev,
-      pdfSettings: {
-        ...prev.pdfSettings,
-        [key]: !prev.pdfSettings[key]
+      [targetGroup]: {
+        ...prev[targetGroup],
+        [key]: !prev[targetGroup]?.[key]
       }
     }));
     setIsDirty(true);
@@ -340,14 +341,41 @@ const WorkspaceSettings = () => {
         <div className="md:col-span-2 space-y-4">
           <SecuritySettings />
           
-          {/* Invoice PDF Settings */}
+          {/* Document PDF Settings */}
           <SettingsModule
-            title="Invoice PDF Settings"
-            description="Select which details should be visible on your generated invoice PDFs."
+            title="Document PDF Settings"
+            description="Select which details should be visible on your generated PDFs."
             icon={FileText}
           >
             <div className="space-y-3 mt-1">
-              <div className="grid grid-cols-1 gap-4 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+              {/* Tab Switcher */}
+              <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setActivePdfTab("invoice")}
+                  className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    activePdfTab === "invoice"
+                      ? "bg-slate-900 text-white shadow-sm dark:bg-[#0b0f19] dark:text-white dark:border dark:border-slate-800"
+                      : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                  }`}
+                >
+                  Invoice PDFs
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePdfTab("quotation")}
+                  className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    activePdfTab === "quotation"
+                      ? "bg-slate-900 text-white shadow-sm dark:bg-[#0b0f19] dark:text-white dark:border dark:border-slate-800"
+                      : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                  }`}
+                >
+                  Quotation PDFs
+                </button>
+              </div>
+
+              {/* Toggles List */}
+              <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1.5 custom-scrollbar">
                 {[
                   { key: 'showCustomerContact', label: 'Customer Phone & Email' },
                   { key: 'showCustomerAddress', label: 'Customer Address' },
@@ -357,23 +385,40 @@ const WorkspaceSettings = () => {
                   { key: 'showItemQuantity', label: 'Item Quantity (Qty)' },
                   { key: 'showItemUnitPrice', label: 'Item Unit Price' },
                   { key: 'showItemTotalPrice', label: 'Item Total Price' }
-                ].map((item) => (
-                  <div key={item.key} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                    <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wide">{item.label}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleToggle(item.key)}
-                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${form.pdfSettings?.[item.key] ? 'bg-primary-500' : 'bg-slate-200'}`}
+                ].map((item) => {
+                  const currentPdfSettings = activePdfTab === "invoice"
+                    ? (form.pdfSettings || defaultPdfSettings)
+                    : (form.quotationPdfSettings || defaultQuotationPdfSettings);
+                  const isChecked = currentPdfSettings?.[item.key] !== false;
+
+                  return (
+                    <div
+                      key={item.key}
+                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl"
                     >
-                      <span
-                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${form.pdfSettings?.[item.key] ? 'translate-x-4' : 'translate-x-0'}`}
-                      />
-                    </button>
-                  </div>
-                ))}
+                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide">
+                        {item.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleToggle(item.key)}
+                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+                          isChecked ? 'bg-primary-500' : 'bg-slate-200 dark:bg-slate-700'
+                        }`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            isChecked ? 'translate-x-4' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
+
               <p className="text-[10px] text-slate-400 mt-2 ml-1">
-                Note: Unchecking these options will hide the respective sections from your printed bills.
+                Note: Unchecking these options will hide the respective sections from your printed {activePdfTab === "invoice" ? "invoices" : "quotations"}.
               </p>
             </div>
           </SettingsModule>

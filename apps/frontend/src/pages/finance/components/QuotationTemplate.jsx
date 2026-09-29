@@ -10,6 +10,17 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
   const tenant = useTenantStore((state) => state.tenant) || {};
   if (!quotation) return null;
 
+  const quotationPdfSettings = tenant.quotationPdfSettings || {
+    showCustomerContact: true,
+    showCustomerAddress: true,
+    showEventDetails: true,
+    showTax: true,
+    showDiscount: true,
+    showItemQuantity: true,
+    showItemUnitPrice: false,
+    showItemTotalPrice: false
+  };
+
   const {
     quotationNumber,
     customer,
@@ -220,19 +231,23 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Prepared For</h4>
           <div className="text-sm space-y-1 text-slate-700">
             <p className="font-semibold text-slate-900">{customer?.name || "—"}</p>
-            {customer?.email && <p>{customer.email}</p>}
-            {customer?.phone && <p>{customer.phone}</p>}
-            {customer?.address && <p className="max-w-[250px] whitespace-pre-wrap leading-relaxed">{customer.address}</p>}
+            {quotationPdfSettings.showCustomerContact !== false && customer?.email && <p>{customer.email}</p>}
+            {quotationPdfSettings.showCustomerContact !== false && customer?.phone && <p>{customer.phone}</p>}
+            {quotationPdfSettings.showCustomerAddress !== false && customer?.address && (
+              <p className="max-w-[250px] whitespace-pre-wrap leading-relaxed">{customer.address}</p>
+            )}
           </div>
         </div>
         
-        <div className="text-right">
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Event Details</h4>
-          <div className="text-sm space-y-1 text-slate-700">
-            <p>Guests: <span className="font-semibold text-slate-900">{guestCount}</span></p>
-            <p>Duration: <span className="font-semibold text-slate-900">{durationInDays} day(s)</span></p>
+        {quotationPdfSettings.showEventDetails !== false && (
+          <div className="text-right">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Event Details</h4>
+            <div className="text-sm space-y-1 text-slate-700">
+              <p>Guests: <span className="font-semibold text-slate-900">{guestCount}</span></p>
+              <p>Duration: <span className="font-semibold text-slate-900">{durationInDays} day(s)</span></p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Items Table */}
@@ -242,21 +257,38 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
             <tr className="border-b-2 border-slate-800 text-slate-900">
               <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider w-12 text-center">#</th>
               <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider">Description</th>
-              <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-24">Qty</th>
+              {quotationPdfSettings.showItemQuantity !== false && (
+                <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-24">Qty</th>
+              )}
+              {quotationPdfSettings.showItemUnitPrice && (
+                <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-32">Unit Price</th>
+              )}
+              {quotationPdfSettings.showItemTotalPrice && (
+                <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-right w-32">Total</th>
+              )}
             </tr>
           </thead>
           <tbody>
-            {allLines.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="py-8 text-center text-slate-400 text-sm">No items found</td>
-              </tr>
-            ) : (() => {
+            {(() => {
+              let colSpanCount = 2;
+              if (quotationPdfSettings.showItemQuantity !== false) colSpanCount++;
+              if (quotationPdfSettings.showItemUnitPrice) colSpanCount++;
+              if (quotationPdfSettings.showItemTotalPrice) colSpanCount++;
+
+              if (allLines.length === 0) {
+                return (
+                  <tr>
+                    <td colSpan={colSpanCount} className="py-8 text-center text-slate-400 text-sm">No items found</td>
+                  </tr>
+                );
+              }
+
               let counter = 0;
               return sections.map((section) => (
                 <React.Fragment key={section.label}>
                   {/* Section header row */}
                   <tr>
-                    <td colSpan={3} className="py-2 px-2 bg-slate-100 border-t border-b border-slate-200">
+                    <td colSpan={colSpanCount} className="py-2 px-2 bg-slate-100 border-t border-b border-slate-200">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
                         {section.label}
                       </span>
@@ -274,9 +306,21 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                           {line.shortDesc && <p className="text-[10px] text-slate-400 mt-0.5">{line.shortDesc}</p>}
                           {line.note && <p className="text-xs text-slate-500 mt-1">{line.note}</p>}
                         </td>
-                        <td className="py-3 px-2 text-right text-sm font-semibold text-slate-700">
-                          {line.qty}{line.unit ? <span className="text-xs font-normal text-slate-400 ml-1">{line.unit}</span> : null}
-                        </td>
+                        {quotationPdfSettings.showItemQuantity !== false && (
+                          <td className="py-3 px-2 text-right text-sm font-semibold text-slate-700">
+                            {line.qty}{line.unit ? <span className="text-xs font-normal text-slate-400 ml-1">{line.unit}</span> : null}
+                          </td>
+                        )}
+                        {quotationPdfSettings.showItemUnitPrice && (
+                          <td className="py-3 px-2 text-right text-sm font-medium text-slate-700">
+                            {line.unitPrice ? `${CURRENCY}${fmt(line.unitPrice)}` : "—"}
+                          </td>
+                        )}
+                        {quotationPdfSettings.showItemTotalPrice && (
+                          <td className="py-3 px-2 text-right text-sm font-bold text-slate-900">
+                            {line.total ? `${CURRENCY}${fmt(line.total)}` : "—"}
+                          </td>
+                        )}
                       </tr>
                     );
                   })}
@@ -295,11 +339,13 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
               <span>Subtotal</span>
               <span className="font-medium text-slate-900">{CURRENCY}{fmt(subtotal)}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Tax</span>
-              <span className="font-medium text-slate-900">{CURRENCY}{fmt(tax)}</span>
-            </div>
-            {Number(discountAmount) > 0 && (
+            {quotationPdfSettings.showTax !== false && (
+              <div className="flex justify-between">
+                <span>Tax</span>
+                <span className="font-medium text-slate-900">{CURRENCY}{fmt(tax)}</span>
+              </div>
+            )}
+            {quotationPdfSettings.showDiscount !== false && Number(discountAmount) > 0 && (
               <div className="flex justify-between text-emerald-600">
                 <span>Discount</span>
                 <span className="font-medium">-{CURRENCY}{fmt(discountAmount)}</span>
