@@ -183,7 +183,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
 
   const fmt = (n) => Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  // Format date as d.m.yyyy (matching reference 2.10.2026)
+  // Format date as d.m.yyyy (matching reference e.g. 2.10.2026)
   const formatDate = (d) => {
     if (!d) return "—";
     const date = new Date(d);
@@ -191,26 +191,26 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
   };
 
-  // Calculate validity period
-  const getValidityDays = () => {
-    if (!validUntil) return 15;
-    const start = createdAt ? new Date(createdAt).getTime() : Date.now();
-    const end = new Date(validUntil).getTime();
-    const diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
-    return diff > 0 ? diff : 15;
+  // Calculate real validity period
+  const getValidityText = () => {
+    if (validUntil && createdAt) {
+      const diff = Math.round((new Date(validUntil).getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24));
+      if (diff > 0) return `${diff} Days`;
+    }
+    if (validUntil) return formatDate(validUntil);
+    return "—";
   };
-  const validityDays = getValidityDays();
+  const validityText = getValidityText();
 
-  // Occasion, Date, Timing, and Venue
+  // Real Event Details from Software
   const occasion = quotation.event?.title || 
-    notes?.match(/Occasion:\s*([^\n\r]+)/i)?.[1] || 
-    (quotation.package?.name ? `${quotation.package.name}` : "Wedding");
+    (quotation.package?.name ? `${quotation.package.name}` : (quotation.event ? "Event" : "—"));
 
   const eventDate = quotation.event?.date || quotation.date || validUntil || createdAt;
 
   const timingSlot = quotation.event?.time ? (
     quotation.event.time.includes(":") ? `TIME ${quotation.event.time}` : quotation.event.time.toUpperCase()
-  ) : (notes?.match(/Timing:\s*([^\n\r]+)/i)?.[1] || "EVENING 5 PM");
+  ) : "—";
 
   const venuePlace = quotation.event?.location || customer?.address || "—";
 
@@ -225,40 +225,52 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
         <div className="border border-[#163A2B] p-6 sm:p-7 bg-white">
           {/* Top Header Section */}
           <div className="flex justify-between items-start gap-4 mb-3">
-            {/* Left: Branding & Contact Details */}
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-hidden pt-1">
-                {tenant.logoUrl ? (
+            {/* Left: Branding & Contact Details (100% Real Tenant Data) */}
+            <div className="flex items-start gap-4 flex-1 pr-4">
+              {tenant.logoUrl && (
+                <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-hidden pt-0.5">
                   <img 
                     src={tenant.logoUrl.startsWith('http') ? tenant.logoUrl : `${import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000'}${tenant.logoUrl}`} 
                     alt="Logo" 
                     className="max-h-16 max-w-16 object-contain"
                   />
-                ) : (
-                  <div className="w-14 h-14 rounded-full border border-[#A37B3E] flex items-center justify-center text-center p-1">
-                    <span className="font-serif font-bold text-[9px] text-[#163A2B] leading-tight">SILVER<br/>CATERING</span>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-0.5">
+                </div>
+              )}
+              <div className="space-y-0.5 flex-1 min-w-0">
                 <h2 className="font-serif text-2xl font-bold tracking-[0.2em] text-[#163A2B] uppercase leading-none">
-                  {tenant.name || "SILVER CATERING"}
+                  {tenant.name || "CATERING & EVENTS"}
                 </h2>
                 <p className="text-[10px] font-bold tracking-[0.25em] text-[#A37B3E] uppercase pt-0.5">
                   CATERING & EVENTS
                 </p>
                 <div className="text-[11px] text-slate-700 space-y-0.5 pt-1.5 leading-snug">
-                  <p>
-                    <span className="font-bold text-slate-900">Tel:</span> {tenant.contactPhone || "+91 98464 15767 | +91 75939 82800"}
-                  </p>
-                  <p>
-                    <span className="font-bold text-slate-900">Web:</span> {tenant.website || "www.silvercatering.in"}
-                    <span className="mx-2 text-slate-400">•</span>
-                    <span className="font-bold text-slate-900">Email:</span> {tenant.contactEmail || "Silvereventsandcaters@gmail.com"}
-                  </p>
-                  <p className="text-slate-600">
-                    {tenant.pdfFromAddress || tenant.address || "Thalakuttiparambil house, Mecheriparambu, Irimbiliyam PO - 679572, Valanchery"}
-                  </p>
+                  {tenant.contactPhone && (
+                    <p>
+                      <span className="font-bold text-slate-900">Tel:</span> {tenant.contactPhone}
+                    </p>
+                  )}
+                  {(tenant.website || tenant.contactEmail) && (
+                    <p>
+                      {tenant.website && (
+                        <>
+                          <span className="font-bold text-slate-900">Web:</span> {tenant.website}
+                        </>
+                      )}
+                      {tenant.website && tenant.contactEmail && (
+                        <span className="mx-2 text-slate-400">•</span>
+                      )}
+                      {tenant.contactEmail && (
+                        <>
+                          <span className="font-bold text-slate-900">Email:</span> {tenant.contactEmail}
+                        </>
+                      )}
+                    </p>
+                  )}
+                  {(tenant.pdfFromAddress || tenant.address) && (
+                    <p className="text-slate-600 whitespace-pre-line">
+                      {tenant.pdfFromAddress || tenant.address}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -275,15 +287,15 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium text-[11px]">Quote Ref:</span>
-                  <span className="font-black text-slate-900 font-mono tracking-tight text-[11px]">{quotationNumber || "QT-0009"}</span>
+                  <span className="font-black text-slate-900 font-mono tracking-tight text-[11px]">{quotationNumber || "—"}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium text-[11px]">Date:</span>
-                  <span className="font-bold text-slate-900 text-[11px]">{formatDate(createdAt)}</span>
+                  <span className="font-bold text-slate-900 text-[11px]">{createdAt ? formatDate(createdAt) : "—"}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium text-[11px]">Validity:</span>
-                  <span className="px-2 py-0.5 bg-[#f2ece2] text-[#8a6833] rounded text-[10px] font-bold leading-none">{validityDays} Days</span>
+                  <span className="px-2 py-0.5 bg-[#f2ece2] text-[#8a6833] rounded text-[10px] font-bold leading-none">{validityText}</span>
                 </div>
               </div>
             </div>
@@ -302,17 +314,19 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
               <div className="p-3 space-y-1.5 text-xs">
                 <div className="flex items-center">
                   <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Client Name:</span>
-                  <span className="font-black text-slate-900 uppercase tracking-wide text-xs">{customer?.name || "—"}</span>
+                  <span className="font-black text-slate-900 uppercase tracking-wide text-xs truncate">{customer?.name || "—"}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Contact No:</span>
-                  <span className="font-bold text-slate-800 text-xs">
-                    {quotationPdfSettings.showCustomerContact !== false ? (customer?.phone || customer?.email || "—") : "—"}
+                  <span className="font-bold text-slate-800 text-xs truncate">
+                    {quotationPdfSettings.showCustomerContact !== false 
+                      ? ([customer?.phone, customer?.email].filter(Boolean).join(" • ") || "—") 
+                      : "—"}
                   </span>
                 </div>
                 <div className="flex items-start">
                   <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Venue / Place:</span>
-                  <span className="font-semibold text-slate-800 text-xs leading-snug">
+                  <span className="font-semibold text-slate-800 text-xs leading-snug line-clamp-2">
                     {quotationPdfSettings.showCustomerAddress !== false ? venuePlace : "—"}
                   </span>
                 </div>
@@ -327,7 +341,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
               <div className="p-3 space-y-1.5 text-xs">
                 <div className="flex items-center">
                   <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Occasion:</span>
-                  <span className="font-bold text-slate-900 text-xs">{occasion}</span>
+                  <span className="font-bold text-slate-900 text-xs truncate">{occasion}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Event Date:</span>
@@ -335,13 +349,13 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                 </div>
                 <div className="flex items-center">
                   <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Timing / Slot:</span>
-                  <span className="font-bold text-slate-900 uppercase text-xs">{timingSlot}</span>
+                  <span className="font-bold text-slate-900 uppercase text-xs truncate">{timingSlot}</span>
                 </div>
                 <div className="border-t border-dashed border-slate-200 my-1"></div>
                 <div className="flex items-center">
                   <span className="text-slate-500 font-medium w-28 shrink-0 text-[11px]">Guest Count:</span>
                   <span className="bg-[#163A2B] text-white px-2.5 py-0.5 rounded text-[11px] font-bold tracking-wider uppercase inline-block">
-                    {guestCount} GUESTS (PAX)
+                    {guestCount || 0} GUESTS (PAX)
                   </span>
                 </div>
               </div>
