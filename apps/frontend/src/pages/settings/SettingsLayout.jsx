@@ -9,8 +9,7 @@ import { useTranslation } from "react-i18next";
 
 const SettingsLayout = () => {
   const { t } = useTranslation();
-  const user = useAuthStore(state => state.user);
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === "admin" || user?.role === "super_admin";
 
   return (
     <div className="relative w-full min-h-screen pt-0 pb-20 overflow-x-hidden">
