@@ -343,26 +343,26 @@ const WorkspaceSettings = () => {
           <SecuritySettings />
           
           {/* Document PDF Settings */}
-          <div className="relative group bg-[#0d1527] rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col p-5">
+          <div className="relative group bg-[#0d1527] rounded-xl border border-slate-800 shadow-lg overflow-hidden flex flex-col p-3.5">
             {/* Header */}
-            <div className="flex items-start gap-3.5 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#141f36] border border-slate-700/60 flex items-center justify-center text-slate-300 shrink-0 shadow-inner">
-                <FileText size={20} />
+            <div className="flex items-start gap-2.5 mb-2.5">
+              <div className="w-7 h-7 rounded-lg bg-[#141f36] border border-slate-700/60 flex items-center justify-center text-slate-300 shrink-0 shadow-inner mt-0.5">
+                <FileText size={15} />
               </div>
-              <div>
-                <h3 className="text-[16px] sm:text-[17px] font-bold text-white tracking-tight">Document PDF Settings</h3>
-                <p className="text-[12px] sm:text-[13px] text-slate-400 mt-0.5 leading-snug">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-[13px] font-bold text-white tracking-tight leading-tight">Document PDF Settings</h3>
+                <p className="text-[10.5px] text-slate-400 mt-0.5 leading-snug">
                   Select which details should be visible on your generated PDFs.
                 </p>
               </div>
             </div>
 
             {/* Tab Switcher */}
-            <div className="grid grid-cols-2 p-1 bg-[#080d19] rounded-xl border border-slate-800/80 mb-3.5">
+            <div className="grid grid-cols-2 p-0.5 bg-[#080d19] rounded-lg border border-slate-800/80 mb-2">
               <button
                 type="button"
                 onClick={() => setActivePdfTab("invoice")}
-                className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                className={`py-1.5 text-[10.5px] font-bold rounded-md transition-all cursor-pointer ${
                   activePdfTab === "invoice"
                     ? "bg-[#131d34] text-white shadow-sm border border-slate-700/60"
                     : "text-slate-400 hover:text-slate-200 border border-transparent"
@@ -373,7 +373,7 @@ const WorkspaceSettings = () => {
               <button
                 type="button"
                 onClick={() => setActivePdfTab("quotation")}
-                className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                className={`py-1.5 text-[10.5px] font-bold rounded-md transition-all cursor-pointer ${
                   activePdfTab === "quotation"
                     ? "bg-[#131d34] text-white shadow-sm border border-slate-700/60"
                     : "text-slate-400 hover:text-slate-200 border border-transparent"
@@ -384,7 +384,7 @@ const WorkspaceSettings = () => {
             </div>
 
             {/* Toggles List */}
-            <div className="space-y-2.5 max-h-[240px] overflow-y-auto pr-1.5 custom-scrollbar">
+            <div className="space-y-1.5 max-h-[175px] overflow-y-auto pr-1 custom-scrollbar">
               {[
                 { key: 'showCustomerContact', label: 'CUSTOMER PHONE & EMAIL' },
                 { key: 'showCustomerAddress', label: 'CUSTOMER ADDRESS' },
@@ -403,21 +403,21 @@ const WorkspaceSettings = () => {
                 return (
                   <div
                     key={item.key}
-                    className="flex items-center justify-between p-3.5 bg-[#101b30] border border-[#1c2a44] rounded-xl transition-colors hover:border-slate-700"
+                    className="flex items-center justify-between px-2.5 py-1.5 bg-[#101b30] border border-[#1c2a44] rounded-lg transition-colors hover:border-slate-700"
                   >
-                    <span className="text-[11px] sm:text-xs font-bold text-slate-200 uppercase tracking-wider select-none">
+                    <span className="text-[10px] font-bold text-slate-200 uppercase tracking-wide select-none truncate mr-2">
                       {item.label}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleToggle(item.key)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
+                      className={`relative inline-flex h-4.5 w-8 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
                         isChecked ? 'bg-[#ea580c]' : 'bg-[#1b253b] border border-slate-700/60'
                       }`}
                     >
                       <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-[#0a101f] shadow-md ring-0 transition duration-200 ease-in-out ${
-                          isChecked ? 'translate-x-5' : 'translate-x-0 bg-slate-400'
+                        className={`pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-[#0a101f] shadow-sm ring-0 transition duration-200 ease-in-out ${
+                          isChecked ? 'translate-x-3.5' : 'translate-x-0 bg-slate-400'
                         }`}
                       />
                     </button>
@@ -426,7 +426,7 @@ const WorkspaceSettings = () => {
               })}
             </div>
 
-            <p className="text-[11px] text-slate-400 mt-3 ml-0.5 leading-relaxed">
+            <p className="text-[10px] text-slate-400 mt-2 ml-0.5 leading-tight">
               Note: Unchecking these options will hide the respective sections from your printed {activePdfTab === "invoice" ? "invoices" : "quotations"}.
             </p>
           </div>
