@@ -227,10 +227,17 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
       ref={ref}
       id="quotation-printable"
       className="bg-white p-3 max-w-[850px] mx-auto text-slate-800 font-sans print:max-w-none print:w-full print:mx-0 print:p-0"
+      style={{ backgroundColor: "#ffffff", color: "#1e293b" }}
     >
       {/* Royal Green Double Border Frame matching reference */}
-      <div className="border-[2.5px] border-[#163A2B] p-1 bg-white">
-        <div className="border border-[#163A2B] p-6 sm:p-7 bg-white">
+      <div 
+        className="border-[2.5px] border-[#163A2B] p-1 bg-white"
+        style={{ borderColor: "#163A2B", backgroundColor: "#ffffff" }}
+      >
+        <div 
+          className="border border-[#163A2B] p-6 sm:p-7 bg-white"
+          style={{ borderColor: "#163A2B", backgroundColor: "#ffffff" }}
+        >
           {/* Top Header Section */}
           <div className="flex justify-between items-start gap-4 mb-3">
             {/* Left: Branding & Contact Details */}

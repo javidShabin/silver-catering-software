@@ -68,12 +68,37 @@ const QuotationPreviewModal = ({ isOpen, onClose, quotation }) => {
     const element = document.getElementById("quotation-printable");
     if (!element) throw new Error("Quotation element not found");
 
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    }
+
     const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
       import("html2canvas"),
       import("jspdf")
     ]);
 
-    const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+    const canvas = await html2canvas(element, {
+      scale: 2.5,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      onclone: (clonedDoc) => {
+        // Force light mode in cloned document for pure white PDF
+        clonedDoc.documentElement.classList.remove("dark");
+        clonedDoc.body.classList.remove("dark");
+        clonedDoc.documentElement.style.backgroundColor = "#ffffff";
+        clonedDoc.body.style.backgroundColor = "#ffffff";
+        clonedDoc.documentElement.style.colorScheme = "light";
+
+        const printable = clonedDoc.getElementById("quotation-printable");
+        if (printable) {
+          printable.style.backgroundColor = "#ffffff";
+          printable.style.color = "#1e293b";
+          printable.classList.remove("dark");
+        }
+      }
+    });
+
     const imgData = canvas.toDataURL("image/png");
     
     const pdf = new jsPDF({
@@ -82,25 +107,32 @@ const QuotationPreviewModal = ({ isOpen, onClose, quotation }) => {
       format: "a4"
     });
     
-    const scaleFactor = 0.85; // Shrink by 15% to fit more content per page
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
     
-    const finalWidth = pdfWidth * scaleFactor;
+    // Clean proportional margins
+    const margin = 16;
+    const finalWidth = pdfWidth - (margin * 2);
     const finalImgHeight = (canvas.height * finalWidth) / canvas.width;
-    const xOffset = (pdfWidth - finalWidth) / 2;
+    const xOffset = margin;
     
+    // Pure white page background
+    pdf.setFillColor(255, 255, 255);
+    pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
+
     let heightLeft = finalImgHeight;
-    let position = 0; // Add top margin if needed, currently 0
+    let position = margin;
     
-    pdf.addImage(imgData, "PNG", xOffset, position, finalWidth, finalImgHeight);
-    heightLeft -= pdfHeight;
+    pdf.addImage(imgData, "PNG", xOffset, position, finalWidth, finalImgHeight, undefined, "FAST");
+    heightLeft -= (pdfHeight - (margin * 2));
     
-    while (heightLeft >= 0) {
-      position -= pdfHeight;
+    while (heightLeft > 0) {
+      position -= (pdfHeight - (margin * 2));
       pdf.addPage();
-      pdf.addImage(imgData, "PNG", xOffset, position, finalWidth, finalImgHeight);
-      heightLeft -= pdfHeight;
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
+      pdf.addImage(imgData, "PNG", xOffset, position, finalWidth, finalImgHeight, undefined, "FAST");
+      heightLeft -= (pdfHeight - (margin * 2));
     }
     
     return pdf.output("blob");
@@ -245,8 +277,8 @@ const QuotationPreviewModal = ({ isOpen, onClose, quotation }) => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 bg-slate-100/50 custom-scrollbar print:p-0 print:bg-white print:overflow-visible">
-            <div className="print:m-0">
+          <div className="flex-1 overflow-y-auto p-6 bg-slate-200/60 custom-scrollbar print:p-0 print:bg-white print:overflow-visible flex justify-center">
+            <div className="w-full max-w-[850px] bg-white rounded-xl shadow-lg print:m-0 print:shadow-none overflow-hidden" style={{ backgroundColor: "#ffffff" }}>
               <QuotationTemplate ref={quotationRef} quotation={enrichedQuotation} />
             </div>
           </div>
@@ -265,10 +297,12 @@ const QuotationPreviewModal = ({ isOpen, onClose, quotation }) => {
             width: 100%;
             margin: 0;
             box-shadow: none;
+            background-color: #ffffff !important;
+            color: #1e293b !important;
           }
           @page {
             size: A4;
-            margin: 15mm;
+            margin: 10mm;
           }
           * {
             -webkit-print-color-adjust: exact !important;
