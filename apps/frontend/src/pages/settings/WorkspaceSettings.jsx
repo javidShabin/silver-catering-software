@@ -12,25 +12,47 @@ import SubscriptionPackageCard from "../../components/super-admin/SubscriptionPa
 import SecuritySettings from "./SecuritySettings";
 
 const defaultPdfSettings = {
+  showCompanyHeader: true,
+  showCustomerDetails: true,
   showCustomerContact: true,
   showCustomerAddress: true,
   showEventDetails: true,
-  showTax: true,
-  showDiscount: true,
+  showMenuItems: true,
   showItemQuantity: true,
   showItemUnitPrice: true,
-  showItemTotalPrice: true
+  showItemTotalPrice: true,
+  showSubtotal: true,
+  showTax: true,
+  showDiscount: true,
+  showGrandTotal: true,
+  showAdvancePaid: true,
+  showBalanceDue: true,
+  showTerms: true,
+  showCompanySignature: true,
+  showFooterBranding: true
 };
 
 const defaultQuotationPdfSettings = {
+  showCompanyHeader: true,
+  showProposalCard: true,
+  showCustomerDetails: true,
   showCustomerContact: true,
   showCustomerAddress: true,
   showEventDetails: true,
-  showTax: true,
-  showDiscount: true,
+  showGuestCount: true,
+  showMenuItems: true,
   showItemQuantity: true,
   showItemUnitPrice: false,
-  showItemTotalPrice: false
+  showItemTotalPrice: false,
+  showPricingNotice: true,
+  showSubtotal: true,
+  showTax: true,
+  showDiscount: true,
+  showGrandTotal: true,
+  showTerms: true,
+  showClientSignature: true,
+  showCompanySignature: true,
+  showFooterBranding: true
 };
 
 const WorkspaceSettings = () => {
@@ -383,44 +405,136 @@ const WorkspaceSettings = () => {
               </button>
             </div>
 
-            {/* Toggles List */}
-            <div className="space-y-1.5 max-h-[190px] overflow-y-auto pr-1.5 custom-scrollbar">
-              {[
-                { key: 'showCustomerContact', label: 'CUSTOMER PHONE & EMAIL' },
-                { key: 'showCustomerAddress', label: 'CUSTOMER ADDRESS' },
-                { key: 'showEventDetails', label: 'EVENT DETAILS' },
-                { key: 'showTax', label: 'TAX BREAKDOWN' },
-                { key: 'showDiscount', label: 'DISCOUNT AMOUNT' },
-                { key: 'showItemQuantity', label: 'ITEM QUANTITY (QTY)' },
-                { key: 'showItemUnitPrice', label: 'ITEM UNIT PRICE' },
-                { key: 'showItemTotalPrice', label: 'ITEM TOTAL PRICE' }
-              ].map((item) => {
+            {/* Toggles List Grouped */}
+            <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1.5 custom-scrollbar">
+              {(activePdfTab === "invoice" ? [
+                {
+                  category: "HEADER & BRANDING",
+                  items: [
+                    { key: 'showCompanyHeader', label: 'Company Header & Logo' }
+                  ]
+                },
+                {
+                  category: "CUSTOMER & EVENT DETAILS",
+                  items: [
+                    { key: 'showCustomerDetails', label: 'Bill To / Customer Section' },
+                    { key: 'showCustomerContact', label: 'Customer Phone & Email' },
+                    { key: 'showCustomerAddress', label: 'Customer Address' },
+                    { key: 'showEventDetails', label: 'Event Details Box' }
+                  ]
+                },
+                {
+                  category: "ITEMS TABLE COLUMNS",
+                  items: [
+                    { key: 'showMenuItems', label: 'Invoice Items Table' },
+                    { key: 'showItemQuantity', label: 'Item Quantity (QTY)' },
+                    { key: 'showItemUnitPrice', label: 'Item Unit Price' },
+                    { key: 'showItemTotalPrice', label: 'Item Total Price' }
+                  ]
+                },
+                {
+                  category: "TOTALS & AMOUNTS",
+                  items: [
+                    { key: 'showSubtotal', label: 'Subtotal Amount' },
+                    { key: 'showTax', label: 'Tax Breakdown' },
+                    { key: 'showDiscount', label: 'Discount Amount' },
+                    { key: 'showGrandTotal', label: 'Total Amount (Grand Total)' },
+                    { key: 'showAdvancePaid', label: 'Advance Paid Amount' },
+                    { key: 'showBalanceDue', label: 'Balance Due Amount' }
+                  ]
+                },
+                {
+                  category: "FOOTER & SIGNATURES",
+                  items: [
+                    { key: 'showTerms', label: 'Terms & Notes' },
+                    { key: 'showCompanySignature', label: 'Authorized Signatory' },
+                    { key: 'showFooterBranding', label: 'Footer Branding' }
+                  ]
+                }
+              ] : [
+                {
+                  category: "HEADER & BRANDING",
+                  items: [
+                    { key: 'showCompanyHeader', label: 'Company Header & Logo' },
+                    { key: 'showProposalCard', label: 'Proposal Title Card' }
+                  ]
+                },
+                {
+                  category: "CLIENT & EVENT SPECIFICATIONS",
+                  items: [
+                    { key: 'showCustomerDetails', label: 'Client Information Box' },
+                    { key: 'showCustomerContact', label: 'Client Phone & Email' },
+                    { key: 'showCustomerAddress', label: 'Client Venue / Address' },
+                    { key: 'showEventDetails', label: 'Event Specifications Box' },
+                    { key: 'showGuestCount', label: 'Guest Count Badge' }
+                  ]
+                },
+                {
+                  category: "ITEMS & TABLE COLUMNS",
+                  items: [
+                    { key: 'showMenuItems', label: 'Menu & Service Items Table' },
+                    { key: 'showItemQuantity', label: 'Item Quantity (QTY)' },
+                    { key: 'showItemUnitPrice', label: 'Item Unit Price' },
+                    { key: 'showItemTotalPrice', label: 'Item Total Price' }
+                  ]
+                },
+                {
+                  category: "ESTIMATE SUMMARY & GRAND TOTAL",
+                  items: [
+                    { key: 'showPricingNotice', label: 'Pricing Notice Box' },
+                    { key: 'showSubtotal', label: 'Subtotal Amount' },
+                    { key: 'showTax', label: 'Estimated Tax' },
+                    { key: 'showDiscount', label: 'Discount Amount' },
+                    { key: 'showGrandTotal', label: 'Grand Total (Net Estimate)' }
+                  ]
+                },
+                {
+                  category: "FOOTER & SIGNATURES",
+                  items: [
+                    { key: 'showTerms', label: 'Catering Terms & Notes' },
+                    { key: 'showClientSignature', label: 'Client Acceptance Signature' },
+                    { key: 'showCompanySignature', label: 'Company Authorized Signatory' },
+                    { key: 'showFooterBranding', label: 'Footer Branding & Note' }
+                  ]
+                }
+              ]).map((group) => {
                 const currentPdfSettings = activePdfTab === "invoice"
                   ? (form.pdfSettings || defaultPdfSettings)
                   : (form.quotationPdfSettings || defaultQuotationPdfSettings);
-                const isChecked = currentPdfSettings?.[item.key] !== false;
 
                 return (
-                  <div
-                    key={item.key}
-                    className="flex items-center justify-between px-3 py-1.5 bg-[#101b30] border border-[#1c2a44] rounded-lg transition-colors hover:border-slate-700"
-                  >
-                    <span className="text-[10.5px] font-bold text-slate-200 uppercase tracking-wide select-none truncate mr-2">
-                      {item.label}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleToggle(item.key)}
-                      className={`relative inline-flex h-4.5 w-8.5 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
-                        isChecked ? 'bg-[#ea580c]' : 'bg-[#1b253b] border border-slate-700/60'
-                      }`}
-                    >
-                      <span
-                        className={`pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-[#0a101f] shadow-md ring-0 transition duration-200 ease-in-out ${
-                          isChecked ? 'translate-x-4' : 'translate-x-0 bg-slate-400'
-                        }`}
-                      />
-                    </button>
+                  <div key={group.category} className="space-y-1">
+                    <div className="text-[9px] font-extrabold tracking-wider text-amber-500/90 uppercase px-1 pt-1">
+                      {group.category}
+                    </div>
+                    <div className="space-y-1">
+                      {group.items.map((item) => {
+                        const isChecked = currentPdfSettings?.[item.key] !== false;
+                        return (
+                          <div
+                            key={item.key}
+                            className="flex items-center justify-between px-3 py-1.5 bg-[#101b30] border border-[#1c2a44] rounded-lg transition-colors hover:border-slate-700"
+                          >
+                            <span className="text-[10.5px] font-bold text-slate-200 uppercase tracking-wide select-none truncate mr-2">
+                              {item.label}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleToggle(item.key)}
+                              className={`relative inline-flex h-4.5 w-8.5 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
+                                isChecked ? 'bg-[#ea580c]' : 'bg-[#1b253b] border border-slate-700/60'
+                              }`}
+                            >
+                              <span
+                                className={`pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-[#0a101f] shadow-md ring-0 transition duration-200 ease-in-out ${
+                                  isChecked ? 'translate-x-4' : 'translate-x-0 bg-slate-400'
+                                }`}
+                              />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })}

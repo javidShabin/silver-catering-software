@@ -11,25 +11,47 @@ const __dirname = path.dirname(__filename);
 const workspaceSettingsKey = "workspace_settings";
 
 const defaultPdfSettings = {
+  showCompanyHeader: true,
+  showCustomerDetails: true,
   showCustomerContact: true,
   showCustomerAddress: true,
   showEventDetails: true,
-  showTax: true,
-  showDiscount: true,
+  showMenuItems: true,
   showItemQuantity: true,
   showItemUnitPrice: true,
-  showItemTotalPrice: true
+  showItemTotalPrice: true,
+  showSubtotal: true,
+  showTax: true,
+  showDiscount: true,
+  showGrandTotal: true,
+  showAdvancePaid: true,
+  showBalanceDue: true,
+  showTerms: true,
+  showCompanySignature: true,
+  showFooterBranding: true
 };
 
 const defaultQuotationPdfSettings = {
+  showCompanyHeader: true,
+  showProposalCard: true,
+  showCustomerDetails: true,
   showCustomerContact: true,
   showCustomerAddress: true,
   showEventDetails: true,
-  showTax: true,
-  showDiscount: true,
+  showGuestCount: true,
+  showMenuItems: true,
   showItemQuantity: true,
   showItemUnitPrice: false,
-  showItemTotalPrice: false
+  showItemTotalPrice: false,
+  showPricingNotice: true,
+  showSubtotal: true,
+  showTax: true,
+  showDiscount: true,
+  showGrandTotal: true,
+  showTerms: true,
+  showClientSignature: true,
+  showCompanySignature: true,
+  showFooterBranding: true
 };
 
 const defaultWorkspaceSettings = {
