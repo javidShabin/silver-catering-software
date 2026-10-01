@@ -172,9 +172,20 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     });
     
     const tax = sub * (Number(formData.taxPercent || 0) / 100);
-    const totalAmount = sub + tax - (Number(formData.discountAmount) || 0);
+    const subtotalPlusTax = sub + tax;
+    const discount = Number(formData.discountAmount || 0);
+    const isDiscountExceeded = discount > subtotalPlusTax;
+    const isDiscountNegative = discount < 0;
+    const totalAmount = Math.max(0, subtotalPlusTax - discount);
     
-    return { subtotal: sub, tax, totalAmount };
+    return { 
+      subtotal: sub, 
+      tax, 
+      subtotalPlusTax,
+      totalAmount,
+      isDiscountExceeded,
+      isDiscountNegative
+    };
   }, [formData, menus, inventoryList, packages]);
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
@@ -480,6 +491,16 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   const handleSave = async () => {
     if (!formData.customerId) {
       toast.error("Please select a customer");
+      return;
+    }
+    const discount = Number(formData.discountAmount || 0);
+    const maxDiscount = totals.subtotal + totals.tax;
+    if (discount < 0) {
+      toast.error("Discount cannot be negative");
+      return;
+    }
+    if (discount > maxDiscount) {
+      toast.error(`Discount cannot exceed the total amount (${CURRENCY}${maxDiscount.toFixed(2)})`);
       return;
     }
     setLoading(true);

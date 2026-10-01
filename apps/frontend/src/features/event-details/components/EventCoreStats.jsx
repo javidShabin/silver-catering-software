@@ -135,6 +135,17 @@ const EventCoreStats = ({ event, setEvent, isSaving, setIsSaving, setToast }) =>
         Number(localDiscount) === Number(invoice?.discountValue || 0)
       ) return; // Skip if unchanged
 
+      const numDiscount = Number(localDiscount || 0);
+      const maxAllowed = subTotal + liveTaxAmount;
+      if (numDiscount < 0) {
+        setToast({ message: "Discount cannot be negative", type: "error" });
+        return;
+      }
+      if (numDiscount > maxAllowed) {
+        setToast({ message: `Discount cannot exceed total amount (${CURRENCY}${maxAllowed.toFixed(2)})`, type: "error" });
+        return;
+      }
+
       setIsSaving(true);
       await eventApi.update(event.id, {
         taxRate: Number(localTaxRate),

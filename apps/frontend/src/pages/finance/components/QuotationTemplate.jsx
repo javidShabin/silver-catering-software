@@ -527,7 +527,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                   <span className="text-xs font-serif font-black tracking-widest text-white uppercase block">TOTAL AMOUNT</span>
                 </div>
                 <span className="text-lg font-black text-white font-mono tracking-tight">
-                  {CURRENCY}{fmt(totalAmount)}
+                  {CURRENCY}{fmt(Math.max(0, Number(totalAmount || 0)))}
                 </span>
               </div>
             </div>
