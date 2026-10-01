@@ -56,7 +56,9 @@ const MenuCard = React.memo(({ item, onEdit, onDelete }) => {
         <span className="text-[10px] font-medium text-slate-500 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">{item.category}</span>
         <div className="text-right">
           <span className="text-[14px] font-black text-slate-800">{CURRENCY}{Number(item.minPrice || 0).toFixed(2)}</span>
-          <span className="text-[10px] font-semibold text-slate-400 ml-1">/ {item.unit || "plate"}</span>
+          {item.unit !== "no_unit" && item.unit !== "none" && item.unit !== "NO_UNIT" && (
+            <span className="text-[10px] font-semibold text-slate-400 ml-1">/ {item.unit || "plate"}</span>
+          )}
         </div>
       </div>
 

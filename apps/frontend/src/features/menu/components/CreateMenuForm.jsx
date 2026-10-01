@@ -239,6 +239,7 @@ const CreateMenuForm = ({ onSubmit, onCancel, isLoading, initialData, categories
                     <option value="pax">Pax</option>
                     <option value="portion">Portion</option>
                     <option value="unlimited">Unlimited</option>
+                    <option value="no_unit">No Unit</option>
                   </select>
                   <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 </div>

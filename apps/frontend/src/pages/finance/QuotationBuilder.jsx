@@ -124,20 +124,21 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     formData.menuItems.forEach(menuId => {
        const menu = menus.find(m => m.id === menuId);
        if (menu) {
-         let price = Number(menu.minPrice || 0);
+         const defaultMenuPrice = menu.minPrice !== undefined && menu.minPrice !== null ? Number(menu.minPrice) : 0;
+         let price = defaultMenuPrice;
          let qty = gCount * dDays;
          
          const sel = formData.customMenuSelections?.[menuId];
          if (sel) {
-          price = Number(sel.price !== undefined && sel.price !== "" ? sel.price : (menu.minPrice || 0));
+          price = Number(sel.price !== undefined && sel.price !== null && sel.price !== "" ? sel.price : defaultMenuPrice);
           if (sel.type === "PER_UNIT") {
-             qty = Number(sel.quantity || 0) * dDays;
+             qty = Number(sel.quantity !== undefined && sel.quantity !== null && sel.quantity !== "" ? sel.quantity : 0) * dDays;
           }
           if (sel.packageId) {
             price = 0;
             qty = 1;
           }
-        } else if (formData.customMenuPrices?.[menuId] !== undefined && formData.customMenuPrices?.[menuId] !== "") {
+        } else if (formData.customMenuPrices?.[menuId] !== undefined && formData.customMenuPrices?.[menuId] !== null && formData.customMenuPrices?.[menuId] !== "") {
           price = Number(formData.customMenuPrices[menuId]);
         }
          
@@ -316,6 +317,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
       }
       
       const selectedPkg = prev.packageId ? packages.find(p => p.id === prev.packageId) : null;
+      const defaultMenuPrice = menu?.minPrice !== undefined && menu?.minPrice !== null ? menu.minPrice : 0;
       return {
         ...prev,
         menuItems: [menuId, ...prev.menuItems],
@@ -331,7 +333,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
             packagePricePerHead: Number(selectedPkg.pricePerHead || 0)
           } : {
             type: "PER_UNIT",
-            price: menu?.minPrice || 0,
+            price: defaultMenuPrice,
             quantity: 1,
             unit: menu?.unit || "plate"
           }
@@ -399,7 +401,8 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   const handleMenuSelectionChange = (menuId, field, value) => {
     const menu = menus.find(m => m.id === menuId);
     setFormData(prev => {
-      const current = prev.customMenuSelections?.[menuId] || { type: "PER_UNIT", price: menu?.minPrice || "", quantity: 1, unit: menu?.unit || "plate" };
+      const defaultPrice = menu?.minPrice !== undefined && menu?.minPrice !== null ? menu.minPrice : 0;
+      const current = prev.customMenuSelections?.[menuId] || { type: "PER_UNIT", price: defaultPrice, quantity: 1, unit: menu?.unit || "plate" };
       if (current.packageId) return prev;
       return {
         ...prev,
@@ -1010,7 +1013,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                                   <span className="absolute left-2 text-slate-400 font-bold text-[10px]">{CURRENCY}</span>
                                   <input 
                                     type="number" min="0"
-                                    value={sel?.price !== undefined && sel?.price !== null ? sel.price : (formData.customMenuPrices?.[menuId] !== undefined && formData.customMenuPrices?.[menuId] !== null ? formData.customMenuPrices[menuId] : (menu.minPrice !== undefined ? menu.minPrice : ""))}
+                                    value={sel?.price !== undefined && sel?.price !== null ? sel.price : (formData.customMenuPrices?.[menuId] !== undefined && formData.customMenuPrices?.[menuId] !== null ? formData.customMenuPrices[menuId] : (menu.minPrice !== undefined && menu.minPrice !== null ? menu.minPrice : 0))}
                                     onChange={(e) => handleMenuSelectionChange(menuId, "price", e.target.value === "" ? "" : Number(e.target.value))}
                                     className="w-24 h-6 rounded border border-slate-200 pl-5 pr-1 text-right text-xs outline-none focus:border-primary-500 bg-white"
                                   />
@@ -1041,6 +1044,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                                       <option value="liter">liter</option>
                                       <option value="unit">unit</option>
                                       <option value="unlimited">unlimited</option>
+                                      <option value="no_unit">no unit</option>
                                     </select>
                                   </div>
                                 </>

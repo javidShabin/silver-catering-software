@@ -95,7 +95,8 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     const isPackageItem = Boolean(sel.packageId);
     const hasCustomQty = sel.quantity !== undefined && sel.quantity !== null && sel.quantity !== "";
     const type = sel.type || (isPackageItem ? "PACKAGE" : "PER_HEAD");
-    const price = isPackageItem ? 0 : Number(sel.price) || 0;
+    const selPrice = sel.price !== undefined && sel.price !== null && sel.price !== "" ? Number(sel.price) : (menu.minPrice !== undefined && menu.minPrice !== null ? Number(menu.minPrice) : 0);
+    const price = isPackageItem ? 0 : selPrice;
     const qty = hasCustomQty 
       ? Number(sel.quantity) 
       : isPackageItem 
@@ -103,7 +104,8 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
         : type === "PER_HEAD" 
           ? Number(guestCount) || 1 
           : Number(sel.quantity) || 1;
-    const unit = sel.unit ? sel.unit.toUpperCase() : (type === "PER_HEAD" ? "PAX" : "NOS");
+    const rawUnit = sel.unit || menu.unit;
+    const unit = rawUnit ? rawUnit.toUpperCase().replace(/\s+/g, '_') : (type === "PER_HEAD" ? "PAX" : "NOS");
     const shortDesc = menu.description ? (menu.description.length > 100 ? menu.description.substring(0, 100) + "..." : menu.description) : null;
     return {
       description: menu.name,
@@ -483,7 +485,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                                         ) : (
                                           <>
                                             {line.qty}{" "}
-                                            {line.unit ? (
+                                            {line.unit && line.unit !== "NO_UNIT" && line.unit !== "NONE" ? (
                                               <span className="text-[10px] text-slate-600 ml-1 font-bold uppercase">
                                                 {line.unit}
                                               </span>
@@ -496,12 +498,12 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                                 )}
                                 {quotationPdfSettings.showItemUnitPrice && (
                                   <td className="py-2 px-3 text-right text-xs font-medium text-slate-700">
-                                    {line.unitPrice ? `${CURRENCY}${fmt(line.unitPrice)}` : "—"}
+                                    {line.unitPrice !== undefined && line.unitPrice !== null && line.unitPrice !== "" ? `${CURRENCY}${fmt(line.unitPrice)}` : "—"}
                                   </td>
                                 )}
                                 {quotationPdfSettings.showItemTotalPrice && (
                                   <td className="py-2 px-3 text-right text-xs font-bold text-slate-900">
-                                    {line.total ? `${CURRENCY}${fmt(line.total)}` : "—"}
+                                    {line.total !== undefined && line.total !== null && line.total !== "" ? `${CURRENCY}${fmt(line.total)}` : "—"}
                                   </td>
                                 )}
                               </tr>

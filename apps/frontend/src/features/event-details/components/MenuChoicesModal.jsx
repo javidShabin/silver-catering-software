@@ -536,6 +536,7 @@ const MenuChoicesModal = ({
                     <option value="liter">liter</option>
                     <option value="unit">unit</option>
                     <option value="unlimited">unlimited</option>
+                    <option value="no_unit">no unit</option>
                   </select>
                 </div>
               </div>
