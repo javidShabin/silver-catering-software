@@ -282,12 +282,12 @@ const CreateEventForm = ({ onSubmit, onCancel, isLoading, initialData }) => {
                   <Users size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${activeField === 'guestCount' ? 'text-orange-500' : 'text-slate-400'}`} />
                   <input
                     type="number"
-                    min="1"
+                    min="0"
                     placeholder="100"
                     className={`${inputClasses('guestCount')} pl-8`}
                     onFocus={() => setActiveField('guestCount')}
                     onBlur={() => setActiveField(null)}
-                    value={formData.guestCount}
+                    value={formData.guestCount !== undefined && formData.guestCount !== null ? formData.guestCount : ""}
                     onChange={e => setFormData({ ...formData, guestCount: e.target.value })}
                     required
                     disabled={isLoading}

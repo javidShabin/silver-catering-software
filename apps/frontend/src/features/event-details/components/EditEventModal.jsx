@@ -78,10 +78,10 @@ const EditEventModal = ({
               <input
                 type="number"
                 required
-                min="1"
+                min="0"
                 placeholder="100"
                 className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
-                value={editFormData.guestCount}
+                value={editFormData.guestCount !== undefined && editFormData.guestCount !== null ? editFormData.guestCount : ""}
                 onChange={(e) => setEditFormData({ ...editFormData, guestCount: e.target.value })}
               />
             </div>
@@ -115,9 +115,9 @@ const EditEventModal = ({
               <input
                 type="number"
                 required
-                min="1"
+                min="0"
                 className="w-full h-9 rounded-lg border border-slate-200 px-3 text-xs focus:border-primary-500 focus:ring-1 outline-none transition-all bg-white"
-                value={editFormData.durationInDays}
+                value={editFormData.durationInDays !== undefined && editFormData.durationInDays !== null ? editFormData.durationInDays : ""}
                 onChange={(e) => setEditFormData({ ...editFormData, durationInDays: e.target.value })}
               />
             </div>

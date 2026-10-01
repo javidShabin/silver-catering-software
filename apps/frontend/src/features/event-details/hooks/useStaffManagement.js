@@ -51,7 +51,12 @@ export const useStaffManagement = (event, setEvent, eventId, setToast) => {
     try {
       setIsSavingStaff(true);
       
-      await eventApi.update(event.id, { staffAllocations: staffAllocations });
+      const cleanAllocations = staffAllocations.map(s => ({
+        ...s,
+        rate: Number(s.rate || 0),
+        count: Number(s.count || 0)
+      }));
+      await eventApi.update(event.id, { staffAllocations: cleanAllocations });
       const updatedEventRes = await eventApi.getById(eventId);
       setEvent(updatedEventRes.data);
 

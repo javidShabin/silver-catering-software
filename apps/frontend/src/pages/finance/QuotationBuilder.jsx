@@ -101,23 +101,26 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   // ─── Auto Calculation using useMemo (Zero unwanted re-renders) ───────────
   const totals = useMemo(() => {
     let sub = 0;
+    const gCount = Number(formData.guestCount || 0);
+    const dDays = Number(formData.durationInDays || 0);
+
     const selectedPackage = packages.find(pkg => pkg.id === formData.packageId);
     if (selectedPackage) {
-      sub += Number(selectedPackage.pricePerHead || 0) * formData.guestCount * formData.durationInDays;
+      sub += Number(selectedPackage.pricePerHead || 0) * gCount * dDays;
     }
     
     // 1. Menus
     formData.menuItems.forEach(menuId => {
        const menu = menus.find(m => m.id === menuId);
        if (menu) {
-         let price = Number(menu.minPrice);
-         let qty = formData.guestCount * formData.durationInDays;
+         let price = Number(menu.minPrice || 0);
+         let qty = gCount * dDays;
          
          const sel = formData.customMenuSelections?.[menuId];
          if (sel) {
-          price = Number(sel.price !== undefined && sel.price !== "" ? sel.price : menu.minPrice);
+          price = Number(sel.price !== undefined && sel.price !== "" ? sel.price : (menu.minPrice || 0));
           if (sel.type === "PER_UNIT") {
-             qty = (Number(sel.quantity) || 1) * formData.durationInDays;
+             qty = Number(sel.quantity || 0) * dDays;
           }
           if (sel.packageId) {
             price = 0;
@@ -135,20 +138,20 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
     formData.inventoryAllocations.forEach(alloc => {
        const inv = inventoryList.find(i => i.id === alloc.inventoryId);
        if (inv && inv.rentPerDay) {
-          sub += Number(inv.rentPerDay) * Number(alloc.quantity) * formData.durationInDays;
+          sub += Number(inv.rentPerDay) * Number(alloc.quantity || 0) * dDays;
        }
     });
     
     // 3. Staffing
-    if (formData.cateringBoysCount > 0 && formData.cateringBoyRate > 0) {
-       sub += Number(formData.cateringBoysCount) * Number(formData.cateringBoyRate) * formData.durationInDays;
+    if (Number(formData.cateringBoysCount || 0) > 0 && Number(formData.cateringBoyRate || 0) > 0) {
+       sub += Number(formData.cateringBoysCount) * Number(formData.cateringBoyRate) * dDays;
     }
     
     formData.staffAllocations.forEach(staff => {
        const staffCount = Number(staff.count) || 0;
        const staffRate = Number(staff.rate) || 0;
        if (staffCount > 0 && staffRate > 0) {
-         sub += staffCount * staffRate * formData.durationInDays;
+         sub += staffCount * staffRate * dDays;
        }
     });
     
@@ -157,7 +160,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
        sub += Number(item.total) || 0;
     });
     
-    const tax = sub * (formData.taxPercent / 100);
+    const tax = sub * (Number(formData.taxPercent || 0) / 100);
     const totalAmount = sub + tax - (Number(formData.discountAmount) || 0);
     
     return { subtotal: sub, tax, totalAmount };
@@ -452,14 +455,26 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
         const inv = inventoryList.find(i => i.id === alloc.inventoryId);
         return {
           ...alloc,
+          quantity: Number(alloc.quantity || 0),
           rentPerDay: inv ? Number(inv.rentPerDay || 0) : Number(alloc.rentPerDay || 0)
         };
       });
 
+      const cleanedStaffAllocations = formData.staffAllocations.map(s => ({
+        ...s,
+        count: Number(s.count || 0),
+        rate: Number(s.rate || 0)
+      }));
+
       // Append calculated totals to payload before saving
       const payload = {
         ...formData,
+        guestCount: Number(formData.guestCount || 0),
+        durationInDays: Number(formData.durationInDays || 0),
+        cateringBoysCount: Number(formData.cateringBoysCount || 0),
+        cateringBoyRate: Number(formData.cateringBoyRate || 0),
         inventoryAllocations: enrichedAllocations,
+        staffAllocations: cleanedStaffAllocations,
         packageId: formData.packageId || null,
         subtotal: totals.subtotal,
         tax: totals.tax,
@@ -485,7 +500,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
 
   const selectedPackage = packages.find(pkg => pkg.id === formData.packageId);
   const selectedPackageTotal = selectedPackage
-    ? Number(selectedPackage.pricePerHead || 0) * formData.guestCount * formData.durationInDays
+    ? Number(selectedPackage.pricePerHead || 0) * Number(formData.guestCount || 0) * Number(formData.durationInDays || 0)
     : 0;
 
   return (
@@ -532,9 +547,9 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
             <div className="relative">
               <CalendarDays size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
-                type="number" min="1"
-                value={formData.durationInDays}
-                onChange={(e) => setFormData({...formData, durationInDays: Number(e.target.value) || 1})}
+                type="number" min="0"
+                value={formData.durationInDays !== undefined && formData.durationInDays !== null ? formData.durationInDays : ""}
+                onChange={(e) => setFormData({...formData, durationInDays: e.target.value === "" ? "" : Number(e.target.value)})}
                 className="w-full h-8 rounded border border-slate-200 pl-7 pr-2 text-xs focus:border-primary-500 focus:ring-1 outline-none bg-white"
               />
             </div>
@@ -544,9 +559,9 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
             <div className="relative">
               <Users size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
-                type="number" min="1"
-                value={formData.guestCount}
-                onChange={(e) => setFormData({...formData, guestCount: Number(e.target.value) || 1})}
+                type="number" min="0"
+                value={formData.guestCount !== undefined && formData.guestCount !== null ? formData.guestCount : ""}
+                onChange={(e) => setFormData({...formData, guestCount: e.target.value === "" ? "" : Number(e.target.value)})}
                 className="w-full h-8 rounded border border-slate-200 pl-7 pr-2 text-xs focus:border-primary-500 focus:ring-1 outline-none bg-white"
               />
             </div>
@@ -885,8 +900,12 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                     else if (formData.customMenuPrices?.[menuId] !== undefined && formData.customMenuPrices?.[menuId] !== "") price = formData.customMenuPrices[menuId];
                     if (isPackageItem) price = 0;
                     
-                    const qty = isPackageItem || isPerUnit ? 1 : (formData.guestCount * formData.durationInDays);
-                    const totalCost = Number(price) * Number(qty);
+                    const qty = isPackageItem 
+                      ? 1 
+                      : isPerUnit 
+                        ? Number(sel?.quantity !== undefined && sel?.quantity !== "" ? sel.quantity : 1) 
+                        : (Number(formData.guestCount || 0) * Number(formData.durationInDays || 0));
+                    const totalCost = Number(price || 0) * Number(qty || 0);
 
                     return (
                       <div key={menuId} className="flex flex-col gap-2 p-2 bg-slate-50 border border-slate-200 rounded text-xs">
@@ -931,8 +950,8 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                                   <span className="absolute left-2 text-slate-400 font-bold text-[10px]">{CURRENCY}</span>
                                   <input 
                                     type="number" min="0"
-                                    value={sel?.price !== undefined ? sel.price : (formData.customMenuPrices?.[menuId] !== undefined ? formData.customMenuPrices[menuId] : menu.minPrice)}
-                                    onChange={(e) => handleMenuSelectionChange(menuId, "price", e.target.value)}
+                                    value={sel?.price !== undefined && sel?.price !== null ? sel.price : (formData.customMenuPrices?.[menuId] !== undefined && formData.customMenuPrices?.[menuId] !== null ? formData.customMenuPrices[menuId] : (menu.minPrice !== undefined ? menu.minPrice : ""))}
+                                    onChange={(e) => handleMenuSelectionChange(menuId, "price", e.target.value === "" ? "" : Number(e.target.value))}
                                     className="w-24 h-6 rounded border border-slate-200 pl-5 pr-1 text-right text-xs outline-none focus:border-primary-500 bg-white"
                                   />
                                 </div>
@@ -943,9 +962,9 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                                   <div className="flex items-center gap-1.5 border-l border-slate-200 pl-3">
                                     <label className="text-[9px] font-bold text-slate-400">QTY:</label>
                                     <input 
-                                      type="number" min="1"
-                                      value={sel?.quantity || 1}
-                                      onChange={(e) => handleMenuSelectionChange(menuId, "quantity", e.target.value)}
+                                      type="number" min="0"
+                                      value={sel?.quantity !== undefined && sel?.quantity !== null ? sel.quantity : ""}
+                                      onChange={(e) => handleMenuSelectionChange(menuId, "quantity", e.target.value === "" ? "" : Number(e.target.value))}
                                       className="w-12 h-6 rounded border border-slate-200 px-1 text-center text-xs outline-none focus:border-primary-500 bg-white"
                                     />
                                   </div>
@@ -1006,7 +1025,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                   {formData.inventoryAllocations.map((alloc, idx) => {
                     const inv = inventoryList.find(i => i.id === alloc.inventoryId);
                     const costPerDay = Number(inv?.rentPerDay || 0);
-                    const totalCost = costPerDay * Number(alloc.quantity) * formData.durationInDays;
+                    const totalCost = costPerDay * Number(alloc.quantity || 0) * Number(formData.durationInDays || 0);
 
                     return (
                       <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded text-xs">
@@ -1017,9 +1036,9 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                         <div className="flex items-center gap-1.5">
                           <label className="text-[9px] font-bold text-slate-400">QTY:</label>
                           <input 
-                            type="number" min="1"
-                            value={alloc.quantity}
-                            onChange={(e) => updateInventoryAllocation(idx, Number(e.target.value) || 1)}
+                            type="number" min="0"
+                            value={alloc.quantity !== undefined && alloc.quantity !== null ? alloc.quantity : ""}
+                            onChange={(e) => updateInventoryAllocation(idx, e.target.value === "" ? "" : Number(e.target.value))}
                             className="w-12 h-6 rounded border border-slate-200 text-center text-xs outline-none focus:border-primary-500"
                           />
                         </div>
@@ -1092,7 +1111,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                   {formData.staffAllocations.map((staff, idx) => {
                     const staffCount = Number(staff.count) || 0;
                     const staffRate = Number(staff.rate) || 0;
-                    const totalCost = staffCount * staffRate * formData.durationInDays;
+                    const totalCost = staffCount * staffRate * Number(formData.durationInDays || 0);
                     
                     return (
                       <div key={idx} className="flex items-center gap-3 p-1.5 bg-slate-50 border border-slate-200 rounded text-xs">
@@ -1113,8 +1132,8 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                               <span className="absolute left-1.5 text-slate-400 font-bold text-[10px]">{CURRENCY}</span>
                               <input
                                 type="number" min="0"
-                                value={staff.rate}
-                                onChange={(e) => updateStaffAllocation(idx, 'rate', Number(e.target.value))}
+                                value={staff.rate !== undefined && staff.rate !== null ? staff.rate : ""}
+                                onChange={(e) => updateStaffAllocation(idx, 'rate', e.target.value === "" ? "" : Number(e.target.value))}
                                 className="w-20 h-6 rounded border border-slate-200 pl-4 pr-1 text-right text-xs outline-none focus:border-primary-500 bg-white"
                               />
                             </div>
@@ -1125,9 +1144,9 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                           <div className="flex items-center gap-1">
                             <label className="text-[9px] font-bold text-slate-400">COUNT:</label>
                             <input
-                              type="number" min="1"
-                              value={staff.count}
-                              onChange={(e) => updateStaffAllocation(idx, 'count', Number(e.target.value))}
+                              type="number" min="0"
+                              value={staff.count !== undefined && staff.count !== null ? staff.count : ""}
+                              onChange={(e) => updateStaffAllocation(idx, 'count', e.target.value === "" ? "" : Number(e.target.value))}
                               className="w-14 h-6 rounded border border-slate-200 px-1 text-center text-xs outline-none focus:border-primary-500 bg-white"
                             />
                           </div>
@@ -1162,8 +1181,8 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                         <label className="text-[10px] font-bold tracking-wider text-orange-500 uppercase block mb-1">Number of Catering Boys</label>
                         <input 
                           type="number" min="0"
-                          value={formData.cateringBoysCount}
-                          onChange={(e) => setFormData({...formData, cateringBoysCount: Number(e.target.value) || 0})}
+                          value={formData.cateringBoysCount !== undefined && formData.cateringBoysCount !== null ? formData.cateringBoysCount : ""}
+                          onChange={(e) => setFormData({...formData, cateringBoysCount: e.target.value === "" ? "" : Number(e.target.value)})}
                           className="w-full h-8 rounded border border-orange-200 px-2 text-xs outline-none focus:border-orange-500 bg-white"
                         />
                       </div>
@@ -1173,8 +1192,8 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                           <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-orange-400 text-xs font-bold">{CURRENCY}</span>
                           <input 
                             type="number" min="0"
-                            value={formData.cateringBoyRate}
-                            onChange={(e) => setFormData({...formData, cateringBoyRate: Number(e.target.value) || 0})}
+                            value={formData.cateringBoyRate !== undefined && formData.cateringBoyRate !== null ? formData.cateringBoyRate : ""}
+                            onChange={(e) => setFormData({...formData, cateringBoyRate: e.target.value === "" ? "" : Number(e.target.value)})}
                             className="w-full h-8 rounded border border-orange-200 pl-7 pr-2 text-xs outline-none focus:border-orange-500 bg-white"
                           />
                         </div>

@@ -39,9 +39,10 @@ const PricingSection = ({
           <span className="text-[9px] mr-1 text-slate-400">{CURRENCY}</span>
           <input 
             type="number"
+            min="0"
             disabled={isViewMode}
-            value={discountAmount}
-            onChange={(e) => onDiscountAmountChange(Number(e.target.value) || 0)}
+            value={discountAmount !== undefined && discountAmount !== null ? discountAmount : ""}
+            onChange={(e) => onDiscountAmountChange(e.target.value === "" ? "" : Number(e.target.value))}
             className="w-12 bg-transparent outline-none text-right text-[10px] text-white"
           />
         </div>

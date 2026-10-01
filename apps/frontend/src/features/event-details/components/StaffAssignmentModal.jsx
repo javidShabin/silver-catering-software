@@ -95,17 +95,17 @@ const StaffAssignmentModal = ({
                       <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Rate</label>
                       <input 
                         type="number" min="0"
-                        value={staff.rate}
-                        onChange={(e) => updateStaffAllocation(idx, "rate", Number(e.target.value) || 0)}
+                        value={staff.rate !== undefined && staff.rate !== null ? staff.rate : ""}
+                        onChange={(e) => updateStaffAllocation(idx, "rate", e.target.value === "" ? "" : Number(e.target.value))}
                         className="w-full h-8 rounded border border-slate-200 px-2 outline-none focus:border-primary-500 font-medium"
                       />
                     </div>
                     <div className="space-y-1 w-16">
                       <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Count</label>
                       <input 
-                        type="number" min="1"
-                        value={staff.count}
-                        onChange={(e) => updateStaffAllocation(idx, "count", Number(e.target.value) || 1)}
+                        type="number" min="0"
+                        value={staff.count !== undefined && staff.count !== null ? staff.count : ""}
+                        onChange={(e) => updateStaffAllocation(idx, "count", e.target.value === "" ? "" : Number(e.target.value))}
                         className="w-full h-8 rounded border border-slate-200 px-2 outline-none focus:border-primary-500 font-bold"
                       />
                     </div>

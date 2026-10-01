@@ -302,10 +302,10 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
                         </label>
                         <input
                           type="number"
-                          min="1"
+                          min="0"
                           required
                           className={inputClasses}
-                          value={formData.numberOfStaff}
+                          value={formData.numberOfStaff !== undefined && formData.numberOfStaff !== null ? formData.numberOfStaff : ""}
                           onChange={(e) => setFormData({ ...formData, numberOfStaff: e.target.value })}
                         />
                       </div>
@@ -316,10 +316,10 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
                         </label>
                         <input
                           type="number"
-                          min="1"
+                          min="0"
                           required
                           className={inputClasses}
-                          value={formData.numberOfDays}
+                          value={formData.numberOfDays !== undefined && formData.numberOfDays !== null ? formData.numberOfDays : ""}
                           onChange={(e) => setFormData({ ...formData, numberOfDays: e.target.value })}
                         />
                       </div>
@@ -367,13 +367,13 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
                                   <span className="px-2 text-[11px] font-bold text-slate-400 border-r border-slate-200/80 bg-slate-50 rounded-l-md h-full flex items-center">Qty</span>
                                   <input
                                     type="number"
-                                    min="1"
+                                    min="0"
                                     required
                                     className="w-16 px-2 py-1.5 bg-transparent text-[13px] font-bold text-center focus:outline-none"
-                                    value={item.quantity}
+                                    value={item.quantity !== undefined && item.quantity !== null ? item.quantity : ""}
                                     onChange={(e) => {
                                       const newItems = [...formData.rentalItems];
-                                      newItems[index].quantity = e.target.value === "" ? "" : (parseInt(e.target.value) || 1);
+                                      newItems[index].quantity = e.target.value === "" ? "" : (parseInt(e.target.value) || 0);
                                       setFormData({ ...formData, rentalItems: newItems });
                                     }}
                                   />
@@ -400,10 +400,10 @@ const AssignmentFormModal = ({ isOpen, onClose, assignment, onSuccess }) => {
                         </label>
                         <input
                           type="number"
-                          min="1"
+                          min="0"
                           required
                           className={inputClasses}
-                          value={formData.numberOfDays}
+                          value={formData.numberOfDays !== undefined && formData.numberOfDays !== null ? formData.numberOfDays : ""}
                           onChange={(e) => setFormData({ ...formData, numberOfDays: e.target.value })}
                         />
                       </div>
