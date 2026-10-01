@@ -9,7 +9,7 @@ const CreateInvoiceForm = ({ onSubmit, onCancel, isLoading }) => {
   const [formData, setFormData] = useState({
     event: "",
     customer: "",
-    items: [{ description: "", quantity: 1, unitPrice: 0, total: 0 }],
+    items: [{ description: "", quantity: 1, unitPrice: "", total: 0 }],
     tax: 0,
     dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     notes: ""
@@ -42,7 +42,7 @@ const CreateInvoiceForm = ({ onSubmit, onCancel, isLoading }) => {
       if (i === index) {
         const updatedItem = { ...item, [field]: value };
         if (field === 'quantity' || field === 'unitPrice') {
-          updatedItem.total = updatedItem.quantity * updatedItem.unitPrice;
+          updatedItem.total = Number(updatedItem.quantity || 0) * Number(updatedItem.unitPrice || 0);
         }
         return updatedItem;
       }
@@ -54,7 +54,7 @@ const CreateInvoiceForm = ({ onSubmit, onCancel, isLoading }) => {
   const addItem = () => {
     setFormData({
       ...formData,
-      items: [...formData.items, { description: "", quantity: 1, unitPrice: 0, total: 0 }]
+      items: [...formData.items, { description: "", quantity: 1, unitPrice: "", total: 0 }]
     });
   };
 
@@ -68,12 +68,19 @@ const CreateInvoiceForm = ({ onSubmit, onCancel, isLoading }) => {
   };
 
   const subtotal = formData.items.reduce((acc, item) => acc + item.total, 0);
-  const totalAmount = subtotal + Number(formData.tax);
+  const totalAmount = subtotal + Number(formData.tax || 0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({
       ...formData,
+      items: formData.items.map(it => ({
+        ...it,
+        quantity: Number(it.quantity || 0),
+        unitPrice: Number(it.unitPrice || 0),
+        total: Number(it.quantity || 0) * Number(it.unitPrice || 0)
+      })),
+      tax: Number(formData.tax || 0),
       subtotal,
       totalAmount,
       balanceAmount: totalAmount
@@ -143,9 +150,9 @@ const CreateInvoiceForm = ({ onSubmit, onCancel, isLoading }) => {
                   placeholder="Qty"
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:outline-none focus:border-primary-500 transition-all text-center"
                   value={item.quantity}
-                  onChange={e => updateItem(index, 'quantity', Number(e.target.value))}
+                  onChange={e => updateItem(index, 'quantity', e.target.value)}
                   required
-                  min="1"
+                  min="0"
                 />
               </div>
               <div className="flex-1 relative">
@@ -155,8 +162,10 @@ const CreateInvoiceForm = ({ onSubmit, onCancel, isLoading }) => {
                   placeholder="Price"
                   className="w-full pl-6 pr-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:outline-none focus:border-primary-500 transition-all"
                   value={item.unitPrice}
-                  onChange={e => updateItem(index, 'unitPrice', Number(e.target.value))}
+                  onChange={e => updateItem(index, 'unitPrice', e.target.value)}
                   required
+                  min="0"
+                  step="0.01"
                 />
               </div>
               <button

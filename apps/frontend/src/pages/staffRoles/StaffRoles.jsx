@@ -14,7 +14,7 @@ const StaffRoles = () => {
   
   const [formData, setFormData] = useState({
     name: "",
-    defaultRate: 0
+    defaultRate: ""
   });
 
   const fetchRoles = async () => {
@@ -40,11 +40,11 @@ const StaffRoles = () => {
       setEditRole(role);
       setFormData({
         name: role.name,
-        defaultRate: Number(role.defaultRate) || 0
+        defaultRate: role.defaultRate !== undefined && role.defaultRate !== null ? role.defaultRate : ""
       });
     } else {
       setEditRole(null);
-      setFormData({ name: "", defaultRate: 0 });
+      setFormData({ name: "", defaultRate: "" });
     }
     setShowModal(true);
   };
@@ -59,13 +59,13 @@ const StaffRoles = () => {
       if (editRole) {
         await staffRoleApi.update(editRole.id, {
           name: formData.name,
-          defaultRate: Number(formData.defaultRate)
+          defaultRate: Number(formData.defaultRate || 0)
         });
         toast.success("Staff role updated successfully");
       } else {
         await staffRoleApi.create({
           name: formData.name,
-          defaultRate: Number(formData.defaultRate)
+          defaultRate: Number(formData.defaultRate || 0)
         });
         toast.success("Staff role created successfully");
       }

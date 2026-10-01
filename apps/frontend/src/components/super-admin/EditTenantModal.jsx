@@ -39,7 +39,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
     if (!formData.name.trim()) return;
     onSave({
       ...formData,
-      subscriptionPrice: formData.isTesting ? 0 : formData.subscriptionPrice,
+      subscriptionPrice: formData.isTesting ? 0 : Number(formData.subscriptionPrice || 0),
       subscriptionExpiresAt: formData.subscriptionExpiresAt ? new Date(formData.subscriptionExpiresAt).toISOString() : null
     });
   };
@@ -178,7 +178,7 @@ const EditTenantModal = ({ isOpen, onClose, tenant, onSave, isSaving }) => {
                   <input
                     type="number"
                     value={formData.subscriptionPrice}
-                    onChange={(e) => setFormData({ ...formData, subscriptionPrice: Number(e.target.value) || 0 })}
+                    onChange={(e) => setFormData({ ...formData, subscriptionPrice: e.target.value })}
                     className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-xs font-medium text-slate-700 bg-white font-semibold"
                   />
                 </div>

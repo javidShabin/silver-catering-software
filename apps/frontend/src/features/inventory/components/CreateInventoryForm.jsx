@@ -7,10 +7,10 @@ const CreateInventoryForm = ({ onSubmit, onCancel, isLoading, initialData }) => 
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     category: initialData?.category || "",
-    quantity: initialData?.quantity || 0,
+    quantity: initialData?.quantity !== undefined && initialData?.quantity !== null ? initialData.quantity : "",
     unit: initialData?.unit || "piece",
-    minStockLevel: initialData?.minStockLevel || 10,
-    rentPerDay: initialData?.rentPerDay || 0,
+    minStockLevel: initialData?.minStockLevel !== undefined && initialData?.minStockLevel !== null ? initialData.minStockLevel : 10,
+    rentPerDay: initialData?.rentPerDay !== undefined && initialData?.rentPerDay !== null ? initialData.rentPerDay : "",
     notes: initialData?.notes || ""
   });
 
@@ -38,9 +38,9 @@ const CreateInventoryForm = ({ onSubmit, onCancel, isLoading, initialData }) => 
     e.preventDefault();
     onSubmit({
       ...formData,
-      quantity: Number(formData.quantity),
-      minStockLevel: Number(formData.minStockLevel),
-      rentPerDay: Number(formData.rentPerDay)
+      quantity: Number(formData.quantity || 0),
+      minStockLevel: Number(formData.minStockLevel || 0),
+      rentPerDay: Number(formData.rentPerDay || 0)
     });
   };
 

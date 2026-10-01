@@ -7,7 +7,7 @@ const PackageFormModal = ({ isOpen, onClose, onSuccess, initialData, menuItems }
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    pricePerHead: 0,
+    pricePerHead: "",
     minGuests: 50,
     isActive: true,
     menuItemIds: []
@@ -20,8 +20,8 @@ const PackageFormModal = ({ isOpen, onClose, onSuccess, initialData, menuItems }
       setFormData({
         name: initialData.name || "",
         description: initialData.description || "",
-        pricePerHead: Number(initialData.pricePerHead) || 0,
-        minGuests: Number(initialData.minGuests) || 50,
+        pricePerHead: initialData.pricePerHead !== undefined && initialData.pricePerHead !== null ? initialData.pricePerHead : "",
+        minGuests: initialData.minGuests !== undefined && initialData.minGuests !== null ? initialData.minGuests : 50,
         isActive: initialData.isActive !== false,
         menuItemIds: initialData.menuItems?.map(item => item.id) || []
       });
@@ -34,7 +34,7 @@ const PackageFormModal = ({ isOpen, onClose, onSuccess, initialData, menuItems }
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : type === "number" ? (value === "" ? "" : Number(value)) : value
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
@@ -58,11 +58,16 @@ const PackageFormModal = ({ isOpen, onClose, onSuccess, initialData, menuItems }
 
     try {
       setIsSubmitting(true);
+      const payload = {
+        ...formData,
+        pricePerHead: Number(formData.pricePerHead || 0),
+        minGuests: Number(formData.minGuests || 0)
+      };
       if (initialData) {
-        await packagesApi.update(initialData.id, formData);
+        await packagesApi.update(initialData.id, payload);
         toast.success("Package updated successfully");
       } else {
-        await packagesApi.create(formData);
+        await packagesApi.create(payload);
         toast.success("Package created successfully");
       }
       onSuccess();
@@ -129,7 +134,7 @@ const PackageFormModal = ({ isOpen, onClose, onSuccess, initialData, menuItems }
                   name="minGuests"
                   value={formData.minGuests}
                   onChange={handleChange}
-                  min="1"
+                  min="0"
                   className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded focus:outline-none focus:border-primary-500 transition-colors text-sm"
                   required
                 />

@@ -10,8 +10,8 @@ const CreateMenuForm = ({ onSubmit, onCancel, isLoading, initialData, categories
     name: initialData?.name || "",
     description: initialData?.description || "",
     category: initialData?.category || "",
-    minPrice: initialData?.minPrice ? Number(initialData.minPrice) : 0,
-    maxPrice: initialData?.maxPrice ? Number(initialData.maxPrice) : 0,
+    minPrice: initialData?.minPrice !== undefined && initialData?.minPrice !== null ? initialData.minPrice : "",
+    maxPrice: initialData?.maxPrice !== undefined && initialData?.maxPrice !== null ? initialData.maxPrice : "",
     isAvailable: initialData?.isAvailable !== undefined ? initialData.isAvailable : true,
     unit: initialData?.unit || "plate",
     dietaryTags: initialData?.dietaryTags || ["None"],
@@ -83,7 +83,11 @@ const CreateMenuForm = ({ onSubmit, onCancel, isLoading, initialData, categories
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      minPrice: Number(formData.minPrice || 0),
+      maxPrice: Number(formData.maxPrice || formData.minPrice || 0)
+    });
   };
 
   const toggleTag = (tag) => {
@@ -209,7 +213,7 @@ const CreateMenuForm = ({ onSubmit, onCancel, isLoading, initialData, categories
                     onFocus={() => setActiveField('minPrice')}
                     onBlur={() => setActiveField(null)}
                     value={formData.minPrice}
-                    onChange={e => setFormData({ ...formData, minPrice: Number(e.target.value) })}
+                    onChange={e => setFormData({ ...formData, minPrice: e.target.value })}
                     required
                   />
                 </div>
