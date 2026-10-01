@@ -6,6 +6,7 @@ import { inventoryApi } from "../../api/inventoryApi";
 import { customerApi } from "../../api/customerApi";
 import { packagesApi } from "../../api/packagesApi";
 import { staffRoleApi } from "../../api/staffRoleApi";
+import { menuCategoryApi } from "../../api/menuCategoryApi";
 import { CURRENCY } from "../../config/currency";
 import SummarySection from "../../features/quotation-builder/components/SummarySection";
 import PricingSection from "../../features/quotation-builder/components/PricingSection";
@@ -28,7 +29,8 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   // Custom Dish Creation State
   const [showCustomDishForm, setShowCustomDishForm] = useState(false);
   const [customDishName, setCustomDishName] = useState("");
-  const [customDishCategory, setCustomDishCategory] = useState("Main Course");
+  const [categories, setCategories] = useState([]);
+  const [customDishCategory, setCustomDishCategory] = useState("");
   const [customDishDescription, setCustomDishDescription] = useState("");
   const [isCreatingDish, setIsCreatingDish] = useState(false);
 
@@ -78,12 +80,13 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [custRes, menuRes, invRes, pkgRes, staffRes] = await Promise.all([
+        const [custRes, menuRes, invRes, pkgRes, staffRes, catRes] = await Promise.all([
           customerApi.getLookup(),
           menuApi.getLookup(),
           inventoryApi.getLookup(),
           packagesApi.getAll().catch(() => ({ status: 'error', data: [] })),
-          staffRoleApi.getAll().catch(() => ({ status: 'error', data: [] }))
+          staffRoleApi.getAll().catch(() => ({ status: 'error', data: [] })),
+          menuCategoryApi.getAll().catch(() => ({ status: 'error', data: [] }))
         ]);
         
         if (custRes.status === "success") setCustomers(custRes.data || []);
@@ -91,6 +94,14 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
         if (invRes.status === "success") setInventoryList(invRes.data || []);
         if (pkgRes.status === "success") setPackages(pkgRes.data || []);
         if (staffRes.status === "success") setStaffRoles(staffRes.data || []);
+
+        const dbCategories = (catRes?.data || []).map(c => c.name).filter(Boolean);
+        const menuCategories = (menuRes?.data || []).map(m => m.category).filter(Boolean);
+        const realCategories = Array.from(new Set([...dbCategories, ...menuCategories]));
+        if (realCategories.length > 0) {
+          setCategories(realCategories);
+          setCustomDishCategory(prev => prev && realCategories.includes(prev) ? prev : realCategories[0]);
+        }
       } catch (error) {
         console.error("Error fetching dependencies", error);
       }
@@ -250,12 +261,35 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
       // Reset form
       setCustomDishName("");
       setCustomDishDescription("");
+      if (categories.length > 0) {
+        setCustomDishCategory(categories[0]);
+      }
       setShowCustomDishForm(false);
     } catch (err) {
       console.error("Failed to create custom dish", err);
       alert("Error creating custom dish: " + (err.response?.data?.message || err.message));
     } finally {
       setIsCreatingDish(false);
+    }
+  };
+
+  const handleToggleCustomDishForm = async () => {
+    if (!showCustomDishForm) {
+      try {
+        const catRes = await menuCategoryApi.getAll();
+        const dbCategories = (catRes?.data || []).map(c => c.name).filter(Boolean);
+        const menuCategories = menus.map(m => m.category).filter(Boolean);
+        const realCategories = Array.from(new Set([...dbCategories, ...menuCategories]));
+        if (realCategories.length > 0) {
+          setCategories(realCategories);
+          setCustomDishCategory(prev => prev && realCategories.includes(prev) ? prev : realCategories[0]);
+        }
+      } catch (err) {
+        console.error("Failed to refresh categories", err);
+      }
+      setShowCustomDishForm(true);
+    } else {
+      setShowCustomDishForm(false);
     }
   };
 
@@ -777,7 +811,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                   </div>
                   <button
                     type="button"
-                    onClick={() => setShowCustomDishForm(!showCustomDishForm)}
+                    onClick={handleToggleCustomDishForm}
                     className={`shrink-0 whitespace-nowrap h-8 px-3 text-[10px] font-bold rounded flex items-center justify-center gap-1.5 transition-colors border ${showCustomDishForm ? 'bg-slate-100 text-slate-700 border-slate-200' : 'bg-primary-50 text-primary-600 border-primary-100 hover:bg-primary-100'}`}
                   >
                     {showCustomDishForm ? "Cancel" : <><Plus size={12} /> New Dish</>}
@@ -834,15 +868,20 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Category</label>
                         <div className="relative">
                           <select
-                            className="w-full h-9 rounded border border-slate-200 pl-3 pr-8 text-xs outline-none focus:border-primary-500 bg-white appearance-none"
+                            className="w-full h-9 rounded border border-slate-200 pl-3 pr-8 text-xs outline-none focus:border-primary-500 bg-white appearance-none cursor-pointer"
                             value={customDishCategory}
                             onChange={(e) => setCustomDishCategory(e.target.value)}
+                            required
                           >
-                            <option value="Starters">Starter</option>
-                            <option value="Main Course">Main Course</option>
-                            <option value="Desserts">Dessert</option>
-                            <option value="Beverages">Beverage</option>
-                            <option value="Snacks">Snacks</option>
+                            {categories.length > 0 ? (
+                              categories.map((cat) => (
+                                <option key={cat} value={cat}>
+                                  {cat}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="Main Course">Main Course</option>
+                            )}
                           </select>
                           <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                         </div>
