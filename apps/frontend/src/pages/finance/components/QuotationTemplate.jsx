@@ -95,7 +95,7 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
     return {
       description: menu.name,
       shortDesc,
-      note: isPackageItem ? "Package item" : type === "PER_HEAD" ? `Per head × ${qty} guests` : `Fixed price`,
+      note: isPackageItem ? "Package item" : type === "PER_HEAD" ? `Per head × ${qty} guests` : (unit === "UNLIMITED" ? "Unlimited service" : `Fixed price`),
       qty,
       unit,
       unitPrice: price,
@@ -442,12 +442,20 @@ const QuotationTemplate = React.forwardRef(({ quotation }, ref) => {
                                     </span>
                                   ) : (
                                     <span className="inline-flex items-center px-2 py-0.5 rounded-[4px] bg-[#F4F1EA] border border-[#DCD6C8] text-xs font-bold text-slate-800">
-                                      {line.qty}{" "}
-                                      {line.unit ? (
-                                        <span className="text-[10px] text-slate-600 ml-1 font-bold uppercase">
-                                          {line.unit}
+                                      {line.unit === "UNLIMITED" ? (
+                                        <span className="text-[10px] text-slate-700 font-bold uppercase tracking-wider">
+                                          UNLIMITED
                                         </span>
-                                      ) : null}
+                                      ) : (
+                                        <>
+                                          {line.qty}{" "}
+                                          {line.unit ? (
+                                            <span className="text-[10px] text-slate-600 ml-1 font-bold uppercase">
+                                              {line.unit}
+                                            </span>
+                                          ) : null}
+                                        </>
+                                      )}
                                     </span>
                                   )}
                                 </td>

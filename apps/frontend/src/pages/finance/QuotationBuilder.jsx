@@ -980,6 +980,7 @@ const QuotationBuilder = ({ onSuccess, onClose, initialData, isViewMode, onOpenP
                                       <option value="kg">kg</option>
                                       <option value="liter">liter</option>
                                       <option value="unit">unit</option>
+                                      <option value="unlimited">unlimited</option>
                                     </select>
                                   </div>
                                 </>
